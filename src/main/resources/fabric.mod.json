@@ -1,15 +1,15 @@
 {
 	"schemaVersion": 1,
 	"id": "skydoppler",
-	"version": "${version}",
+	"version": "v0.0.1-alpha",
 	"name": "Skydoppler",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A Hypixel Skyblock mod with a vast array of features for all areas of Skyblock!",
 	"authors": [
-		"Me!"
+		"TirelessMist"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/TirelessMist",
+		"sources": "https://github.com/TirelessMist/Skydoppler"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/skydoppler/icon.png",
@@ -35,7 +35,14 @@
 		"java": ">=21",
 		"fabric-api": "*"
 	},
-	"suggests": {
-		"another-mod": "*"
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.com/",
+				"modmenu.curseforge": "https://www.curseforge.com/",
+				"modmenu.modrinth": "https://modrinth.com/"
+			},
+			"update_checker": true
+		}
 	}
 }
