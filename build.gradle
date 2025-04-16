@@ -88,3 +88,15 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+// Add the Terraformers maven repo to your repositories block
+repositories {
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+}
+
+// Add Mod Menu as a dependency in your environment
+dependencies {
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+}

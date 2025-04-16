@@ -1,15 +1,13 @@
 package ae.skydoppler.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHud;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MinecraftClient.class)
-public class ExampleClientMixin {
-	@Inject(at = @At("HEAD"), method = "run")
-	private void init(CallbackInfo info) {
-		// This code is injected into the start of MinecraftClient.run()V
-	}
+@Mixin(ChatHud.class)
+public class ChatHudMixin {
+	@Inject(at = @At("HEAD"), method = "")
 }
