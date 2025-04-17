@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 public class ChatNotificationHandler {
-    private JsonObject jsonObject;
+    private static JsonObject jsonObject;
     private static JsonArray messageEntries;
 
     public static void checkForMatches(Text chatMessage) {
@@ -32,7 +32,7 @@ public class ChatNotificationHandler {
         }
     }
 
-    public void loadJsonData() {
+    public static void loadJsonData() {
         try (InputStream stream = SkydopplerClient.class.getResourceAsStream("/chat_matches.json")) {
             if (stream == null) {
                 System.err.println("Could not find chat_matches.json in resources!");
