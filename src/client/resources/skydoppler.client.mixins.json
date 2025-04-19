@@ -3,7 +3,8 @@
 	"package": "ae.skydoppler.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ChatHudMixin"
+		"ChatHudMixin",
+		"ScoreboardMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
