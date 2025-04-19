@@ -19,13 +19,13 @@ import java.util.Objects;
 public class ChatNotificationHandler {
     private static JsonObject jsonObject;
     private static JsonArray messageEntries;
-    private static boolean playSound = false;
 
     public static void checkForMatches(Text chatMessage) {
         for (JsonElement element : messageEntries) { // for each message "block"
 
             JsonObject obj = element.getAsJsonObject(); // gets the current message "block" as a JsonObject
 
+            String textOfChatMessage = chatMessage.getString();
             String currentChatMatchType = obj.get("ChatMatchType").getAsString();
             String currentChatMatchCaseSensitivityType = obj.get("ChatMatchCaseSensitivityType").getAsString();
             JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
@@ -34,7 +34,7 @@ public class ChatNotificationHandler {
                 matchStrings.add(jsonElement.getAsString());
             }
 
-            if (CheckMatch(chatMessage.toString(), matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
+            if (CheckMatch(textOfChatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
                 if (obj.get("playSound").getAsBoolean()) {
                     MinecraftClient client = MinecraftClient.getInstance();
                     if (client.player != null) {
@@ -43,6 +43,8 @@ public class ChatNotificationHandler {
 
                     }
                 }
+                TextRenderer.DisplayTitle(Text.literal(obj.get("displayText").getAsString()), Text.empty(), 0, 90, 0);
+                System.out.println("Chat Match Display Text: " + obj.get("displayText"));
                 break;
             }
 
@@ -51,20 +53,22 @@ public class ChatNotificationHandler {
 
     private static boolean CheckMatch(String chatMessage, List<String> matchStrings, ChatMatchType matchType, ChatMatchCaseSensitivityType caseSensitivityType) {
 
-        if (matchType == ChatMatchType.match_exactly) {
-            for (String s : matchStrings) {
-                if (chatMessage.equals(s)) {
-                    return true; // checking quick case before all computation work
-                }
-            }
-        }
-
         if (caseSensitivityType == ChatMatchCaseSensitivityType.not_case_sensitive) {
             chatMessage = chatMessage.toLowerCase(); // sets all the strings to lower case for a faster way to do no case sensitivity
-            for (String s : matchStrings) {
-                s = s.toLowerCase();
-            }
+            matchStrings.replaceAll(String::toLowerCase);
         }
+
+        if (matchType == ChatMatchType.match_exactly) {
+            boolean isMatch = false;
+            for (String s : matchStrings) {
+                if (chatMessage.equals(s)) {
+                    isMatch = true; // checking quick case before all computation work
+                }
+            }
+            return isMatch;
+        }
+
+
 
         switch (matchType) {
             case ChatMatchType.contains -> {

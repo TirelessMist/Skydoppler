@@ -2,7 +2,7 @@
   "messages": [
     {
       "matches": [
-        "[@]"
+        "anything"
       ],
       "ChatMatchCaseSensitivityType": "case_sensitive",
       "ChatMatchType": "starts_with",
@@ -11,12 +11,21 @@
     },
     {
       "matches": [
-        "hello"
+        "Hello", "skibidi"
       ],
-      "ChatMatchCaseSensitivityType": "case_sensitive",
+      "ChatMatchCaseSensitivityType": "not_case_sensitive",
       "ChatMatchType": "contains",
       "displayText": "Someone said \"hello\"",
-      "playSound": "false"
+      "playSound": "true"
+    },
+    {
+      "matches": [
+        "[@] Sigma", "[@] Super"
+      ],
+      "ChatMatchCaseSensitivityType": "case_sensitive",
+      "ChatMatchType": "match_exactly",
+      "displayText": "The match was exact.",
+      "playSound": "true"
     }
   ]
 }
