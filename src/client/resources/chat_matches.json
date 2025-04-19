@@ -2,12 +2,12 @@
   "messages": [
     {
       "matches": [
-        "TirelessMist","Player"
+        "[@]"
       ],
-      "ChatMatchCaseSensitivityType": "match_exactly",
+      "ChatMatchCaseSensitivityType": "case_sensitive",
       "ChatMatchType": "starts_with",
       "displayText": "You are the sigma.",
-      "playSound": "false"
+      "playSound": "true"
     },
     {
       "matches": [
@@ -16,7 +16,7 @@
       "ChatMatchCaseSensitivityType": "case_sensitive",
       "ChatMatchType": "contains",
       "displayText": "Someone said \"hello\"",
-      "playSound": "true"
+      "playSound": "false"
     }
   ]
 }

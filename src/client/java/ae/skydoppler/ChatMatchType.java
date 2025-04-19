@@ -1,5 +1,5 @@
 package ae.skydoppler;
 
 public enum ChatMatchType {
-    starts_with,contains
+    match_exactly,starts_with,contains
 }
