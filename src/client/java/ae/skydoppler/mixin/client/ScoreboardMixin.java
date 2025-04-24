@@ -1,72 +1,82 @@
 package ae.skydoppler.mixin.client;
 
-import net.minecraft.scoreboard.*;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Collection;
 
 @Mixin(Scoreboard.class)
-public class ScoreboardMixin {
+public abstract class ScoreboardMixin {
 
-    /*@Inject(method = "updateObjective", at = @At("HEAD"))
-    private void onUpdateObjective(ScoreboardObjective objective, CallbackInfo ci) {
-        System.out.println("--------SCOREBOARD UPDATE OBJECTIVE:--------");
-        System.out.println("SCOREBOARD: " + objective.getScoreboard());
-        System.out.println("Name: " + objective.getName());
-        System.out.println("Display name: " + objective.getDisplayName());
-        System.out.println("Render type: " + objective.getRenderType());
-        System.out.println("Criterion: " + objective.getCriterion());
-        System.out.println("--------------------------");
-    }
+    @Inject(method = "updateScoreboardTeam", at = @At("HEAD"))
+    // Called when a Team is updated on the scoreboard (on Hypixel, the team name is updated to show new info)
+    private void onUpdateScoreboardTeam(Team team, CallbackInfo ci) {
 
-    @Inject(method = "updateScore", at = @At("HEAD"))
-    private void onUpdateScore(ScoreHolder scoreHolder, ScoreboardObjective scoreboardObjective, ScoreboardScore scoreboardScore, CallbackInfo ci) {
-        System.out.println("-------SCORE UPDATE:-------");
+        // Retrieve the prefix and suffix. These may be null so check first.
+        Text prefixComponent = team.getPrefix();
+        Text suffixComponent = team.getSuffix();
 
-        System.out.println("SCOREHOLDER:");
-        System.out.println("ScoreHolder DisplayName: " + scoreHolder.getDisplayName());
-        System.out.println("ScoreHolder NameForScoreboard: " + scoreHolder.getNameForScoreboard());
+        String combinedString = "";
 
-        System.out.println("SCOREBOARDOBJECTIVE:");
-        System.out.println("Scoreboard: " + scoreboardObjective.getScoreboard());
-        System.out.println("Name: " + scoreboardObjective.getName());
-        System.out.println("Display name: " + scoreboardObjective.getDisplayName());
-        System.out.println("Render type: " + scoreboardObjective.getRenderType());
-        System.out.println("Criterion: " + scoreboardObjective.getCriterion());
-
-        System.out.println("SCOREBOARDSCORE:");
-        System.out.println("ScoreboardScore Score: " + scoreboardScore.getScore());
-
-        if (scoreboardScore.getDisplayText() != null) {
-            System.out.println("ScoreboardScore DisplayText: " + scoreboardScore.getDisplayText());
+        // Process the prefix component and its siblings.
+        if (prefixComponent != null) {
+            combinedString = combinedString + (extractFullText(prefixComponent));
+        } else {
+            System.out.println("[ScoreboardMixin] The team's prefix is null.");
         }
 
-        System.out.println("ScoreboardScore FormattedScore: " + scoreboardScore.getFormattedScore(scoreboardScore.getNumberFormat()));
-        System.out.println("ScoreboardScore IsLocked: " + scoreboardScore.isLocked());
-
-        System.out.println("--------------------------");
-    }*/
-
-    @Inject(method = "updateScore", at = @At("HEAD"))
-    private void onScoreUpdate(ScoreHolder scoreHolder, ScoreboardObjective objective, ScoreboardScore score, CallbackInfo ci) {
-        String scoreboardLine = scoreHolder.getStyledDisplayName().getLiteralString();
-
-        if (scoreboardLine != null) {
-            scoreboardLine = stripFormattingCodes(scoreboardLine);
-            if (scoreboardLine.contains("Location")) {
-                System.out.println("[Hypixel Skyblock] Scoreboard Location Line Updated: " + scoreboardLine);
-            }
+        // Process the suffix component and its siblings.
+        if (suffixComponent != null) {
+            combinedString = combinedString + (extractFullText(suffixComponent));
+        } else {
+            System.out.println("[ScoreboardMixin] The team's suffix is null.");
         }
 
+
+        // Print out the final, appended string value
+        System.out.println("[ScoreboardMixin] Combined prefix and suffix: " + cleanString(combinedString));
+
     }
 
-    private String stripFormattingCodes(String text) {
-        return text.replaceAll("§.", "");
+    @Unique
+    private String extractFullText(Text text) {
+        if (text == null) return "";
+
+        // In many Yarn mappings, getString() returns the whole string. If not, you can iterate:
+        /*StringBuilder sb = new StringBuilder();*/
+
+        String appendedString = "";
+
+        // Append the text of the base component.
+        String baseText = text.getString();
+        appendedString = appendedString + (baseText);
+
+        // Now, process each sibling. Note that getSiblings() returns a list of Text components.
+        // If getString() already accounts for siblings, this loop may be unnecessary.
+        /*for (Text sibling : text.getSiblings()) {
+            appendedString = appendedString + (sibling.getString());
+        }*/
+
+        return appendedString;
     }
+
+    @Unique
+    private String cleanString(String input) {
+        if (input == null) return "";
+        // Remove "â" and the next two characters
+        // Remove "§" and the next character
+        // Remove all whitespace
+        String cleaned = input.replaceAll("â..", "").replaceAll("§.", "").replaceAll("\\s+", "");
+
+        System.out.println("Cleaned String!");
+
+        return cleaned;
+    }
+
 
 }

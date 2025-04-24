@@ -43,7 +43,7 @@ public class TextRenderer {
         loadJsonData();
     }
 
-    public static void DrawTextLine(Text text, Point position) {
+    public void DrawTextLine(Text text, Point position) {
         if (SkydopplerClient.client.player != null) {
         }
     }
