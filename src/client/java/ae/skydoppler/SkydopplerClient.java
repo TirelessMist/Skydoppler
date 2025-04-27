@@ -1,6 +1,7 @@
 package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
+import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -23,6 +24,8 @@ public class SkydopplerClient implements ClientModInitializer {
 	public static KeyBinding printScoreboardLines;
 
 	private TextRenderer textRenderer;
+
+	public static SkyblockPlayerDataStruct playerDataStruct;
 
 	@Override
 	public void onInitializeClient() {
