@@ -2,15 +2,6 @@
   "messages": [
     {
       "matches": [
-        "anything"
-      ],
-      "ChatMatchCaseSensitivityType": "case_sensitive",
-      "ChatMatchType": "starts_with",
-      "displayText": "You are the sigma.",
-      "playSound": "true"
-    },
-    {
-      "matches": [
         "Hello", "skibidi"
       ],
       "ChatMatchCaseSensitivityType": "not_case_sensitive",

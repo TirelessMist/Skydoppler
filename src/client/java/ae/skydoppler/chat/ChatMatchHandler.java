@@ -2,6 +2,7 @@ package ae.skydoppler.chat;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.TextRenderer;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,11 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatMatchHandler {
-    private static JsonObject jsonObject;
-    private static JsonArray messageEntries;
+    private static JsonObject chat_matches_json;
+    private static JsonArray chat_matches_entries;
+    private static JsonObject sea_creature_matches_json;
+    private static JsonArray sea_creature_matches_entries;
 
-    public static void checkForMatches(Text chatMessage) {
-        for (JsonElement element : messageEntries) { // for each message "block"
+    public static String checkForMatches(Text chatMessage) {
+        // can return a "replace" string, where it replaces the original chat message with the String returned from this function
+
+        String returnString = "";
+
+        for (JsonElement element : chat_matches_entries) { // for each message "block"
 
             JsonObject obj = element.getAsJsonObject(); // gets the current message "block" as a JsonObject
 
@@ -50,6 +56,35 @@ public class ChatMatchHandler {
             }
 
         }
+
+        for (JsonElement element : sea_creature_matches_entries) {
+
+            JsonObject obj = element.getAsJsonObject();
+
+            String textOfChatMessage = chatMessage.getString();
+            JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
+            List<String> matchStrings = new ArrayList<>();
+            for (JsonElement jsonElement : matchesJsonArray) {
+                matchStrings.add(jsonElement.getAsString());
+            }
+
+            if (CheckMatch(textOfChatMessage, matchStrings, ChatMatchType.match_exactly, ChatMatchCaseSensitivityType.case_sensitive)) {
+
+                MinecraftClient client = MinecraftClient.getInstance();
+                if (client.player != null && SkydopplerClient.PlayRareSeaCreatureNotificationsSound) {
+                    client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                }
+                String displayText = obj.get("displayText").getAsString();
+                if (SkydopplerClient.ShowRareSeaCreatureNotificationsChatMessage) {
+                    returnString = "§eYou fished up a " + displayText + "§e.";
+                }
+                TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
+                System.out.println("Legendary Sea Creature: " + obj.get("displayText"));
+                break;
+            }
+        }
+
+        return returnString;
     }
 
     private static boolean CheckMatch(String chatMessage, List<String> matchStrings, ChatMatchType matchType, ChatMatchCaseSensitivityType caseSensitivityType) {
@@ -68,7 +103,6 @@ public class ChatMatchHandler {
             }
             return isMatch;
         }
-
 
 
         switch (matchType) {
@@ -101,9 +135,26 @@ public class ChatMatchHandler {
             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             // Parse the JSON file using Gson
             Gson gson = new Gson();
-            jsonObject = gson.fromJson(reader, JsonObject.class);
+            chat_matches_json = gson.fromJson(reader, JsonObject.class);
             reader.close();
-            messageEntries = jsonObject.getAsJsonArray("messages");
+            chat_matches_entries = chat_matches_json.getAsJsonArray("messages");
+        } catch (Exception e) {
+            System.err.println("Error reading JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try (InputStream stream = SkydopplerClient.class.getResourceAsStream("/sea_creature_messages.json")) {
+            if (stream == null) {
+                System.err.println("Could not find sea_creature_messages.json in resources!");
+                return;
+            }
+            // Use InputStreamReader with an appropriate charset.
+            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+            // Parse the JSON file using Gson
+            Gson gson = new Gson();
+            sea_creature_matches_json = gson.fromJson(reader, JsonObject.class);
+            reader.close();
+            sea_creature_matches_entries = sea_creature_matches_json.getAsJsonArray("messages");
         } catch (Exception e) {
             System.err.println("Error reading JSON file: " + e.getMessage());
             e.printStackTrace();

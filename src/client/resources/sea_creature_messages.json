@@ -1,0 +1,70 @@
+{
+  "messages": [
+    {
+      "matches": [
+        "§aA long snout breaks the surface of the water. It's an Alligator!"
+      ],
+      "displayText": "§2Alligator"
+    },
+    {
+      "matches": [
+        "§aThe Water Hydra has come to test your Strength."
+      ],
+      "displayText": "§1Water Hydra"
+    },
+    {
+      "matches": [
+        "§aThe Sea Emperor arises from the depths..."
+      ],
+      "displayText": "§3Sea Emperor"
+    },
+    {
+      "matches": [
+        "§aWOAH! A Plhlegblast appeared."
+      ],
+      "displayText": "§1Plhlegblast"
+    },
+    {
+      "matches": [
+        "§cYou hear a massive rumble as Thunder emerges."
+      ],
+      "displayText": "§4Thunder"
+    },
+    {
+      "matches": [
+        "§cYou have angered a legendary creature...\nLord Jawbus has arrived"
+      ],
+      "displayText": "§8Lord Jawbus"
+    },
+    {
+      "matches": [
+        "§aThe spirit of a long lost Phantom Fisher has come to haunt you."
+      ],
+      "displayText": "§5Phantom Fisher"
+    },
+    {
+      "matches": [
+        "§aThis can't be! The manifestation of death himself!"
+      ],
+      "displayText": "§8Grim Reaper"
+    },
+    {
+      "matches": [
+        "§aYou found a forgotten Nutcracker laying beneath the ice."
+      ],
+      "displayText": "§2Nutcracker"
+    },
+    {
+      "matches": [
+        "§aA Reindrake forms from the depths.", "§cWOAH! A §4Reindrake §cwas summoned from the depths!"
+      ],
+      "displayText": "§4Reindrake"
+    },
+    {
+      "matches": [
+        "§aHide no longer, a Great White Shark has tracked your scent and thirsts for your blood!"
+      ],
+      "displayText": "§3Great White Shark"
+    }
+  ]
+}

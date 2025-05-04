@@ -1,60 +1,75 @@
 package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
+import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.scoreboard.ScoreHolder;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
 
 public class SkydopplerClient implements ClientModInitializer {
 
-	public static MinecraftClient client = MinecraftClient.getInstance();
+    public static MinecraftClient client = MinecraftClient.getInstance();
 
-	public static KeyBinding printScoreboardLines;
+    public static KeyBinding debugKey;
+    public static SkyblockPlayerDataStruct playerDataStruct;
+    public static boolean RareSeaCreatureNotifications;
+    public static boolean ShowRareSeaCreatureNotificationsChatMessage;
+    public static boolean PlayRareSeaCreatureNotificationsSound;
+    private TextRenderer textRenderer;
 
-	private TextRenderer textRenderer;
+    public static boolean isRodCast;
 
-	public static SkyblockPlayerDataStruct playerDataStruct;
+    @Override
+    public void onInitializeClient() {
 
-	@Override
-	public void onInitializeClient() {
-		textRenderer = new TextRenderer(client);
-		textRenderer.initialize();
-		ChatMatchHandler.loadJsonData();
+        System.out.println("Skydoppler (Client) is initializing!");
+        textRenderer = new TextRenderer(client);
+        textRenderer.initialize();
+        ChatMatchHandler.loadJsonData();
+        isRodCast = false;
 
-		printScoreboardLines = KeyBindingHelper.registerKeyBinding(new KeyBinding("Print Scoreboard Lines to Log", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
+        RareSeaCreatureNotifications = true;
+        ShowRareSeaCreatureNotificationsChatMessage = true;
+        PlayRareSeaCreatureNotificationsSound = true;
 
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (printScoreboardLines.wasPressed()) {
-				if (client.player != null && client.world != null) {
+        playerDataStruct = new SkyblockPlayerDataStruct();
 
+        debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
 
-					Scoreboard scoreboard = client.world.getScoreboard();
-					for (Team team : scoreboard.getTeams()) {
-						System.out.println("===SCOREBOARD TEAM \"" + team.getDisplayName().getSiblings() + "\"===");
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (debugKey.wasPressed()) {
+                // add debug key stuff here if you need
+            }
 
-						System.out.println("Scoreboard Line Team Prefix: " + team.getPrefix().getSiblings());
-						System.out.println("Scoreboard Line Team Name: " + team.getName());
-						System.out.println("Scoreboard Line Team Suffix: " + team.getSuffix().getSiblings());
+            // Check every tick if the local player's fishing bobber is present within hideRange
+            if (client.world == null || client.player == null) {
+                FishingHideState.rodCastActive = false;
+                return;
+            }
+            // Create a bounding box centered around the player
+            double r = FishingHideState.hideRange;
+            Box box = new Box(
+                    client.player.getX() - r, client.player.getY() - r, client.player.getZ() - r,
+                    client.player.getX() + r, client.player.getY() + r, client.player.getZ() + r
+            );
 
-						System.out.println("--------------------------");
-					}
+            // Check if any FishingBobberEntity in the world (within the box) belongs to the local player
+            boolean found = client.world.getEntitiesByClass(FishingBobberEntity.class, box,
+                    bobber -> bobber.getOwner() != null && bobber.getOwner().equals(client.player)
+            ).size() > 0;
 
+            FishingHideState.rodCastActive = found;
+        });
 
-				}
-			}
-		});
-
-	}
+    }
 }

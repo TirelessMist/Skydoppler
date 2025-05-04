@@ -1,7 +1,7 @@
 package ae.skydoppler.mixin.client;
 
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
+import ae.skydoppler.scoreboard.ScoreboardHandler;
+import net.minecraft.scoreboard.*;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,9 +37,12 @@ public abstract class ScoreboardMixin {
             System.out.println("[ScoreboardMixin] The team's suffix is null.");
         }
 
+        ScoreboardHandler.scoreboardTeamUpdate(combinedString);
 
-        // Print out the final, appended string value
-        System.out.println("[ScoreboardMixin] Combined prefix and suffix: " + cleanString(combinedString));
+    }
+
+    @Inject(method = "updateScore", at = @At("HEAD"))
+    private void onUpdateScore(ScoreHolder holder, ScoreboardObjective objective, ScoreboardScore score, CallbackInfo ci) {
 
     }
 
@@ -63,19 +66,6 @@ public abstract class ScoreboardMixin {
         }*/
 
         return appendedString;
-    }
-
-    @Unique
-    private String cleanString(String input) {
-        if (input == null) return "";
-        // Remove "â" and the next two characters
-        // Remove "§" and the next character
-        // Remove all whitespace
-        String cleaned = input.replaceAll("â..", "").replaceAll("§.", "").replaceAll("\\s+", "");
-
-        System.out.println("Cleaned String!");
-
-        return cleaned;
     }
 
 

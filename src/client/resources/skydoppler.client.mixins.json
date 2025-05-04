@@ -4,7 +4,9 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ChatHudMixin",
-		"ScoreboardMixin"
+		"ScoreboardMixin",
+		"EntityRenderDispatcherMixin",
+		"MinecraftClientMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
