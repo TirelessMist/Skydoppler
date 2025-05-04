@@ -21,6 +21,8 @@ public abstract class ScoreboardMixin {
         Text prefixComponent = team.getPrefix();
         Text suffixComponent = team.getSuffix();
 
+        /*ScoreboardTeam scoreboardTeam = team.getScoreboard().getSlotForObjective(team.getObjective());*/
+
         String combinedString = "";
 
         // Process the prefix component and its siblings.

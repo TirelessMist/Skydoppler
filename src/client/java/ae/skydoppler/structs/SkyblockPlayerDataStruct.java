@@ -1,5 +1,8 @@
 package ae.skydoppler.structs;
 
+import ae.skydoppler.skyblock_locations.SkyblockIslandType;
+import ae.skydoppler.skyblock_locations.SkyblockLocation;
+
 public class SkyblockPlayerDataStruct {
 
     // MONEY
@@ -11,8 +14,8 @@ public class SkyblockPlayerDataStruct {
     private long bits;
 
     // LOCATION
-    private String islandName;
-    private String skyblockLocation;
+    private SkyblockIslandType islandType;
+    private SkyblockLocation skyblockLocation;
 
     // ACTION BAR STUFF
     private int maxHealth;
@@ -61,19 +64,19 @@ public class SkyblockPlayerDataStruct {
         this.bits = bits;
     }
 
-    public String getIslandName() {
-        return islandName;
+    public SkyblockIslandType getIslandType() {
+        return islandType;
     }
 
-    public void setIslandName(String islandName) {
-        this.islandName = islandName;
+    public void setIslandType(SkyblockIslandType islandType) {
+        this.islandType = islandType;
     }
 
-    public String getSkyblockLocation() {
+    public SkyblockLocation getSkyblockLocation() {
         return skyblockLocation;
     }
 
-    public void setSkyblockLocation(String skyblockLocation) {
+    public void setSkyblockLocation(SkyblockLocation skyblockLocation) {
         this.skyblockLocation = skyblockLocation;
     }
 
@@ -148,4 +151,23 @@ public class SkyblockPlayerDataStruct {
     public void setSkillXpStruct(SkyblockSkillXpStruct skillXpStruct) {
         this.skillXpStruct = skillXpStruct;
     }
+
+    public SkyblockPlayerDataStruct() {
+        this.purse = 0;
+        this.coopBank = 0;
+        this.privateBank = 0;
+        this.bits = 0;
+        this.islandType = SkyblockIslandType.NONE;
+        this.skyblockLocation = SkyblockLocation.NONE;
+        this.maxHealth = 0;
+        this.currentHealth = 0;
+        this.maxMana = 0;
+        this.currentMana = 0;
+        this.overflowMana = 0;
+        this.defense = 0;
+        this.ehp = 0;
+        this.trueDefense = 0;
+        this.skillXpStruct = new SkyblockSkillXpStruct();
+    }
+
 }

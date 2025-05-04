@@ -1,12 +1,59 @@
 package ae.skydoppler.scoreboard;
 
-import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.TextRenderer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScoreboardHandler {
 
     public static void scoreboardTeamUpdate(String line) {
+
+
+        line = line.trim();
+        line = line.toLowerCase();
+
+        System.out.println("===SCOREBOARD UPDATE===");
+        System.out.println("Line: " + line);
+
+        Pattern pattern = Pattern.compile("\u2020");
+
+        Matcher matcher = pattern.matcher(line);
+
+        System.out.println("Running if statement to check if the line contains \"\u008F\".");
+        if (matcher.find() || line.contains("\u2020")) {
+            /*line = line.substring(line.indexOf("£") + 1);
+            line = line.trim();*/
+            System.out.println("Displaying title: " + line);
+            TextRenderer.DisplayTitle(Text.literal("Location: " + line), Text.empty(), 0, 90, 0);
+            assert MinecraftClient.getInstance().player != null;
+            MinecraftClient.getInstance().player.playSoundToPlayer(SoundEvents.BLOCK_BELL_USE, SoundCategory.MASTER, 1.0f, 1.0f);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /*line = line.trim();
         line = line.toLowerCase();

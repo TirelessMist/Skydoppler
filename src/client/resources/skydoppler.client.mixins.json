@@ -6,7 +6,7 @@
 		"ChatHudMixin",
 		"ScoreboardMixin",
 		"EntityRenderDispatcherMixin",
-		"MinecraftClientMixin"
+		"InventoryScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

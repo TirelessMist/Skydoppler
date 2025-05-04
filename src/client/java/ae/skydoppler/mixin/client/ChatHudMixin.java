@@ -14,7 +14,7 @@ public class ChatHudMixin {
     @Inject(at = @At("HEAD"), method = "addMessage*")
     private void onAddMessage(Text chatMessage, CallbackInfo ci) {
 
-        System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage + "\"");
+        System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage.copyContentOnly() + "\"");
         ChatMatchHandler.checkForMatches(chatMessage);
 
     }
