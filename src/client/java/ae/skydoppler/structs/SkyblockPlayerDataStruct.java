@@ -30,7 +30,7 @@ public class SkyblockPlayerDataStruct {
     private int trueDefense;
 
     // SKILLS
-    private SkyblockSkillXpStruct skillXpStruct;
+    private SkyblockSkillXpStruct skillXp;
 
     public long getPurse() {
         return purse;
@@ -145,11 +145,11 @@ public class SkyblockPlayerDataStruct {
     }
 
     public SkyblockSkillXpStruct getSkillXpStruct() {
-        return skillXpStruct;
+        return skillXp;
     }
 
-    public void setSkillXpStruct(SkyblockSkillXpStruct skillXpStruct) {
-        this.skillXpStruct = skillXpStruct;
+    public void setSkillXpStruct(SkyblockSkillXpStruct skillXp) {
+        this.skillXp = skillXp;
     }
 
     public SkyblockPlayerDataStruct() {
@@ -167,7 +167,7 @@ public class SkyblockPlayerDataStruct {
         this.defense = 0;
         this.ehp = 0;
         this.trueDefense = 0;
-        this.skillXpStruct = new SkyblockSkillXpStruct();
+        this.skillXp = new SkyblockSkillXpStruct();
     }
 
 }
