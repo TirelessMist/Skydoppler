@@ -1,7 +1,7 @@
 package ae.skydoppler.structs;
 
 import ae.skydoppler.skyblock_locations.SkyblockIslandType;
-import ae.skydoppler.skyblock_locations.SkyblockLocation;
+import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 
 public class SkyblockPlayerDataStruct {
 
@@ -15,7 +15,7 @@ public class SkyblockPlayerDataStruct {
 
     // LOCATION
     private SkyblockIslandType islandType;
-    private SkyblockLocation skyblockLocation;
+    private SkyblockIslandEnum skyblockIslandEnum;
 
     // ACTION BAR STUFF
     private int maxHealth;
@@ -72,12 +72,12 @@ public class SkyblockPlayerDataStruct {
         this.islandType = islandType;
     }
 
-    public SkyblockLocation getSkyblockLocation() {
-        return skyblockLocation;
+    public SkyblockIslandEnum getSkyblockLocation() {
+        return skyblockIslandEnum;
     }
 
-    public void setSkyblockLocation(SkyblockLocation skyblockLocation) {
-        this.skyblockLocation = skyblockLocation;
+    public void setSkyblockLocation(SkyblockIslandEnum skyblockIslandEnum) {
+        this.skyblockIslandEnum = skyblockIslandEnum;
     }
 
     public int getMaxHealth() {
@@ -158,7 +158,7 @@ public class SkyblockPlayerDataStruct {
         this.privateBank = 0;
         this.bits = 0;
         this.islandType = SkyblockIslandType.NONE;
-        this.skyblockLocation = SkyblockLocation.NONE;
+        this.skyblockIslandEnum = SkyblockIslandEnum.NONE;
         this.maxHealth = 0;
         this.currentHealth = 0;
         this.maxMana = 0;
