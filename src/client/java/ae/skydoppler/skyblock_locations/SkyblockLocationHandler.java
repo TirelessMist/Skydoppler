@@ -8,12 +8,17 @@ public class SkyblockLocationHandler {
 
         System.out.println("============RAW LOCATION: " + '"' + location + "\"============");
 
+        if (location.equalsIgnoreCase("none")) {
+            System.out.println("Location is none, not setting anything.");
+            return;
+        }
+
         for (SkyblockIslandEnum island : SkyblockIslandEnum.values()) {
 
             Enum<?>[] zones = island.getZonesForIsland();
 
             for (Enum<?> zone : zones) {
-                if (zone instanceof SkyblockIslandEnum.EnumName enumName && enumName.getName().equals(location)) {
+                if (zone instanceof SkyblockIslandEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
                     System.out.println("Found location: " + zone);
 
                     SkydopplerClient.currentIsland = island;
@@ -23,7 +28,13 @@ public class SkyblockLocationHandler {
                     System.out.println("Current zone set to: " + zone.name());
                     return;
                 }
+                /*public <T extends NamedEnum> void printEnumName(T enumValue) {
+                      System.out.println(enumValue.getName());
+                  }*/
             }
         }
+
+        SkydopplerClient.currentIsland = SkyblockIslandEnum.NONE;
+        SkydopplerClient.currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0]; // Sets currentZone to the first enum for the island of type "NONE", which is also "NONE" (the only value for the island of type "NONE").
     }
 }
