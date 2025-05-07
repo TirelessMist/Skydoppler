@@ -3,6 +3,7 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
+import ae.skydoppler.skyblock_locations.SkyblockIslandType;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -35,10 +36,12 @@ public class SkydopplerClient implements ClientModInitializer {
     public static boolean PlayRareSeaCreatureNotificationsSound;
     private TextRenderer textRenderer;
 
-    public static SkyblockIslandEnum currentIsland;
-    public static Enum<?> currentZone;
+    public static SkyblockIslandEnum currentIsland = SkyblockIslandEnum.NONE;
+    public static Enum<?> currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0]; // Sets currentZone to the first enum for the island of type "NONE", which is also "NONE" (the only value for the island of type "NONE").
 
     public static boolean isRodCast;
+
+    public static boolean isPlayingSkyblock = false;
 
     @Override
     public void onInitializeClient() {
