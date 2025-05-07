@@ -46,6 +46,13 @@ public enum SkyblockIslandEnum {
         return zones;
     }
 
+    public Enum<?>[] getZonesForIsland() {
+        if (zones == null) {
+            return new Enum<?>[0]; // Return an empty array if no zones are defined
+        }
+        return zones.getEnumConstants(); // Retrieve all enum constants for the zone class
+    }
+
     public enum NoneZones {
         NONE("none");
 
@@ -53,6 +60,9 @@ public enum SkyblockIslandEnum {
 
         NoneZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -63,6 +73,9 @@ public enum SkyblockIslandEnum {
 
         PrivateIslandZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -110,6 +123,9 @@ public enum SkyblockIslandEnum {
         HubZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum TheGardenZones {
@@ -143,6 +159,9 @@ public enum SkyblockIslandEnum {
         TheGardenZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum TheBarnZones {
@@ -153,6 +172,9 @@ public enum SkyblockIslandEnum {
 
         TheBarnZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -173,6 +195,9 @@ public enum SkyblockIslandEnum {
         MushroomDesertZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum TheParkZones {
@@ -192,6 +217,9 @@ public enum SkyblockIslandEnum {
         TheParkZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum SpiderDenZones {
@@ -208,6 +236,9 @@ public enum SkyblockIslandEnum {
         SpiderDenZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum TheEndZones {
@@ -221,6 +252,9 @@ public enum SkyblockIslandEnum {
 
         TheEndZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -275,6 +309,9 @@ public enum SkyblockIslandEnum {
         CrimsonIsleZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum GoldMineZones {
@@ -284,6 +321,9 @@ public enum SkyblockIslandEnum {
 
         GoldMineZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -300,6 +340,9 @@ public enum SkyblockIslandEnum {
 
         DeepCavernsZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -341,6 +384,9 @@ public enum SkyblockIslandEnum {
         DwarvenMinesZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum CrystalHollowsZones {
@@ -364,6 +410,9 @@ public enum SkyblockIslandEnum {
         CrystalHollowsZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum JerryIslandZones {
@@ -384,6 +433,9 @@ public enum SkyblockIslandEnum {
         JerryIslandZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum DungeonHubZones {
@@ -393,6 +445,9 @@ public enum SkyblockIslandEnum {
 
         DungeonHubZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
@@ -455,6 +510,9 @@ public enum SkyblockIslandEnum {
         RiftZones(String name) {
             this.name = name;
         }
+        public String getName() {
+            return name;
+        }
     }
 
     public enum BackwaterBayouZones {
@@ -464,6 +522,9 @@ public enum SkyblockIslandEnum {
 
         BackwaterBayouZones(String name) {
             this.name = name;
+        }
+        public String getName() {
+            return name;
         }
     }
 
