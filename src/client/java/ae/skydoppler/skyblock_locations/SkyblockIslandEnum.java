@@ -53,7 +53,11 @@ public enum SkyblockIslandEnum {
         return zones.getEnumConstants(); // Retrieve all enum constants for the zone class
     }
 
-    public enum NoneZones {
+    public interface EnumName {
+        String getName();
+    }
+
+    public enum NoneZones implements EnumName {
         NONE("none");
 
         private final String name;
@@ -61,12 +65,13 @@ public enum SkyblockIslandEnum {
         NoneZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum PrivateIslandZones {
+    public enum PrivateIslandZones implements EnumName {
         PRIVATE_ISLAND("private island");
 
         private final String name;
@@ -74,12 +79,13 @@ public enum SkyblockIslandEnum {
         PrivateIslandZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum HubZones {
+    public enum HubZones implements EnumName {
         HUB("hub"),
         VILLAGE("village"),
         BAZAAR("bazaar alley"),
@@ -123,12 +129,13 @@ public enum SkyblockIslandEnum {
         HubZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum TheGardenZones {
+    public enum TheGardenZones implements EnumName {
         THE_GARDEN("the garden"),
         PLOT_1("plot: 1"),
         PLOT_2("plot: 2"),
@@ -159,12 +166,13 @@ public enum SkyblockIslandEnum {
         TheGardenZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum TheBarnZones {
+    public enum TheBarnZones implements EnumName {
         BARN("barn"),
         WINDMILL("windmill");
 
@@ -173,12 +181,13 @@ public enum SkyblockIslandEnum {
         TheBarnZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum MushroomDesertZones {
+    public enum MushroomDesertZones implements EnumName {
         MUSHROOM_DESERT("mushroom desert"),
         DESERT_SETTLEMENT("desert settlement"),
         GLOWING_MUSHROOM_CAVE("glowing mushroom cave"),
@@ -195,12 +204,13 @@ public enum SkyblockIslandEnum {
         MushroomDesertZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum TheParkZones {
+    public enum TheParkZones implements EnumName {
         THE_PARK("the park"),
         BIRCH_PARK("birch park"),
         HOWLING_CAVE("howling cave"),
@@ -217,12 +227,13 @@ public enum SkyblockIslandEnum {
         TheParkZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum SpiderDenZones {
+    public enum SpiderDenZones implements EnumName {
         SPIDER_DEN("spider's den"),
         SPIDER_MOUND("spider mound"),
         GRAVEL_MINES("gravel mines"),
@@ -236,12 +247,13 @@ public enum SkyblockIslandEnum {
         SpiderDenZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum TheEndZones {
+    public enum TheEndZones implements EnumName {
         THE_END("the end"),
         DRAGON_NEST("dragon's nest"),
         VOID_SEPULTURE("void sepulchre"),
@@ -253,12 +265,13 @@ public enum SkyblockIslandEnum {
         TheEndZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum CrimsonIsleZones {
+    public enum CrimsonIsleZones implements EnumName {
         CRIMSON_ISLE("crimson isle"),
         STRONGHOLD("stronghold"),
         CRIMSON_FIELDS("crimson fields"),
@@ -309,12 +322,13 @@ public enum SkyblockIslandEnum {
         CrimsonIsleZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum GoldMineZones {
+    public enum GoldMineZones implements EnumName {
         GOLD_MINE("gold mine");
 
         private final String name;
@@ -322,12 +336,13 @@ public enum SkyblockIslandEnum {
         GoldMineZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum DeepCavernsZones {
+    public enum DeepCavernsZones implements EnumName {
         DEEP_CAVERNS("deep caverns"),
         GUNPOWDER_MINES("gunpowder mines"),
         LAPIS_QUARRY("lapis quarry"),
@@ -341,12 +356,13 @@ public enum SkyblockIslandEnum {
         DeepCavernsZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum DwarvenMinesZones {
+    public enum DwarvenMinesZones implements EnumName {
         DWARVEN_MINES("dwarven mines"),
         ARISTOCRAT_PASSAGE("aristocrat passage"),
         BARRACKS_OF_HEROES("barracks of heroes"),
@@ -384,12 +400,13 @@ public enum SkyblockIslandEnum {
         DwarvenMinesZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum CrystalHollowsZones {
+    public enum CrystalHollowsZones implements EnumName {
         CRYSTAL_HOLLOWS("crystal hollows"),
         CRYSTAL_NUCLEUS("crystal nucleus"),
         GOBLIN_HOLDOUT("goblin holdout"),
@@ -410,12 +427,13 @@ public enum SkyblockIslandEnum {
         CrystalHollowsZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum JerryIslandZones {
+    public enum JerryIslandZones implements EnumName {
         JERRY_WORKSHOP("jerry's workshop"),
         JERRY_POND("jerry pond"),
         REFLECTIVE_POND("reflective pond"),
@@ -433,12 +451,13 @@ public enum SkyblockIslandEnum {
         JerryIslandZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum DungeonHubZones {
+    public enum DungeonHubZones implements EnumName {
         DUNGEON_HUB("dungeon hub");
 
         private final String name;
@@ -446,12 +465,13 @@ public enum SkyblockIslandEnum {
         DungeonHubZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum RiftZones {
+    public enum RiftZones implements EnumName {
         THE_RIFT("the rift"),
         WIZARD_TOWER("wizard tower"),
         WYLD_WOODS("wyld woods"),
@@ -510,12 +530,13 @@ public enum SkyblockIslandEnum {
         RiftZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum BackwaterBayouZones {
+    public enum BackwaterBayouZones implements EnumName {
         BACKWATER_BAYOU("backwater bayou");
 
         private final String name;
@@ -523,6 +544,7 @@ public enum SkyblockIslandEnum {
         BackwaterBayouZones(String name) {
             this.name = name;
         }
+        @Override
         public String getName() {
             return name;
         }
