@@ -14,6 +14,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -63,23 +64,28 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
         }
 
-        if (SkydopplerClient.currentIsland == SkyblockIslandEnum.HUB) { // if the player is in the hub
-            // if the player is in a location where the players should be hidden
 
-            double distanceSq = entity.squaredDistanceTo(client.player);
 
-            if (distanceSq >= HideHubPlayersState.showRange * HideHubPlayersState.showRange) {
+        if (HideHubPlayersState.shouldHidePlayers()) hidePlayers(entity, ci);
 
-                ci.cancel();
-                return;
-            }
 
-        }
+
+
 
         if (DroppedItemGlowingState.glowing && entity instanceof ItemEntity item) { // glowing dropped items. the item's glow color is set by Hypixel to the rarity color of the item, so we don't need to decide the color.
 
             item.setGlowing(true);
 
+        }
+    }
+    @Unique
+    private void hidePlayers(E entity, CallbackInfo ci) {
+        double distanceSq = entity.squaredDistanceTo(client.player);
+
+        if (distanceSq >= HideHubPlayersState.showRange * HideHubPlayersState.showRange) {
+
+            ci.cancel();
+            return;
         }
     }
 }
