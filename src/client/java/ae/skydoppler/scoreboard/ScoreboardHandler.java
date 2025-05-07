@@ -1,10 +1,13 @@
 package ae.skydoppler.scoreboard;
 
 import ae.skydoppler.TextRenderer;
+import ae.skydoppler.skyblock_locations.SkyblockLocationHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+
+import java.text.Normalizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +19,9 @@ public class ScoreboardHandler {
         line = line.trim();
         line = line.toLowerCase();
 
+        // remove accents on letters here
+        line = Normalizer.normalize(line, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
         /*System.out.println("===SCOREBOARD UPDATE===");
         String converted = convertIconsToUnicode(line);
         System.out.println("Converted scoreboard: " + converted);*/
@@ -23,9 +29,8 @@ public class ScoreboardHandler {
         if (line.contains("⏣")) { // if it contains the location icon
             line = line.substring(line.indexOf("⏣") + 1);
             line = line.trim();
-            line = line.substring(0, 1).toUpperCase() + line.substring(1);
 
-
+            SkyblockLocationHandler.setLocationFromString(line);
 
             return;
         }
@@ -43,9 +48,6 @@ public class ScoreboardHandler {
 
             // Convert to an integer and round up
             int roundedNumber = (int) Math.ceil(Double.parseDouble(cleanedNumber));
-
-            // Print the formatted result
-            TextRenderer.DisplayTitle(Text.literal(label + ": " + roundedNumber), Text.empty(), 0, 50, 0);
 
             return;
         }

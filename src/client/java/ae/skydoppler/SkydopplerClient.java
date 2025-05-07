@@ -2,6 +2,7 @@ package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.fishing.FishingHideState;
+import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -33,6 +34,9 @@ public class SkydopplerClient implements ClientModInitializer {
     public static boolean ShowRareSeaCreatureNotificationsChatMessage;
     public static boolean PlayRareSeaCreatureNotificationsSound;
     private TextRenderer textRenderer;
+
+    public static SkyblockIslandEnum currentIsland;
+    public static Enum<?> currentZone;
 
     public static boolean isRodCast;
 

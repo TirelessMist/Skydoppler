@@ -1,9 +1,10 @@
 package ae.skydoppler.mixin.client;
 
-import ae.skydoppler.HideHubPlayersState;
+import ae.skydoppler.player_hiding.HideHubPlayersState;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.item.DroppedItemGlowingState;
+import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -62,7 +63,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
         }
 
-        if (HideHubPlayersState.hidePlayersInListOfLocations.contains(SkydopplerClient.playerDataStruct.getSkyblockLocation())) {
+        if (SkydopplerClient.currentIsland == SkyblockIslandEnum.HUB) { // if the player is in the hub
             // if the player is in a location where the players should be hidden
 
             double distanceSq = entity.squaredDistanceTo(client.player);
