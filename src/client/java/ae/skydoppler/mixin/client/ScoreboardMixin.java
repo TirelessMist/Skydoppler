@@ -1,18 +1,21 @@
 package ae.skydoppler.mixin.client;
 
+import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.scoreboard.ScoreboardHandler;
 import net.minecraft.scoreboard.*;
+import net.minecraft.scoreboard.number.NumberFormat;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Mixin(Scoreboard.class)
 public abstract class ScoreboardMixin {
 
-    @Inject(method = "updateScoreboardTeam", at = @At("HEAD"))
+    @Inject(method = "updateScoreboardTeam", at = @At("RETURN"))
     // Called when a Team is updated on the scoreboard (on Hypixel, the team name is updated to update scoreboard lines)
     private void onUpdateScoreboardTeam(Team team, CallbackInfo ci) {
 
@@ -42,6 +45,16 @@ public abstract class ScoreboardMixin {
     @Inject(method = "updateScore", at = @At("HEAD"))
     private void onUpdateScore(ScoreHolder holder, ScoreboardObjective objective, ScoreboardScore score, CallbackInfo ci) {
 
+    }
+
+    @Inject(method = "addObjective(Ljava/lang/String;Lnet/minecraft/scoreboard/ScoreboardCriterion;Lnet/minecraft/text/Text;Lnet/minecraft/scoreboard/ScoreboardCriterion$RenderType;ZLnet/minecraft/scoreboard/number/NumberFormat;)Lnet/minecraft/scoreboard/ScoreboardObjective;", at = @At("HEAD"))
+    private void onAddObjective(String name, ScoreboardCriterion criterion, Text displayName, ScoreboardCriterion.RenderType renderType, boolean displayAutoUpdate, NumberFormat numberFormat, CallbackInfoReturnable<ScoreboardObjective> cir) {
+        System.out.println("Adding objective: " + name);
+
+        name = name.trim();
+        if (criterion == ScoreboardCriterion.DUMMY) {
+            SkydopplerClient.isPlayingSkyblock = name.equalsIgnoreCase("SBScoreboard");
+        }
     }
 
 }
