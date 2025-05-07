@@ -1,35 +1,34 @@
 package ae.skydoppler.skyblock_locations;
 
 public enum SkyblockIslandEnum {
-    NONE(SkyblockIslandType.NONE, null),
+    NONE(SkyblockIslandType.NONE, NoneZones.class),
 
-    PRIVATE_ISLAND(SkyblockIslandType.NONE, null),
+    PRIVATE_ISLAND(SkyblockIslandType.NONE, PrivateIslandZones.class),
 
     HUB(SkyblockIslandType.HUB, HubZones.class),
 
-    DUNGEON_HUB(SkyblockIslandType.HUB, null),
+    DUNGEON_HUB(SkyblockIslandType.HUB, DungeonHubZones.class),
 
-    CRIMSON_ISLE(SkyblockIslandType.COMBAT_ISLAND, null),
-    SPIDER_DEN(SkyblockIslandType.COMBAT_ISLAND, null),
+    CRIMSON_ISLE(SkyblockIslandType.COMBAT_ISLAND, CrimsonIsleZones.class),
+    SPIDER_DEN(SkyblockIslandType.COMBAT_ISLAND, SpiderDenZones.class),
     THE_END(SkyblockIslandType.COMBAT_ISLAND, TheEndZones.class),
 
-    GOLD_MINE(SkyblockIslandType.MINING_ISLAND, null),
-    DEEP_CAVERNS(SkyblockIslandType.MINING_ISLAND, null),
-    DWARVEN_MINES(SkyblockIslandType.MINING_ISLAND, null),
-    CRYSTAL_HOLLOWS(SkyblockIslandType.MINING_ISLAND, null),
-    GLACITE_TUNNELS(SkyblockIslandType.MINING_ISLAND, null),
+    GOLD_MINE(SkyblockIslandType.MINING_ISLAND, GoldMineZones.class),
+    DEEP_CAVERNS(SkyblockIslandType.MINING_ISLAND, DeepCavernsZones.class),
+    DWARVEN_MINES(SkyblockIslandType.MINING_ISLAND, DwarvenMinesZones.class),
+    CRYSTAL_HOLLOWS(SkyblockIslandType.MINING_ISLAND, CrystalHollowsZones.class),
 
-    JERRY_ISLAND(SkyblockIslandType.NONE, null),
+    JERRY_ISLAND(SkyblockIslandType.NONE, JerryIslandZones.class),
 
-    BACKWATER_BAYOU(SkyblockIslandType.FISHING_ISLAND, null),
+    BACKWATER_BAYOU(SkyblockIslandType.FISHING_ISLAND, BackwaterBayouZones.class),
 
-    THE_PARK(SkyblockIslandType.FORAGING_ISLAND, null),
+    THE_PARK(SkyblockIslandType.FORAGING_ISLAND, TheParkZones.class),
 
     THE_GARDEN(SkyblockIslandType.FARMING_ISLAND, null),
-    THE_BARN(SkyblockIslandType.FARMING_ISLAND, null),
-    MUSHROOM_DESERT(SkyblockIslandType.FARMING_ISLAND, null),
+    THE_BARN(SkyblockIslandType.FARMING_ISLAND, TheBarnZones.class),
+    MUSHROOM_DESERT(SkyblockIslandType.FARMING_ISLAND, MushroomDesertZones.class),
 
-    THE_RIFT(SkyblockIslandType.RIFT_ISLAND, null);
+    THE_RIFT(SkyblockIslandType.RIFT_ISLAND, RiftZones.class);
 
     private final SkyblockIslandType islandType;
     private final Class<? extends Enum<?>> zones;
@@ -45,6 +44,26 @@ public enum SkyblockIslandEnum {
 
     public Class<? extends Enum<?>> getZones() {
         return zones;
+    }
+
+    public enum NoneZones {
+        NONE("none");
+
+        private final String name;
+
+        NoneZones(String name) {
+            this.name = name;
+        }
+    }
+
+    public enum PrivateIslandZones {
+        PRIVATE_ISLAND("private island");
+
+        private final String name;
+
+        PrivateIslandZones(String name) {
+            this.name = name;
+        }
     }
 
     public enum HubZones {
@@ -87,19 +106,56 @@ public enum SkyblockIslandEnum {
         FISHING_OUTPOST("fishing outpost");
 
         private final String name;
+
         HubZones(String name) {
             this.name = name;
         }
     }
-    public enum BarnZones {
+
+    public enum TheGardenZones {
+        THE_GARDEN("the garden"),
+        PLOT_1("plot: 1"),
+        PLOT_2("plot: 2"),
+        PLOT_3("plot: 3"),
+        PLOT_4("plot: 4"),
+        PLOT_5("plot: 5"),
+        PLOT_6("plot: 6"),
+        PLOT_7("plot: 7"),
+        PLOT_8("plot: 8"),
+        PLOT_9("plot: 9"),
+        PLOT_10("plot: 10"),
+        PLOT_11("plot: 11"),
+        PLOT_12("plot: 12"),
+        PLOT_13("plot: 13"),
+        PLOT_14("plot: 14"),
+        PLOT_15("plot: 15"),
+        PLOT_16("plot: 16"),
+        PLOT_17("plot: 17"),
+        PLOT_18("plot: 18"),
+        PLOT_19("plot: 19"),
+        PLOT_20("plot: 20"),
+        PLOT_21("plot: 21"),
+        PLOT_22("plot: 22"),
+        PLOT_23("plot: 23"),
+        PLOT_24("plot: 24");
+        private final String name;
+
+        TheGardenZones(String name) {
+            this.name = name;
+        }
+    }
+
+    public enum TheBarnZones {
         BARN("barn"),
         WINDMILL("windmill");
 
         private final String name;
-        BarnZones(String name) {
+
+        TheBarnZones(String name) {
             this.name = name;
         }
     }
+
     public enum MushroomDesertZones {
         MUSHROOM_DESERT("mushroom desert"),
         DESERT_SETTLEMENT("desert settlement"),
@@ -113,10 +169,12 @@ public enum SkyblockIslandEnum {
         TREASURE_HUNTER_CAMP("treasure hunter camp");
 
         private final String name;
+
         MushroomDesertZones(String name) {
             this.name = name;
         }
     }
+
     public enum TheParkZones {
         THE_PARK("the park"),
         BIRCH_PARK("birch park"),
@@ -130,10 +188,12 @@ public enum SkyblockIslandEnum {
         JUNGLE_ISLAND("jungle island");
 
         private final String name;
+
         TheParkZones(String name) {
             this.name = name;
         }
     }
+
     public enum SpiderDenZones {
         SPIDER_DEN("spider's den"),
         SPIDER_MOUND("spider mound"),
@@ -144,10 +204,12 @@ public enum SkyblockIslandEnum {
         ARCHAEOLOGIST_CAMP("archaeologist's camp");
 
         private final String name;
+
         SpiderDenZones(String name) {
             this.name = name;
         }
     }
+
     public enum TheEndZones {
         THE_END("the end"),
         DRAGON_NEST("dragon's nest"),
@@ -156,10 +218,12 @@ public enum SkyblockIslandEnum {
         ZEALOT_BRUISER_HIDEOUT("zealot bruiser hideout");
 
         private final String name;
+
         TheEndZones(String name) {
             this.name = name;
         }
     }
+
     public enum CrimsonIsleZones {
         CRIMSON_ISLE("crimson isle"),
         STRONGHOLD("stronghold"),
@@ -207,18 +271,22 @@ public enum SkyblockIslandEnum {
         SMOLDERING_TOMB("smoldering tomb");
 
         private final String name;
+
         CrimsonIsleZones(String name) {
             this.name = name;
         }
     }
+
     public enum GoldMineZones {
         GOLD_MINE("gold mine");
 
         private final String name;
+
         GoldMineZones(String name) {
             this.name = name;
         }
     }
+
     public enum DeepCavernsZones {
         DEEP_CAVERNS("deep caverns"),
         GUNPOWDER_MINES("gunpowder mines"),
@@ -229,10 +297,12 @@ public enum SkyblockIslandEnum {
         OBSIDIAN_SANCTUARY("obsidian sanctuary");
 
         private final String name;
+
         DeepCavernsZones(String name) {
             this.name = name;
         }
     }
+
     public enum DwarvenMinesZones {
         DWARVEN_MINES("dwarven mines"),
         ARISTOCRAT_PASSAGE("aristocrat passage"),
@@ -267,10 +337,12 @@ public enum SkyblockIslandEnum {
         GLACITE_MINESHAFTS("glacite mineshafts");
 
         private final String name;
+
         DwarvenMinesZones(String name) {
             this.name = name;
         }
     }
+
     public enum CrystalHollowsZones {
         CRYSTAL_HOLLOWS("crystal hollows"),
         CRYSTAL_NUCLEUS("crystal nucleus"),
@@ -288,10 +360,12 @@ public enum SkyblockIslandEnum {
         FAIRY_GROTTO("fairy grotto");
 
         private final String name;
+
         CrystalHollowsZones(String name) {
             this.name = name;
         }
     }
+
     public enum JerryIslandZones {
         JERRY_WORKSHOP("jerry's workshop"),
         JERRY_POND("jerry pond"),
@@ -306,18 +380,22 @@ public enum SkyblockIslandEnum {
         EINARY_EMPORIUM("einary's emporium");
 
         private final String name;
+
         JerryIslandZones(String name) {
             this.name = name;
         }
     }
+
     public enum DungeonHubZones {
         DUNGEON_HUB("dungeon hub");
 
         private final String name;
+
         DungeonHubZones(String name) {
             this.name = name;
         }
     }
+
     public enum RiftZones {
         THE_RIFT("the rift"),
         WIZARD_TOWER("wizard tower"),
@@ -373,14 +451,17 @@ public enum SkyblockIslandEnum {
         TRIAL_GROUNDS("trial grounds");
 
         private final String name;
+
         RiftZones(String name) {
             this.name = name;
         }
     }
+
     public enum BackwaterBayouZones {
         BACKWATER_BAYOU("backwater bayou");
 
         private final String name;
+
         BackwaterBayouZones(String name) {
             this.name = name;
         }
