@@ -34,7 +34,7 @@ public class SkyblockLocationHandler {
             }
         }
 
-        SkydopplerClient.currentIsland = SkyblockIslandEnum.NONE;
-        SkydopplerClient.currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0]; // Sets currentZone to the first enum for the island of type "NONE", which is also "NONE" (the only value for the island of type "NONE").
+        /*SkydopplerClient.currentIsland = SkyblockIslandEnum.NONE;
+        SkydopplerClient.currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0]; // Sets currentZone to the first enum for the island of type "NONE", which is also "NONE" (the only value for the island of type "NONE").*/
     }
 }
