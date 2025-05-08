@@ -11,11 +11,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
+
+    MinecraftClient client = MinecraftClient.getInstance();
+
     @Inject(at = @At("HEAD"), method = "addMessage*")
     private void onAddMessage(Text chatMessage, CallbackInfo ci) {
 
-        System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage.copyContentOnly() + "\"");
-        ChatMatchHandler.checkForMatches(chatMessage);
+        chatMessage = StyleConverter.ConvertToString(chatMessage);
+
+        System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage + "\"");
+        
+        String returnValue = ChatMatchHandler.checkForMatches(chatMessage);
+
+        if (returnValue.equalsIgnoreCase("\\hide")) {
+
+            ci.cancel();
+            return;
+
+        }
+
+        if (!returnValue.empty()) {
+
+            ci.cancel();
+            client.player.sendMessage(Text.literal(returnValue), false);
+            return;
+
+        }
 
     }
 }
