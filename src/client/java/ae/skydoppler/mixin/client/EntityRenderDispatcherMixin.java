@@ -66,7 +66,10 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
 
 
-        if (HideHubPlayersState.shouldHidePlayers()) hidePlayers(entity, ci);
+        if (HideHubPlayersState.shouldHidePlayers()) {
+            hidePlayers(entity, ci);
+            return;
+        }
 
 
 
@@ -75,6 +78,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
         if (DroppedItemGlowingState.glowing && entity instanceof ItemEntity item) { // glowing dropped items. the item's glow color is set by Hypixel to the rarity color of the item, so we don't need to decide the color.
 
             item.setGlowing(true);
+            return;
 
         }
     }
@@ -85,7 +89,6 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
         if (distanceSq >= HideHubPlayersState.showRange * HideHubPlayersState.showRange) {
 
             ci.cancel();
-            return;
         }
     }
 }
