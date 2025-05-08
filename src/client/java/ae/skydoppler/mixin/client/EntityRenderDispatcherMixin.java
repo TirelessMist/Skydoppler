@@ -4,6 +4,7 @@ import ae.skydoppler.player_hiding.HideHubPlayersState;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.item.DroppedItemGlowingState;
+import ae.skydoppler.player_hiding.HidePlayerNearNpc;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -65,6 +66,18 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
         }
 
 
+
+        if (HidePlayerNearNpc.hidePlayers) {
+
+            if (entity instanceof PlayerEntity player) {
+
+            System.out.println("Player's scoreboard team: " + player.getScoreboardTeam().getName() + ", player's team prefix: " + player.getScoreboardTeam().getPrefix().getString() + ", player's team suffix: " + player.getScoreboardTeam().getSuffix().getString());
+
+
+
+            }
+
+        }
 
         if (HideHubPlayersState.shouldHidePlayers()) {
             hidePlayers(entity, ci);
