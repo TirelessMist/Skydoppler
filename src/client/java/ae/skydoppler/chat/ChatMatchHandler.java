@@ -23,7 +23,7 @@ public class ChatMatchHandler {
     private static JsonObject sea_creature_matches_json;
     private static JsonArray sea_creature_matches_entries;
 
-    public static String checkForMatches(Text chatMessage) {
+    public static string checkForMatches(String chatMessage) {
         // can return a "replace" string, where it replaces the original chat message with the String returned from this function
 
         String returnString = "";
@@ -32,16 +32,14 @@ public class ChatMatchHandler {
 
             JsonObject obj = element.getAsJsonObject(); // gets the current message "block" as a JsonObject
 
-            String textOfChatMessage = chatMessage.getString();
             String currentChatMatchType = obj.get("ChatMatchType").getAsString();
             String currentChatMatchCaseSensitivityType = obj.get("ChatMatchCaseSensitivityType").getAsString();
             JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
             List<String> matchStrings = new ArrayList<>();
-            for (JsonElement jsonElement : matchesJsonArray) {
+            for (JsonElement jsonElement : matchesJsonArray) 
                 matchStrings.add(jsonElement.getAsString());
-            }
 
-            if (CheckMatch(textOfChatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
+            if (CheckMatch(chatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
                 if (obj.get("playSound").getAsBoolean()) {
                     MinecraftClient client = MinecraftClient.getInstance();
                     if (client.player != null) {
@@ -51,8 +49,8 @@ public class ChatMatchHandler {
                     }
                 }
                 TextRenderer.DisplayTitle(Text.literal(obj.get("displayText").getAsString()), Text.empty(), 0, 90, 0);
-                System.out.println("Chat Match Display Text: " + obj.get("displayText"));
-                break;
+                //System.out.println("Chat Match Display Text: " + obj.get("displayText"));
+                return returnString;
             }
 
         }
@@ -61,7 +59,6 @@ public class ChatMatchHandler {
 
             JsonObject obj = element.getAsJsonObject();
 
-            String textOfChatMessage = chatMessage.getString();
             JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
             List<String> matchStrings = new ArrayList<>();
             for (JsonElement jsonElement : matchesJsonArray) {
@@ -80,7 +77,7 @@ public class ChatMatchHandler {
                 }
                 TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
                 System.out.println("Legendary Sea Creature: " + obj.get("displayText"));
-                break;
+                return returnString;
             }
         }
 
