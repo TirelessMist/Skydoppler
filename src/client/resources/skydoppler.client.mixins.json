@@ -4,9 +4,10 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ChatHudMixin",
-		"ScoreboardMixin",
 		"EntityRenderDispatcherMixin",
-		"InventoryScreenMixin"
+		"InventoryScreenMixin",
+		"ParticleRendererMixin",
+		"ScoreboardMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
