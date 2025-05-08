@@ -8,8 +8,10 @@ public enum SkyblockIslandEnum {
     HUB(SkyblockIslandType.HUB, HubZones.class),
 
     DUNGEON_HUB(SkyblockIslandType.HUB, DungeonHubZones.class),
+    DUNGEON(SkyblockIslandType.DUNGEON_ISLAND, DungeonZones.class),
 
     CRIMSON_ISLE(SkyblockIslandType.COMBAT_ISLAND, CrimsonIsleZones.class),
+    KUUDRA(SkyblockIslandType.KUUDRA_ISLAND, KuudraZones.class),
     SPIDER_DEN(SkyblockIslandType.COMBAT_ISLAND, SpiderDenZones.class),
     THE_END(SkyblockIslandType.COMBAT_ISLAND, TheEndZones.class),
 
@@ -328,6 +330,20 @@ public enum SkyblockIslandEnum {
         }
     }
 
+    public enum KuudraZones implements EnumName {
+        KUUDRA_HOLLOW("kuudra's hollow");
+
+        private final String name;
+
+        KuudraZones(String name) {
+            this.name = name;
+        }
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
     public enum GoldMineZones implements EnumName {
         GOLD_MINE("gold mine");
 
@@ -463,6 +479,34 @@ public enum SkyblockIslandEnum {
         private final String name;
 
         DungeonHubZones(String name) {
+            this.name = name;
+        }
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum DungeonZones implements EnumName {
+        CATACOMBS_ENTRANCE("the catacombs (e)"),
+        CATACOMBS_FLOOR_ONE("the catacombs (f1)"),
+        CATACOMBS_FLOOR_TWO("the catacombs (f2)"),
+        CATACOMBS_FLOOR_THREE("the catacombs (f3)"),
+        CATACOMBS_FLOOR_FOUR("the catacombs (f4)"),
+        CATACOMBS_FLOOR_FIVE("the catacombs (f5)"),
+        CATACOMBS_FLOOR_SIX("the catacombs (f6)"),
+        CATACOMBS_FLOOR_SEVEN("the catacombs (f7)"),
+        MASTER_CATACOMBS_FLOOR_ONE("the catacombs (m1)"),
+        MASTER_CATACOMBS_FLOOR_TWO("the catacombs (m2)"),
+        MASTER_CATACOMBS_FLOOR_THREE("the catacombs (m3)"),
+        MASTER_CATACOMBS_FLOOR_FOUR("the catacombs (m4)"),
+        MASTER_CATACOMBS_FLOOR_FIVE("the catacombs (m5)"),
+        MASTER_CATACOMBS_FLOOR_SIX("the catacombs (m6)"),
+        MASTER_CATACOMBS_FLOOR_SEVEN("the catacombs (m7)");
+
+        private final String name;
+
+        DungeonZones(String name) {
             this.name = name;
         }
         @Override
