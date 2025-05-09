@@ -28,6 +28,8 @@ public class SkydopplerClient implements ClientModInitializer {
     public static boolean isPlayingSkyblock = false;
     private TextRenderer textRenderer;
 
+    public static boolean hideExplosionParticle = true;
+
     @Override
     public void onInitializeClient() {
 
