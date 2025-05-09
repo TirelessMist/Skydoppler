@@ -3,27 +3,18 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
-import ae.skydoppler.skyblock_locations.SkyblockIslandType;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
-import org.lwjgl.glfw.GLFW;import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
-import static ae.skydoppler.Skydoppler.LOGGER;
+import java.util.List;
 
 public class SkydopplerClient implements ClientModInitializer {
 
@@ -31,17 +22,11 @@ public class SkydopplerClient implements ClientModInitializer {
 
     public static KeyBinding debugKey;
     public static SkyblockPlayerDataStruct playerDataStruct;
-    public static boolean RareSeaCreatureNotifications;
-    public static boolean ShowRareSeaCreatureNotificationsChatMessage;
-    public static boolean PlayRareSeaCreatureNotificationsSound;
-    private TextRenderer textRenderer;
-
     public static SkyblockIslandEnum currentIsland = SkyblockIslandEnum.NONE;
     public static Enum<?> currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0]; // Sets currentZone to the first enum for the island of type "NONE", which is also "NONE" (the only value for the island of type "NONE").
-
     public static boolean isRodCast;
-
     public static boolean isPlayingSkyblock = false;
+    private TextRenderer textRenderer;
 
     @Override
     public void onInitializeClient() {
@@ -52,9 +37,6 @@ public class SkydopplerClient implements ClientModInitializer {
         ChatMatchHandler.loadJsonData();
         isRodCast = false;
 
-        RareSeaCreatureNotifications = true;
-        ShowRareSeaCreatureNotificationsChatMessage = true;
-        PlayRareSeaCreatureNotificationsSound = true;
 
         playerDataStruct = new SkyblockPlayerDataStruct();
 
@@ -86,4 +68,6 @@ public class SkydopplerClient implements ClientModInitializer {
         });
 
     }
+
+
 }
