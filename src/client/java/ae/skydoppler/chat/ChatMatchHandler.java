@@ -2,6 +2,7 @@ package ae.skydoppler.chat;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.TextRenderer;
+import ae.skydoppler.fishing.SeacreatureMessageState;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatMatchHandler {
+    private static final MinecraftClient client = MinecraftClient.getInstance();
     private static JsonObject chat_matches_json;
     private static JsonArray chat_matches_entries;
     private static JsonObject sea_creature_matches_json;
     private static JsonArray sea_creature_matches_entries;
 
-    public static string checkForMatches(String chatMessage) {
+    public static String checkForMatches(String chatMessage) {
         // can return a "replace" string, where it replaces the original chat message with the String returned from this function
 
         String returnString = "";
@@ -36,7 +38,7 @@ public class ChatMatchHandler {
             String currentChatMatchCaseSensitivityType = obj.get("ChatMatchCaseSensitivityType").getAsString();
             JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
             List<String> matchStrings = new ArrayList<>();
-            for (JsonElement jsonElement : matchesJsonArray) 
+            for (JsonElement jsonElement : matchesJsonArray)
                 matchStrings.add(jsonElement.getAsString());
 
             if (CheckMatch(chatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
@@ -65,19 +67,29 @@ public class ChatMatchHandler {
                 matchStrings.add(jsonElement.getAsString());
             }
 
-            if (CheckMatch(textOfChatMessage, matchStrings, ChatMatchType.match_exactly, ChatMatchCaseSensitivityType.case_sensitive)) {
+            if (CheckMatch(chatMessage, matchStrings, ChatMatchType.match_exactly, ChatMatchCaseSensitivityType.case_sensitive)) {
+                String displayText = obj.get("displayText").getAsString();
 
-                MinecraftClient client = MinecraftClient.getInstance();
-                if (client.player != null && SkydopplerClient.PlayRareSeaCreatureNotificationsSound) {
+                if (SeacreatureMessageState.showTitle) {
+                    TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
+                }
+
+                if (client.player != null && SeacreatureMessageState.shouldPlaySound) {
                     client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
                 }
-                String displayText = obj.get("displayText").getAsString();
-                if (SkydopplerClient.ShowRareSeaCreatureNotificationsChatMessage) {
+
+                if (SeacreatureMessageState.showCustomChatMessage) {
                     returnString = "§eYou fished up a " + displayText + "§e.";
                 }
-                TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
-                System.out.println("Legendary Sea Creature: " + obj.get("displayText"));
+
+                if (SeacreatureMessageState.shouldHideOriginalMessage) {
+                    returnString = "\\hide" + returnString;
+                }
+
                 return returnString;
+
+                //System.out.println("Legendary Sea Creature: " + obj.get("displayText"));
+
             }
         }
 
