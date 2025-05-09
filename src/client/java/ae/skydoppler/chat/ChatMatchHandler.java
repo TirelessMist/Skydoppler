@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatMatchHandler {
+    
     private static final MinecraftClient client = MinecraftClient.getInstance();
     private static JsonObject chat_matches_json;
     private static JsonArray chat_matches_entries;
@@ -42,17 +43,26 @@ public class ChatMatchHandler {
                 matchStrings.add(jsonElement.getAsString());
 
             if (CheckMatch(chatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
+                
+                String displayText = obj.get("displayText").getAsString();
+
                 if (obj.get("playSound").getAsBoolean()) {
                     MinecraftClient client = MinecraftClient.getInstance();
                     if (client.player != null) {
 
-                        client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                        client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
 
                     }
                 }
-                TextRenderer.DisplayTitle(Text.literal(obj.get("displayText").getAsString()), Text.empty(), 0, 90, 0);
+
+                if (obj.get("hideOriginalMessage").getAsBoolean) {
+
+                    returnString = "\\hide" + displayText;
+
+                } else returnString = displayText;
+
+                TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
                 //System.out.println("Chat Match Display Text: " + obj.get("displayText"));
-                return returnString;
             }
 
         }
@@ -85,8 +95,6 @@ public class ChatMatchHandler {
                 if (SeacreatureMessageState.shouldHideOriginalMessage) {
                     returnString = "\\hide" + returnString;
                 }
-
-                return returnString;
 
                 //System.out.println("Legendary Sea Creature: " + obj.get("displayText"));
 
