@@ -2,20 +2,22 @@
   "messages": [
     {
       "matches": [
-        "Hello", "skibidi"
+        "Hello", "This is a chat message."
       ],
       "ChatMatchCaseSensitivityType": "not_case_sensitive",
       "ChatMatchType": "contains",
       "displayText": "Someone said \"hello\"",
+      "hideOriginalMessage": "false",
       "playSound": "true"
     },
     {
       "matches": [
-        "[@] Sigma", "[@] Super"
+        "[@] Hello World"
       ],
       "ChatMatchCaseSensitivityType": "case_sensitive",
       "ChatMatchType": "match_exactly",
       "displayText": "The match was exact.",
+      "hideOriginalMessage": "true",
       "playSound": "true"
     }
   ]
