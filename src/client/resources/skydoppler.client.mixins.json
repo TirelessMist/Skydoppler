@@ -1,15 +1,14 @@
 {
-	"required": true,
-	"package": "ae.skydoppler.mixin.client",
-	"compatibilityLevel": "JAVA_21",
-	"client": [
-		"ChatHudMixin",
-		"EntityRenderDispatcherMixin",
-		"InventoryScreenMixin",
-		"ParticleRendererMixin",
-		"ScoreboardMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "ae.skydoppler.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ChatHudMixin",
+    "EntityRenderDispatcherMixin",
+    "InventoryScreenMixin",
+    "ScoreboardMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
