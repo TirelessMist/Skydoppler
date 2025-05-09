@@ -3,7 +3,7 @@ package ae.skydoppler.skyblock_locations;
 public enum SkyblockIslandEnum {
     NONE(SkyblockIslandType.NONE, NoneZones.class),
 
-    PRIVATE_ISLAND(SkyblockIslandType.NONE, PrivateIslandZones.class),
+    PRIVATE_ISLAND(SkyblockIslandType.PRIVATE_ISLAND, PrivateIslandZones.class),
 
     HUB(SkyblockIslandType.HUB, HubZones.class),
 
@@ -74,7 +74,7 @@ public enum SkyblockIslandEnum {
     }
 
     public enum PrivateIslandZones implements EnumName {
-        PRIVATE_ISLAND("private island");
+        PRIVATE_ISLAND("your island");
 
         private final String name;
 
