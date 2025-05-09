@@ -1,11 +1,9 @@
 package ae.skydoppler.mixin.client;
 
-import ae.skydoppler.player_hiding.HideHubPlayersState;
-import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.item.DroppedItemGlowingState;
+import ae.skydoppler.player_hiding.HideHubPlayersState;
 import ae.skydoppler.player_hiding.HidePlayerNearNpc;
-import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -20,88 +18,62 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.stream.StreamSupport;
+
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
-    private static MinecraftClient client = MinecraftClient.getInstance();
+    @Unique
+    private static final MinecraftClient client = MinecraftClient.getInstance();
 
     @Inject(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("HEAD"), cancellable = true)
     private void onRender(E entity, double x, double y, double z, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        if (client.world == null || client.player == null) return;
 
-        if (client.world == null || client.player == null) {
+        if (FishingHideState.rodCastActive && shouldHideFishingEntity(entity)) {
+            ci.cancel();
             return;
         }
 
-        // fishing hider functionality
-        if (FishingHideState.rodCastActive) {
-
-            if (entity instanceof PlayerEntity player) {
-
-                if (!player.equals(client.player)) {
-
-                    double distanceSq = player.squaredDistanceTo(client.player);
-
-                    if (distanceSq <= FishingHideState.hideRange * FishingHideState.hideRange) {
-
-                        ci.cancel();
-                        return;
-                    }
-                }
-            }
-
-            if (entity instanceof FishingBobberEntity bobber) {
-
-                if (bobber.getOwner() != null && !bobber.getOwner().equals(client.player)) {
-
-                    double distanceSq = bobber.squaredDistanceTo(client.player);
-
-                    if (distanceSq <= FishingHideState.hideRange * FishingHideState.hideRange) {
-
-                        ci.cancel();
-                        return;
-                    }
-                }
-            }
-
-        }
-
-
-
-        if (HidePlayerNearNpc.hidePlayers) {
-
-            if (entity instanceof PlayerEntity player) {
-
-            System.out.println("Player's scoreboard team: " + player.getScoreboardTeam().getName() + ", player's team prefix: " + player.getScoreboardTeam().getPrefix().getString() + ", player's team suffix: " + player.getScoreboardTeam().getSuffix().getString());
-
-
-
-            }
-
-        }
-
-        if (HideHubPlayersState.shouldHidePlayers()) {
-            hidePlayers(entity, ci);
+        if (HideHubPlayersState.shouldHidePlayers() && shouldHideHubPlayer(entity)) {
+            ci.cancel();
             return;
         }
 
+        if (HidePlayerNearNpc.hidePlayers && entity instanceof PlayerEntity player && !player.equals(client.player) && isEntityNearNpc(player)) {
 
+            if (!HidePlayerNearNpc.isPlayerAnNpc(player)) { // if the player is not an NPC, cancel the render.
 
+                ci.cancel();
+                return;
 
+            }
 
-        if (DroppedItemGlowingState.glowing && entity instanceof ItemEntity item) { // glowing dropped items. the item's glow color is set by Hypixel to the rarity color of the item, so we don't need to decide the color.
+        }
 
+        if (DroppedItemGlowingState.glowing && entity instanceof ItemEntity item) {
             item.setGlowing(true);
-            return;
-
         }
     }
+
     @Unique
-    private void hidePlayers(E entity, CallbackInfo ci) {
-        double distanceSq = entity.squaredDistanceTo(client.player);
+    private boolean shouldHideFishingEntity(E entity) {
+        return (entity instanceof PlayerEntity player && !player.equals(client.player)
+                && player.squaredDistanceTo(client.player) <= FishingHideState.hideRange * FishingHideState.hideRange)
+                || (entity instanceof FishingBobberEntity bobber && bobber.getOwner() != null
+                && !bobber.getOwner().equals(client.player)
+                && bobber.squaredDistanceTo(client.player) <= FishingHideState.hideRange * FishingHideState.hideRange);
+    }
 
-        if (distanceSq >= HideHubPlayersState.showRange * HideHubPlayersState.showRange) {
+    @Unique
+    private boolean shouldHideHubPlayer(E entity) {
+        return entity.squaredDistanceTo(client.player) >= HideHubPlayersState.showRange * HideHubPlayersState.showRange;
+    }
 
-            ci.cancel();
-        }
+    @Unique
+    private boolean isEntityNearNpc(PlayerEntity entity) {
+        return StreamSupport.stream(client.world.getEntities().spliterator(), false)
+                .filter(e -> e instanceof PlayerEntity && HidePlayerNearNpc.isPlayerAnNpc((PlayerEntity) e))
+                .anyMatch(e -> entity.squaredDistanceTo((PlayerEntity) e) <= HidePlayerNearNpc.hideRange * HidePlayerNearNpc.hideRange);
     }
 }
