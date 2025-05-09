@@ -53,8 +53,8 @@ public class ParticleManagerMixin {
             double dotProduct = Math.max(-1.0, Math.min(1.0, dirX * lookX + dirY * lookY + dirZ * lookZ));
             double angle = Math.acos(dotProduct) * (180.0 / Math.PI);
 
-            // Check if the angle is within a couple of degrees (e.g., 5 degrees)
-            if (angle <= 5.0) {
+            // Check if the angle is within a couple of degrees
+            if (angle <= 2.5) {
                 cir.setReturnValue(null); // cancel the particle if the player is aiming at it
             }
         }
