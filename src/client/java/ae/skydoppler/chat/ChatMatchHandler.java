@@ -55,7 +55,7 @@ public class ChatMatchHandler {
                     }
                 }
 
-                if (obj.get("hideOriginalMessage").getAsBoolean) {
+                if (obj.get("hideOriginalMessage").getAsBoolean()) {
 
                     returnString = "\\hide" + displayText;
 
