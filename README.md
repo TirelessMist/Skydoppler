@@ -1,6 +1,6 @@
 # **Skydoppler**
 A Hypixel Skyblock mod with QOL features, dungeon solvers, and skill trackers.
-Made for Minecraft Java Edition - Fabric - Latest Version
+Made for Minecraft Java Edition - Fabric - Latest Version.
 
 ## **Full Feature List**
 
