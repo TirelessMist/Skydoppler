@@ -6,6 +6,7 @@
     "ChatHudMixin",
     "EntityRenderDispatcherMixin",
     "InGameHudMixin",
+    "InGameOverlayRendererMixin",
     "ParticleManagerMixin",
     "ScoreboardMixin"
   ],
