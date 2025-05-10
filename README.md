@@ -1,7 +1,7 @@
 # Skydoppler
-A Hypixel Skyblockmod with QOL features, dungeon solvers, and skill trackers.
+A Hypixel Skyblock mod with QOL features, dungeon solvers, and skill trackers.
 
-## Full Feature List
+## **Full Feature List**
 
 ### Quality-Of-Life (QOL):
    + Hide Far Players in Hub
