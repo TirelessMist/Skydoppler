@@ -5,11 +5,13 @@
   "client": [
     "ChatHudMixin",
     "EntityRenderDispatcherMixin",
-    "InventoryScreenMixin",
+    "InGameHudMixin",
     "ParticleManagerMixin",
     "ScoreboardMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  },
+  "mixins": [
+  ]
 }
