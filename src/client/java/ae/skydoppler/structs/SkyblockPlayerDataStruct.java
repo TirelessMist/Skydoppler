@@ -1,6 +1,6 @@
 package ae.skydoppler.structs;
 
-import ae.skydoppler.skyblock_locations.SkyblockIslandType;
+import ae.skydoppler.skyblock_locations.SkyblockIslandCategoryEnum;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 
 public class SkyblockPlayerDataStruct {
@@ -14,7 +14,7 @@ public class SkyblockPlayerDataStruct {
     private long bits;
 
     // LOCATION
-    private SkyblockIslandType islandType;
+    private SkyblockIslandCategoryEnum islandType;
     private SkyblockIslandEnum skyblockIslandEnum;
 
     // ACTION BAR STUFF
@@ -64,11 +64,11 @@ public class SkyblockPlayerDataStruct {
         this.bits = bits;
     }
 
-    public SkyblockIslandType getIslandType() {
+    public SkyblockIslandCategoryEnum getIslandType() {
         return islandType;
     }
 
-    public void setIslandType(SkyblockIslandType islandType) {
+    public void setIslandType(SkyblockIslandCategoryEnum islandType) {
         this.islandType = islandType;
     }
 
@@ -157,7 +157,7 @@ public class SkyblockPlayerDataStruct {
         this.coopBank = 0;
         this.privateBank = 0;
         this.bits = 0;
-        this.islandType = SkyblockIslandType.NONE;
+        this.islandType = SkyblockIslandCategoryEnum.NONE;
         this.skyblockIslandEnum = SkyblockIslandEnum.NONE;
         this.maxHealth = 0;
         this.currentHealth = 0;
