@@ -23,6 +23,7 @@ import java.util.stream.StreamSupport;
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
+
     @Unique
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -56,6 +57,12 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
         }
     }
 
+    @Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
+    private void onRenderFire(CallbackInfo ci) {
+
+
+    }
+
     @Unique
     private boolean shouldHideFishingEntity(E entity) {
         return (entity instanceof PlayerEntity player && !player.equals(client.player)
@@ -67,13 +74,14 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
     @Unique
     private boolean shouldHideHubPlayer(E entity) {
-        return entity.squaredDistanceTo(client.player) >= HideHubPlayersState.showRange * HideHubPlayersState.showRange;
+        return !HidePlayerNearNpc.isPlayerAnNpc(entity) && entity.squaredDistanceTo(client.player) >= HideHubPlayersState.showRange * HideHubPlayersState.showRange;
     }
 
     @Unique
     private boolean isEntityNearNpc(PlayerEntity entity) {
         return StreamSupport.stream(client.world.getEntities().spliterator(), false)
-                .filter(e -> e instanceof PlayerEntity && HidePlayerNearNpc.isPlayerAnNpc((PlayerEntity) e))
-                .anyMatch(e -> entity.squaredDistanceTo((PlayerEntity) e) <= HidePlayerNearNpc.hideRange * HidePlayerNearNpc.hideRange);
+                .filter(e -> e instanceof PlayerEntity && HidePlayerNearNpc.isPlayerAnNpc(e))
+                .anyMatch(e -> entity.squaredDistanceTo(e) <= HidePlayerNearNpc.hideRange * HidePlayerNearNpc.hideRange);
     }
+
 }
