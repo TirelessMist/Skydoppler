@@ -1,46 +1,47 @@
 package ae.skydoppler.skyblock_locations;
 
 public enum SkyblockIslandEnum {
-    NONE(SkyblockIslandType.NONE, NoneZones.class),
 
-    PRIVATE_ISLAND(SkyblockIslandType.PRIVATE_ISLAND, PrivateIslandZones.class),
+    NONE(SkyblockIslandCategoryEnum.NONE, NoneZones.class),
 
-    HUB(SkyblockIslandType.HUB, HubZones.class),
+    PRIVATE_ISLAND(SkyblockIslandCategoryEnum.PRIVATE_ISLAND, PrivateIslandZones.class),
 
-    DUNGEON_HUB(SkyblockIslandType.HUB, DungeonHubZones.class),
-    DUNGEON(SkyblockIslandType.DUNGEON_ISLAND, DungeonZones.class),
+    HUB(SkyblockIslandCategoryEnum.HUB_ISLAND, HubZones.class),
 
-    CRIMSON_ISLE(SkyblockIslandType.COMBAT_ISLAND, CrimsonIsleZones.class),
-    KUUDRA(SkyblockIslandType.KUUDRA_ISLAND, KuudraZones.class),
-    SPIDER_DEN(SkyblockIslandType.COMBAT_ISLAND, SpiderDenZones.class),
-    THE_END(SkyblockIslandType.COMBAT_ISLAND, TheEndZones.class),
+    DUNGEON_HUB(SkyblockIslandCategoryEnum.HUB_ISLAND, DungeonHubZones.class),
+    DUNGEON(SkyblockIslandCategoryEnum.DUNGEON_ISLAND, DungeonZones.class),
 
-    GOLD_MINE(SkyblockIslandType.MINING_ISLAND, GoldMineZones.class),
-    DEEP_CAVERNS(SkyblockIslandType.MINING_ISLAND, DeepCavernsZones.class),
-    DWARVEN_MINES(SkyblockIslandType.MINING_ISLAND, DwarvenMinesZones.class),
-    CRYSTAL_HOLLOWS(SkyblockIslandType.MINING_ISLAND, CrystalHollowsZones.class),
+    CRIMSON_ISLE(SkyblockIslandCategoryEnum.COMBAT_ISLAND, CrimsonIsleZones.class),
+    KUUDRA(SkyblockIslandCategoryEnum.KUUDRA_ISLAND, KuudraZones.class),
+    SPIDER_DEN(SkyblockIslandCategoryEnum.COMBAT_ISLAND, SpiderDenZones.class),
+    THE_END(SkyblockIslandCategoryEnum.COMBAT_ISLAND, TheEndZones.class),
 
-    JERRY_ISLAND(SkyblockIslandType.NONE, JerryIslandZones.class),
+    GOLD_MINE(SkyblockIslandCategoryEnum.MINING_ISLAND, GoldMineZones.class),
+    DEEP_CAVERNS(SkyblockIslandCategoryEnum.MINING_ISLAND, DeepCavernsZones.class),
+    DWARVEN_MINES(SkyblockIslandCategoryEnum.MINING_ISLAND, DwarvenMinesZones.class),
+    CRYSTAL_HOLLOWS(SkyblockIslandCategoryEnum.MINING_ISLAND, CrystalHollowsZones.class),
 
-    BACKWATER_BAYOU(SkyblockIslandType.FISHING_ISLAND, BackwaterBayouZones.class),
+    JERRY_ISLAND(SkyblockIslandCategoryEnum.SPECIAL_ISLAND, JerryIslandZones.class),
 
-    THE_PARK(SkyblockIslandType.FORAGING_ISLAND, TheParkZones.class),
+    BACKWATER_BAYOU(SkyblockIslandCategoryEnum.FISHING_ISLAND, BackwaterBayouZones.class),
 
-    THE_GARDEN(SkyblockIslandType.FARMING_ISLAND, null),
-    THE_BARN(SkyblockIslandType.FARMING_ISLAND, TheBarnZones.class),
-    MUSHROOM_DESERT(SkyblockIslandType.FARMING_ISLAND, MushroomDesertZones.class),
+    THE_PARK(SkyblockIslandCategoryEnum.FORAGING_ISLAND, TheParkZones.class),
 
-    THE_RIFT(SkyblockIslandType.RIFT_ISLAND, RiftZones.class);
+    THE_GARDEN(SkyblockIslandCategoryEnum.FARMING_ISLAND, TheGardenZones.class),
+    THE_BARN(SkyblockIslandCategoryEnum.FARMING_ISLAND, TheBarnZones.class),
+    MUSHROOM_DESERT(SkyblockIslandCategoryEnum.FARMING_ISLAND, MushroomDesertZones.class),
 
-    private final SkyblockIslandType islandType;
+    THE_RIFT(SkyblockIslandCategoryEnum.RIFT_ISLAND, RiftZones.class);
+
+    private final SkyblockIslandCategoryEnum islandType;
     private final Class<? extends Enum<?>> zones;
 
-    SkyblockIslandEnum(SkyblockIslandType islandType, Class<? extends Enum<?>> zones) {
+    SkyblockIslandEnum(SkyblockIslandCategoryEnum islandType, Class<? extends Enum<?>> zones) {
         this.islandType = islandType;
         this.zones = zones;
     }
 
-    public SkyblockIslandType getIslandType() {
+    public SkyblockIslandCategoryEnum getIslandType() {
         return islandType;
     }
 
