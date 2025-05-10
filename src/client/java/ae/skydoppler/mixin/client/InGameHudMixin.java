@@ -64,15 +64,4 @@ public class InGameHudMixin {
             ci.cancel();
     }
 
-    @Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
-    private void onRenderOverlay(DrawContext context, Identifier texture, float opacity, CallbackInfo ci) {
-
-        if (EntityFireHideState.HideFirstPersonFire && texture.getPath().contains("fire_layer_")) {
-            // Cancel the overlay render if the overlay is the first-person fire overlay.
-
-            ci.cancel();
-        }
-
-    }
-
 }
