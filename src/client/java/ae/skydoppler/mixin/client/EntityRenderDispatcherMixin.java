@@ -1,17 +1,21 @@
 package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.fishing.FishingHideState;
-import ae.skydoppler.item.DroppedItemGlowingState;
+import ae.skydoppler.glow.DroppedItemGlowingState;
+import ae.skydoppler.glow.PlayerGlowingState;
+import ae.skydoppler.model.EntityFireHideState;
 import ae.skydoppler.player_hiding.HideHubPlayersState;
 import ae.skydoppler.player_hiding.HidePlayerNearNpc;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
+import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -54,13 +58,22 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
         if (DroppedItemGlowingState.glowing && entity instanceof ItemEntity item) {
             item.setGlowing(true);
+            return;
+        }
+
+        if (PlayerGlowingState.shouldGlow && entity instanceof PlayerEntity && !HidePlayerNearNpc.isPlayerAnNpc(entity)) {
+
+            entity.setGlowing(true);
         }
     }
 
     @Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
-    private void onRenderFire(CallbackInfo ci) {
+    private void onRenderFire(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, Quaternionf rotation, CallbackInfo ci) {
 
+        if (EntityFireHideState.HideFireOnEntities) {
 
+            ci.cancel();
+        }
     }
 
     @Unique
