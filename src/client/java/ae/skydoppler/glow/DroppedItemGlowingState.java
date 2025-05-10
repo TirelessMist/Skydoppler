@@ -1,4 +1,4 @@
-package ae.skydoppler.item;
+package ae.skydoppler.glow;
 
 import java.awt.Color;
 
