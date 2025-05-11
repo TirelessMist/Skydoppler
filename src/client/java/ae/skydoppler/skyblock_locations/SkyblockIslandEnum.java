@@ -34,31 +34,71 @@ public enum SkyblockIslandEnum {
     THE_RIFT(SkyblockIslandCategoryEnum.RIFT_ISLAND, RiftZones.class);
 
     private final SkyblockIslandCategoryEnum islandType;
-    private final Class<? extends Enum<?>> zones;
+    private final Class<? extends Enum<?>> zoneClass;
 
-    SkyblockIslandEnum(SkyblockIslandCategoryEnum islandType, Class<? extends Enum<?>> zones) {
+    SkyblockIslandEnum(SkyblockIslandCategoryEnum islandType, Class<? extends Enum<?>> zoneClass) {
         this.islandType = islandType;
-        this.zones = zones;
+        this.zoneClass = zoneClass;
     }
 
     public SkyblockIslandCategoryEnum getIslandType() {
         return islandType;
     }
 
-    public Class<? extends Enum<?>> getZones() {
-        return zones;
+    public Class<? extends Enum<?>> getZoneClass() {
+        return zoneClass;
     }
 
     public Enum<?>[] getZonesForIsland() {
-        if (zones == null) {
+        if (zoneClass == null) {
             return new Enum<?>[0]; // Return an empty array if no zones are defined
         }
-        return zones.getEnumConstants(); // Retrieve all enum constants for the zone class
+        return zoneClass.getEnumConstants(); // Retrieve all enum constants for the zone class
     }
 
     public interface EnumName {
         String getName();
     }
+
+    public interface EnumRegion {
+        Enum<?> getRegion();
+    }
+
+    public enum HubRegions {
+        VILLAGE,
+        CRYPTS;
+    }
+
+    public enum CrystalHollowsRegions {
+        NUCLEUS,
+        JUNGLE,
+        GOBLIN_HOLDOUT,
+        MITHRIL_DEPOSITS,
+        PRECURSOR_REMNANTS,
+        MAGMA_FIELDS;
+    }
+
+    public enum CrimsonIsleRegions {
+        SCARLETON,
+        DRAGONTAIL;
+    }
+
+    public enum RiftRegions {
+        WYLD_WOODS,
+        LAGOON,
+        FARM,
+        WEST_VILLAGE,
+        LIVING_STILLNESS,
+        PLAZA,
+        VAMPIRE,
+        MOUNTAINTOP,
+        WIZARD_TOWER,
+        LEECH_SUPREME,
+        BACTE,
+        MIRRORVERSE,
+        SUN_GOD;
+    }
+
 
     public enum NoneZones implements EnumName {
         NONE("none");
@@ -68,6 +108,7 @@ public enum SkyblockIslandEnum {
         NoneZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -82,19 +123,20 @@ public enum SkyblockIslandEnum {
         PrivateIslandZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum HubZones implements EnumName {
+    public enum HubZones implements EnumName, EnumRegion {
         HUB("hub"),
-        VILLAGE("village"),
-        BAZAAR("bazaar alley"),
-        AUCTION_HOUSE("auction house"),
-        BANK("bank"),
-        COMMUNITY_CENTER("community center"),
+        VILLAGE("village", HubRegions.VILLAGE),
+        BAZAAR("bazaar alley", HubRegions.VILLAGE),
+        AUCTION_HOUSE("auction house", HubRegions.VILLAGE),
+        BANK("bank", HubRegions.VILLAGE),
+        COMMUNITY_CENTER("community center", HubRegions.VILLAGE),
         ELECTION_ROOM("election room"),
         MUSEUM("museum"),
         ARCHERY_RANGE("archery range"),
@@ -102,7 +144,7 @@ public enum SkyblockIslandEnum {
         BLACKSMITH("blacksmith"),
         BUILDER_HOUSE("builder's house"),
         CANVAS_ROOM("canvas room"),
-        COAL_MINE("coal mine"),
+        COAL_MINE("coal mine", HubRegions.CRYPTS),
         COLOSSEUM("colosseum"),
         FARM("farm"),
         FARMHOUSE("farmhouse"),
@@ -110,8 +152,8 @@ public enum SkyblockIslandEnum {
         FISHERMAN_HUT("fisherman's hut"),
         FLOWER_HOUSE("flower house"),
         FOREST("forest"),
-        GRAVEYARD("graveyard"),
-        CATACOMBS_ENTRANCE("catacombs entrance"),
+        GRAVEYARD("graveyard", HubRegions.CRYPTS),
+        CATACOMBS_ENTRANCE("catacombs entrance", HubRegions.CRYPTS),
         HEXATORUM("hexatorum"),
         UNINCORPORATED("unincorporated"),
         LIBRARY("library"),
@@ -128,13 +170,25 @@ public enum SkyblockIslandEnum {
         FISHING_OUTPOST("fishing outpost");
 
         private final String name;
+        private final Enum<?> region;
+
+        HubZones(String name, Enum<?> region) {
+            this.name = name;
+            this.region = region;
+        }
 
         HubZones(String name) {
-            this.name = name;
+            this(name, null); // Default the region to null if not provided
         }
+
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public Enum<?> getRegion() {
+            return region;
         }
     }
 
@@ -169,6 +223,7 @@ public enum SkyblockIslandEnum {
         TheGardenZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -184,6 +239,7 @@ public enum SkyblockIslandEnum {
         TheBarnZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -207,6 +263,7 @@ public enum SkyblockIslandEnum {
         MushroomDesertZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -230,6 +287,7 @@ public enum SkyblockIslandEnum {
         TheParkZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -250,6 +308,7 @@ public enum SkyblockIslandEnum {
         SpiderDenZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -268,13 +327,14 @@ public enum SkyblockIslandEnum {
         TheEndZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum CrimsonIsleZones implements EnumName {
+    public enum CrimsonIsleZones implements EnumName, EnumRegion {
         CRIMSON_ISLE("crimson isle"),
         STRONGHOLD("stronghold"),
         CRIMSON_FIELDS("crimson fields"),
@@ -291,43 +351,55 @@ public enum SkyblockIslandEnum {
         MYSTIC_MARSH("mystic marsh"),
         BARBARIAN_OUTPOST("barbarian outpost"),
         MAGE_OUTPOST("mage outpost"),
-        DRAGONTAIL("dragontail"),
-        CHIEF_HUT("chief's hut"),
-        DRAGONTAIL_BLACKSMITH("dragontail blacksmith"),
-        DRAGONTAIL_TOWNSQUARE("dragontail townsquare"),
-        DRAGONTAIL_AUCTION_HOUSE("dragontail auction house"),
-        DRAGONTAIL_BAZAAR("dragontail bazaar"),
-        DRAGONTAIL_BANK("dragontail bank"),
+        DRAGONTAIL("dragontail", CrimsonIsleRegions.DRAGONTAIL),
+        CHIEF_HUT("chief's hut", CrimsonIsleRegions.DRAGONTAIL),
+        DRAGONTAIL_BLACKSMITH("dragontail blacksmith", CrimsonIsleRegions.DRAGONTAIL),
+        DRAGONTAIL_TOWNSQUARE("dragontail townsquare", CrimsonIsleRegions.DRAGONTAIL),
+        DRAGONTAIL_AUCTION_HOUSE("dragontail auction house", CrimsonIsleRegions.DRAGONTAIL),
+        DRAGONTAIL_BAZAAR("dragontail bazaar", CrimsonIsleRegions.DRAGONTAIL),
+        DRAGONTAIL_BANK("dragontail bank", CrimsonIsleRegions.DRAGONTAIL),
         MINION_SHOP("minion shop"),
         THE_DUKEDOM("the dukedom"),
         THE_BASTION("the bastion"),
-        SCARLETON("scarleton"),
-        COMMUNITY_CENTER("community center"),
-        THRONE_ROOM("throne room"),
-        MAGE_COUNCIL("mage council"),
-        SCARLETON_PLAZA("scarleton plaza"),
-        SCARLETON_MINION_SHOP("scarleton minion shop"),
-        SCARLETON_AUCTION_HOUSE("scarleton auction house"),
-        SCARLETON_BAZAAR("scarleton bazaar"),
-        SCARLETON_BANK("scarleton bank"),
-        SCARLETON_BLACKSMITH("scarleton blacksmith"),
-        IGRUPAN_HOUSE("igrupan's house"),
-        IGRUPAN_CHICKEN_COOP("igrupan's chicken coop"),
-        CATHEDRAL("cathedral"),
-        COURTYARD("courtyard"),
+        SCARLETON("scarleton", CrimsonIsleRegions.SCARLETON),
+        COMMUNITY_CENTER("community center", CrimsonIsleRegions.SCARLETON),
+        THRONE_ROOM("throne room", CrimsonIsleRegions.SCARLETON),
+        MAGE_COUNCIL("mage council", CrimsonIsleRegions.SCARLETON),
+        SCARLETON_PLAZA("scarleton plaza", CrimsonIsleRegions.SCARLETON),
+        SCARLETON_MINION_SHOP("scarleton minion shop", CrimsonIsleRegions.SCARLETON),
+        SCARLETON_AUCTION_HOUSE("scarleton auction house", CrimsonIsleRegions.SCARLETON),
+        SCARLETON_BAZAAR("scarleton bazaar", CrimsonIsleRegions.SCARLETON),
+        SCARLETON_BANK("scarleton bank", CrimsonIsleRegions.SCARLETON),
+        SCARLETON_BLACKSMITH("scarleton blacksmith", CrimsonIsleRegions.SCARLETON),
+        IGRUPAN_HOUSE("igrupan's house", CrimsonIsleRegions.SCARLETON),
+        IGRUPAN_CHICKEN_COOP("igrupan's chicken coop", CrimsonIsleRegions.SCARLETON),
+        CATHEDRAL("cathedral", CrimsonIsleRegions.SCARLETON),
+        COURTYARD("courtyard", CrimsonIsleRegions.SCARLETON),
         THE_WASTELAND("the wasteland"),
         RUINS_OF_ASHFANG("ruins of ashfang"),
         FORGOTTEN_SKULL("forgotten skull"),
         SMOLDERING_TOMB("smoldering tomb");
 
         private final String name;
+        private final Enum<?> region;
+
+        CrimsonIsleZones(String name, Enum<?> region) {
+            this.name = name;
+            this.region = region;
+        }
 
         CrimsonIsleZones(String name) {
-            this.name = name;
+            this(name, null); // Default the region to null if not provided
         }
+
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public Enum<?> getRegion() {
+            return region;
         }
     }
 
@@ -339,6 +411,7 @@ public enum SkyblockIslandEnum {
         KuudraZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -353,6 +426,7 @@ public enum SkyblockIslandEnum {
         GoldMineZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -373,6 +447,7 @@ public enum SkyblockIslandEnum {
         DeepCavernsZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -417,36 +492,48 @@ public enum SkyblockIslandEnum {
         DwarvenMinesZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum CrystalHollowsZones implements EnumName {
+    public enum CrystalHollowsZones implements EnumName, EnumRegion {
         CRYSTAL_HOLLOWS("crystal hollows"),
-        CRYSTAL_NUCLEUS("crystal nucleus"),
-        GOBLIN_HOLDOUT("goblin holdout"),
-        GOBLIN_QUEEN_DEN("goblin queen's den"),
-        JUNGLE("jungle"),
-        JUNGLE_TEMPLE("jungle temple"),
-        PRECURSOR_REMNANTS("precursor remnants"),
-        LOST_PRECURSOR_CITY("lost precursor city"),
-        MITHRIL_DEPOSITS("mithril deposits"),
+        CRYSTAL_NUCLEUS("crystal nucleus", CrystalHollowsRegions.NUCLEUS),
+        GOBLIN_HOLDOUT("goblin holdout", CrystalHollowsRegions.GOBLIN_HOLDOUT),
+        GOBLIN_QUEEN_DEN("goblin queen's den", CrystalHollowsRegions.GOBLIN_HOLDOUT),
+        JUNGLE("jungle", CrystalHollowsRegions.JUNGLE),
+        JUNGLE_TEMPLE("jungle temple", CrystalHollowsRegions.JUNGLE),
+        PRECURSOR_REMNANTS("precursor remnants", CrystalHollowsRegions.PRECURSOR_REMNANTS),
+        LOST_PRECURSOR_CITY("lost precursor city", CrystalHollowsRegions.PRECURSOR_REMNANTS),
+        MITHRIL_DEPOSITS("mithril deposits", CrystalHollowsRegions.MITHRIL_DEPOSITS),
         DRAGON_LAIR("dragon's lair"),
-        MINES_OF_DIVAN("mines of divan"),
-        MAGMA_FIELDS("magma fields"),
-        KHAZAD_DUM("khazad-dum"),
+        MINES_OF_DIVAN("mines of divan", CrystalHollowsRegions.MITHRIL_DEPOSITS),
+        MAGMA_FIELDS("magma fields", CrystalHollowsRegions.MAGMA_FIELDS),
+        KHAZAD_DUM("khazad-dum", CrystalHollowsRegions.MAGMA_FIELDS),
         FAIRY_GROTTO("fairy grotto");
 
         private final String name;
+        private final Enum<?> region;
 
-        CrystalHollowsZones(String name) {
+        CrystalHollowsZones(String name, Enum<?> region) {
             this.name = name;
+            this.region = region;
         }
+        CrystalHollowsZones(String name) {
+            this(name, null); // Default the region to null if not provided
+        }
+
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public Enum<?> getRegion() {
+            return region;
         }
     }
 
@@ -468,6 +555,7 @@ public enum SkyblockIslandEnum {
         JerryIslandZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -482,6 +570,7 @@ public enum SkyblockIslandEnum {
         DungeonHubZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
@@ -510,74 +599,87 @@ public enum SkyblockIslandEnum {
         DungeonZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
         }
     }
 
-    public enum RiftZones implements EnumName {
+    public enum RiftZones implements EnumName, EnumRegion {
         THE_RIFT("the rift"),
-        WIZARD_TOWER("wizard tower"),
-        WYLD_WOODS("wyld woods"),
-        ENIGMA_CRIB("enigma's crib"),
-        BROKEN_CAGE("broken cage"),
-        SHIFTED_TAVERN("shifted tavern"),
+        WIZARD_TOWER("wizard tower", RiftRegions.WIZARD_TOWER),
+        WYLD_WOODS("wyld woods", RiftRegions.WYLD_WOODS),
+        ENIGMA_CRIB("enigma's crib", RiftRegions.WYLD_WOODS),
+        BROKEN_CAGE("broken cage", RiftRegions.WYLD_WOODS),
+        SHIFTED_TAVERN("shifted tavern", RiftRegions.WYLD_WOODS),
         PUMPGROTTO("pumpgrotto"),
         THE_BASTION("the bastion"),
         OTHERSIDE("otherside"),
-        BLACK_LAGOON("black lagoon"),
-        LAGOON_CAVE("lagoon cave"),
-        LAGOON_HUT("lagoon hut"),
-        LEECHES_LAIR("leeches lair"),
+        BLACK_LAGOON("black lagoon", RiftRegions.LAGOON),
+        LAGOON_CAVE("lagoon cave", RiftRegions.LAGOON),
+        LAGOON_HUT("lagoon hut", RiftRegions.LAGOON),
+        LEECHES_LAIR("leeches lair", RiftRegions.LEECH_SUPREME),
         AROUND_COLOSSEUM("around colosseum"),
         RIFT_GALLERY_ENTRANCE("rift gallery entrance"),
         RIFT_GALLERY("rift gallery"),
-        WEST_VILLAGE("west village"),
-        DOLPHIN_TRAINER("dolphin trainer"),
-        CAKE_HOUSE("cake house"),
-        INFESTED_HOUSE("infested house"),
-        MIRRORVERSE("mirrorverse"),
-        DREADFARM("dreadfarm"),
-        GREAT_BEANSTALK("great beanstalk"),
-        VILLAGE_PLAZA("village plaza"),
-        TAYLORS("taylor's"),
-        LONELY_TERRACE("lonely terrace"),
-        MURDER_HOUSE("murder house"),
-        BOOK_IN_A_BOOK("book in a book"),
-        HALF_EATEN_CAVE("half-eaten cave"),
-        YOUR_ISLAND("'your' island"),
-        EMPTY_BANK("empty bank"),
-        BARRY_CENTER("barry center"),
-        BARRY_HQ("barry hq"),
-        DEJA_VU_ALLEY("deja vu alley"),
-        LIVING_CAVE("living cave"),
-        LIVING_STILLNESS("living stillness"),
-        COLOSSEUM("colosseum"),
-        BARRIER_STREET("barrier street"),
-        PHOTON_PATHWAY("photon pathway"),
-        STILLGORE_CHATEAU("stillgore chateau"),
-        OUBLIETTE("oubliette"),
-        FAIRYLOSOPHER_TOWER("fairylosopher tower"),
-        MOUNTAINTOP("mountaintop"),
-        CONTINUUM("continuum"),
-        TIME_CHAMBER("time chamber"),
-        TIME_TORN_ISLES("time-torn isles"),
-        ROSE_END("rose's end"),
-        WALK_OF_FAME("walk of fame"),
-        CEREBRAL_CITADEL("cerebral citadel"),
-        WIZARDMAN_BUREAU("wizardman bureau"),
-        WIZARD_BRAWL("wizard brawl"),
-        TRIAL_GROUNDS("trial grounds");
+        WEST_VILLAGE("west village", RiftRegions.WEST_VILLAGE),
+        DOLPHIN_TRAINER("dolphin trainer", RiftRegions.WEST_VILLAGE),
+        CAKE_HOUSE("cake house", RiftRegions.WEST_VILLAGE),
+        INFESTED_HOUSE("infested house", RiftRegions.WEST_VILLAGE),
+        MIRRORVERSE("mirrorverse", RiftRegions.MIRRORVERSE),
+        DREADFARM("dreadfarm", RiftRegions.FARM),
+        GREAT_BEANSTALK("great beanstalk", RiftRegions.FARM),
+        VILLAGE_PLAZA("village plaza", RiftRegions.PLAZA),
+        TAYLORS("taylor's", RiftRegions.PLAZA),
+        LONELY_TERRACE("lonely terrace", RiftRegions.PLAZA),
+        MURDER_HOUSE("murder house", RiftRegions.PLAZA),
+        BOOK_IN_A_BOOK("book in a book", RiftRegions.PLAZA),
+        HALF_EATEN_CAVE("half-eaten cave", RiftRegions.PLAZA),
+        YOUR_ISLAND("'your' island", RiftRegions.PLAZA),
+        EMPTY_BANK("empty bank", RiftRegions.PLAZA),
+        BARRY_CENTER("barry center", RiftRegions.PLAZA),
+        BARRY_HQ("barry hq", RiftRegions.PLAZA),
+        DEJA_VU_ALLEY("deja vu alley", RiftRegions.PLAZA),
+        LIVING_CAVE("living cave", RiftRegions.LIVING_STILLNESS),
+        LIVING_STILLNESS("living stillness", RiftRegions.LIVING_STILLNESS),
+        COLOSSEUM("colosseum", RiftRegions.BACTE),
+        BARRIER_STREET("barrier street", RiftRegions.PLAZA),
+        PHOTON_PATHWAY("photon pathway", RiftRegions.PLAZA),
+        STILLGORE_CHATEAU("stillgore chateau", RiftRegions.VAMPIRE),
+        OUBLIETTE("oubliette", RiftRegions.VAMPIRE),
+        FAIRYLOSOPHER_TOWER("fairylosopher tower", RiftRegions.VAMPIRE),
+        MOUNTAINTOP("mountaintop", RiftRegions.MOUNTAINTOP),
+        CONTINUUM("continuum", RiftRegions.MOUNTAINTOP),
+        TIME_CHAMBER("time chamber", RiftRegions.SUN_GOD),
+        TIME_TORN_ISLES("time-torn isles", RiftRegions.MOUNTAINTOP),
+        ROSE_END("rose's end", RiftRegions.MOUNTAINTOP),
+        WALK_OF_FAME("walk of fame", RiftRegions.MOUNTAINTOP),
+        CEREBRAL_CITADEL("cerebral citadel", RiftRegions.MOUNTAINTOP),
+        WIZARDMAN_BUREAU("wizardman bureau", RiftRegions.MOUNTAINTOP),
+        WIZARD_BRAWL("wizard brawl", RiftRegions.MOUNTAINTOP),
+        TRIAL_GROUNDS("trial grounds", RiftRegions.MOUNTAINTOP);
 
         private final String name;
+        private final Enum<?> region;
+
+        RiftZones(String name, Enum<?> region) {
+            this.name = name;
+            this.region = region;
+        }
 
         RiftZones(String name) {
-            this.name = name;
+            this(name, null);
         }
+
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public Enum<?> getRegion() {
+            return region;
         }
     }
 
@@ -589,6 +691,7 @@ public enum SkyblockIslandEnum {
         BackwaterBayouZones(String name) {
             this.name = name;
         }
+
         @Override
         public String getName() {
             return name;
