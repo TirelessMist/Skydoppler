@@ -24,6 +24,7 @@ public class SkydopplerClient implements ClientModInitializer {
     public static SkyblockPlayerDataStruct playerDataStruct;
     public static SkyblockIslandEnum currentIsland = SkyblockIslandEnum.NONE;
     public static Enum<?> currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0]; // Sets currentZone to the first enum for the island of type "NONE", which is also "NONE" (the only value for the island of type "NONE").
+    public static Enum<?> currentRegion = null;
     public static boolean isRodCast;
     public static boolean isPlayingSkyblock = false;
     private TextRenderer textRenderer;
