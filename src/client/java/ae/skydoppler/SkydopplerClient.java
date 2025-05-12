@@ -15,6 +15,11 @@ import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.List;
+import java.util.Map;
+
+import static ae.skydoppler.dungeon.solver.waterboard_solver.solveMaze;
+
 public class SkydopplerClient implements ClientModInitializer {
 
     public static MinecraftClient client = MinecraftClient.getInstance();
@@ -26,9 +31,8 @@ public class SkydopplerClient implements ClientModInitializer {
     public static Enum<?> currentRegion = null;
     public static boolean isRodCast;
     public static boolean isPlayingSkyblock = false;
-    private TextRenderer textRenderer;
-
     public static boolean hideExplosionParticle = true;
+    private TextRenderer textRenderer;
 
     @Override
     public void onInitializeClient() {
@@ -48,6 +52,51 @@ public class SkydopplerClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (debugKey.wasPressed()) {
                 // add debug key stuff here if you need
+
+
+                char[][] debugGrid = {
+                        // taken from Hypixel
+                        {'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'e', 'o', 'A', 'o', 'o', 'o', 'o', 'o', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'o', 'x', 'c', 'x', 'x', 'x', 'D', 'x', 'x', 'x', 'o', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'o', 'B', 'o', 'E', 'o', 'o', 'o', 'x', 'x', 'x', 'o', 'x', 'x', 'x'},
+                        {'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o', 'x', 'f', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'b', 'x'},
+                        {'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'c', 'x', 'o', 'x'},
+                        {'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o', 'o'},
+                        {'o', 'x', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'o'},
+                        {'o', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'B', 'o', 'f', 'x', 'o'},
+                        {'o', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'o'},
+                        {'o', 'x', 'o', 'o', 'o', 'x', 'x', 'o', 'o', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o'},
+                        {'o', 'x', 'x', 'x', 'o', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'o', 'x', 'o'},
+                        {'o', 'o', 'o', 'x', 'o', 'o', 'f', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'o'},
+                        {'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'x', 'x', 'o', 'o', 'x', 'o', 'o', 'o', 'o'},
+                        {'x', 'x', 'o', 'x', 'x', 'x', 'x', 'B', 'x', 'D', 'x', 'x', 'x', 'o', 'x', 'o', 'x', 'x', 'x'},
+                        {'o', 'e', 'o', 'c', 'o', 'o', 'f', 'o', 'x', 'o', 'o', 'o', 'B', 'o', 'x', 'o', 'o', 'o', 'o'},
+                        {'o', 'x', 'x', 'x', 'x', 'x', 'x', 'd', 'x', 'o', 'x', 'x', 'x', 'c', 'o', 'x', 'x', 'x', 'o'},
+                        {'o', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'o'},
+                        {'o', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'x', 'x', 'f', 'x', 'x', 'x', 'A'},
+                        {'o', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'o'},
+                        {'o', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'o'},
+                        {'o', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'o'},
+                        {'1', 'x', 'x', 'x', '2', 'x', 'x', 'x', 'x', '3', 'x', 'x', 'x', 'x', '4', 'x', 'x', 'x', '5'},
+                };
+
+                // Assume the initial door states are all false (closed).
+                boolean[] doorsInitial = { false, false, false, false, false };
+
+                Map<Character, List<Integer>> solution = solveMaze(debugGrid, doorsInitial);
+                if (solution != null) {
+                    System.out.println("Solution found! Lever toggling schedule (lever -> list of ticks):");
+                    for (Map.Entry<Character, List<Integer>> entry : solution.entrySet()) {
+                        System.out.println(entry.getKey() + " -> " + entry.getValue());
+                    }
+                } else {
+                    System.out.println("No solution found.");
+                }
+
             }
 
             // Check every tick if the local player's fishing bobber is present within hideRange
