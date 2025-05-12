@@ -277,43 +277,4 @@ public class waterboard_solver {
             this.level = level;
         }
     }
-
-    // --- Sample Usage ---
-    public static void main(String[] args) {
-        char[][] debugGrid = {
-                {'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'},
-                {'x', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'e', 'o', 'A', 'o', 'o', 'o', 'o', 'o', 'x', 'x', 'x'},
-                {'x', 'x', 'x', 'x', 'x', 'o', 'x', 'c', 'x', 'x', 'x', 'D', 'x', 'x', 'x', 'o', 'x', 'x', 'x'},
-                {'x', 'x', 'x', 'x', 'x', 'o', 'B', 'o', 'E', 'o', 'o', 'o', 'x', 'x', 'x', 'o', 'x', 'x', 'x'},
-                {'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o', 'x', 'f', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'b', 'x'},
-                {'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'c', 'x', 'o', 'x'},
-                {'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o', 'o'},
-                {'o', 'x', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'o'},
-                {'o', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'B', 'o', 'f', 'x', 'o'},
-                {'o', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'o'},
-                {'o', 'x', 'o', 'o', 'o', 'x', 'x', 'o', 'o', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o'},
-                {'o', 'x', 'x', 'x', 'o', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'o', 'x', 'o'},
-                {'o', 'o', 'o', 'x', 'o', 'o', 'f', 'o', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'o'},
-                {'x', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'x', 'x', 'o', 'o', 'x', 'o', 'o', 'o', 'o'},
-                {'x', 'x', 'o', 'x', 'x', 'x', 'x', 'B', 'x', 'D', 'x', 'x', 'x', 'o', 'x', 'o', 'x', 'x', 'x'},
-                {'o', 'e', 'o', 'c', 'o', 'o', 'f', 'o', 'x', 'o', 'o', 'o', 'B', 'o', 'x', 'o', 'o', 'o', 'o'},
-                {'o', 'x', 'x', 'x', 'x', 'x', 'x', 'd', 'x', 'o', 'x', 'x', 'x', 'c', 'o', 'x', 'x', 'x', 'o'},
-                {'o', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'o'},
-                {'o', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'x', 'x', 'f', 'x', 'x', 'x', 'A'},
-                {'1', 'x', 'x', 'x', '2', 'x', 'x', 'x', 'x', '3', 'x', 'x', 'x', 'x', '4', 'x', 'x', 'x', '5'},
-        };
-
-        // Assume all door states are initially false (closed)
-        boolean[] doorsInitial = { false, false, false, false, false };
-
-        Map<Character, List<Integer>> solution = solveMaze(debugGrid, doorsInitial);
-        if (solution != null) {
-            System.out.println("Solution found! Lever toggling schedule (lever -> list of ms timings):");
-            for (Map.Entry<Character, List<Integer>> entry : solution.entrySet()) {
-                System.out.println(entry.getKey() + " -> " + entry.getValue());
-            }
-        } else {
-            System.out.println("No solution found.");
-        }
-    }
 }
