@@ -8,11 +8,16 @@ import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -50,6 +55,40 @@ public class SkydopplerClient implements ClientModInitializer {
         debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+
+            if (client.player == null || client.world == null) return;
+
+            // Define the maximum distance for the raycast (e.g., 20 blocks)
+            double maxDistance = 20.0;
+
+            // Get the player's eye position and look vector
+            Vec3d eyePos = client.player.getCameraPosVec(1.0F);
+            Vec3d lookVec = client.player.getRotationVec(1.0F);
+
+            // Calculate the end position based on the look vector and the desired distance
+            Vec3d endPos = eyePos.add(lookVec.x * maxDistance, lookVec.y * maxDistance, lookVec.z * maxDistance);
+
+            // Set up the raycast context
+            RaycastContext context = new RaycastContext(
+                    eyePos,
+                    endPos,
+                    RaycastContext.ShapeType.OUTLINE,          // Determines how to traverse block shapes
+                    RaycastContext.FluidHandling.NONE,         // Decide whether fluids should be considered
+                    client.player               // The player performing the raycast
+            );
+
+            // Perform the raycast using the custom context
+            HitResult hitResult = client.world.raycast(context);
+
+            // Check if the hit result is a block hit
+            if (hitResult.getType() == HitResult.Type.BLOCK) {
+                BlockHitResult blockHitResult = (BlockHitResult) hitResult;
+                if (client.world.getBlockState(blockHitResult.getBlockPos()).getBlock() == Blocks.GRAY_STAINED_GLASS)
+                    System.out.println("Extended raycast hit Gray Stained Glass at: " + blockHitResult.getBlockPos());
+                // You can now query the block further or perform additional logic here.
+            }
+
+
             while (debugKey.wasPressed()) {
                 // add debug key stuff here if you need
 
@@ -85,7 +124,7 @@ public class SkydopplerClient implements ClientModInitializer {
                 };
 
                 // Assume the initial door states are all false (closed).
-                boolean[] doorsInitial = { false, false, false, false, false };
+                boolean[] doorsInitial = {false, false, false, false, false};
 
                 Map<Character, List<Integer>> solution = solveMaze(debugGrid, doorsInitial);
                 if (solution != null) {
