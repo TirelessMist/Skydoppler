@@ -16,6 +16,8 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+	maven { url "https://maven.shedaniel.me/" } // cloth config
+	maven { url "https://maven.terraformersmc.com/releases/" } // mod menu
 }
 
 loom {
@@ -38,7 +40,9 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
+
+	modApi "me.shedaniel.cloth:cloth-config-fabric:18.0.145"
+	modApi "com.terraformersmc:modmenu:14.0.0-rc.2"
 }
 
 processResources {
@@ -87,16 +91,4 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
-}
-// Add the Terraformers maven repo to your repositories block
-repositories {
-	maven {
-		name = "Terraformers"
-		url = "https://maven.terraformersmc.com/"
-	}
-}
-
-// Add Mod Menu as a dependency in your environment
-dependencies {
-	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 }
