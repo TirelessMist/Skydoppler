@@ -1,6 +1,7 @@
 package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
+import ae.skydoppler.chat.command.SkydopplerCommand;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
@@ -13,8 +14,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.List;
 
 public class SkydopplerClient implements ClientModInitializer {
 
@@ -40,6 +39,7 @@ public class SkydopplerClient implements ClientModInitializer {
         ChatMatchHandler.loadJsonData();
         isRodCast = false;
 
+        SkydopplerCommand.register();
 
         playerDataStruct = new SkyblockPlayerDataStruct();
 
