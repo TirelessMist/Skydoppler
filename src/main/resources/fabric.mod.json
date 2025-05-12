@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"ae.skydoppler.SkydopplerClient"
+		],
+		"modmenu": [
+			"ae.skydoppler.config.SkydopplerModMenuIntegration"
 		]
 	},
 	"mixins": [
