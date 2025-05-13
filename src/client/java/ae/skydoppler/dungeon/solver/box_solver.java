@@ -4,15 +4,13 @@ import java.util.*;
 
 public class box_solver {
 
-    // A simple point class to represent grid positions.
+    // A helper class representing a grid position.
     static class Point implements Comparable<Point> {
         int r, c;
-
         public Point(int r, int c) {
             this.r = r;
             this.c = c;
         }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -20,68 +18,60 @@ public class box_solver {
             Point p = (Point) o;
             return this.r == p.r && this.c == p.c;
         }
-
         @Override
         public int hashCode() {
             return Objects.hash(r, c);
         }
-
         @Override
         public int compareTo(Point other) {
-            if (this.r != other.r)
-                return this.r - other.r;
-            return this.c - other.c;
+            return (this.r != other.r) ? (this.r - other.r) : (this.c - other.c);
         }
-
         @Override
         public String toString() {
             return "(" + r + ", " + c + ")";
         }
     }
 
-    // Represents a push move made on a box.
+    // Represents a push move (from a box's current cell and the direction to push it).
     static class BoxMove {
         int r, c;
         String direction;
-
         public BoxMove(int r, int c, String direction) {
             this.r = r;
             this.c = c;
             this.direction = direction;
         }
-
         @Override
         public String toString() {
             return "box -> (" + r + ", " + c + ") -> " + direction;
         }
     }
 
-    // A state represents a configuration of boxes (their positions). We keep a parent pointer and the move
-    // that got us to this state so that we can easily reconstruct the solution.
+    // A state represents a configuration of box positions. It stores a pointer to its parent state
+    // and the BoxMove that led to it so that, on finding a solution, we can reconstruct the push sequence.
     static class State {
         Set<Point> boxes;
         State parent;
-        BoxMove move;  // move that led from parent to this state
-
+        BoxMove move;
         public State(Set<Point> boxes, State parent, BoxMove move) {
             this.boxes = boxes;
             this.parent = parent;
             this.move = move;
         }
-
-        // A unique key formed by sorting the boxes’ positions. This allows us to keep track of visited states.
+        // Generates a unique key for the state by sorting the set of box positions.
         public String getKey() {
-            List<Point> points = new ArrayList<>(boxes);
-            Collections.sort(points);
+            List<Point> pts = new ArrayList<>(boxes);
+            Collections.sort(pts);
             StringBuilder sb = new StringBuilder();
-            for (Point p : points)
+            for (Point p : pts) {
                 sb.append(p.r).append(",").append(p.c).append(";");
+            }
             return sb.toString();
         }
     }
 
-    // Checks if an "air" path exists from start to end.
-    // In this search, a box occupies its cell as an obstacle. (There are no walls any longer.)
+    // Determines whether there is an unobstructed "air" path from start to end.
+    // Boxes are treated as obstacles. (No walls are processed.)
     static boolean pathExists(char[][] grid, Set<Point> boxes, Point start, Point end) {
         int rows = grid.length, cols = grid[0].length;
         boolean[][] visited = new boolean[rows][cols];
@@ -90,11 +80,11 @@ public class box_solver {
         visited[start.r][start.c] = true;
         int[] dr = {-1, 1, 0, 0};
         int[] dc = {0, 0, -1, 1};
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Point cur = queue.poll();
             if (cur.equals(end))
                 return true;
-            for (int i = 0; i < 4; i++){
+            for (int i = 0; i < 4; i++) {
                 int nr = cur.r + dr[i];
                 int nc = cur.c + dc[i];
                 if (nr < 0 || nr >= rows || nc < 0 || nc >= cols)
@@ -110,14 +100,13 @@ public class box_solver {
         return false;
     }
 
-    // Determines whether a given box is movable – that is, whether it has at least one free adjacent cell.
+    // Determines if a given box has at least one adjacent free cell (so that it is movable).
     private static boolean isBoxMovable(Point box, char[][] grid, Set<Point> boxes) {
         int rows = grid.length, cols = grid[0].length;
         int[] dr = {-1, 1, 0, 0};
         int[] dc = {0, 0, -1, 1};
-        for (int i = 0; i < 4; i++){
-            int nr = box.r + dr[i];
-            int nc = box.c + dc[i];
+        for (int i = 0; i < 4; i++) {
+            int nr = box.r + dr[i], nc = box.c + dc[i];
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols)
                 continue;
             if (boxes.contains(new Point(nr, nc)))
@@ -127,8 +116,8 @@ public class box_solver {
         return false;
     }
 
-    // Checks if a vital cell (such as the end) becomes permanently blocked.
-    // For each adjacent cell (if inside bounds), if it is empty or occupied by a movable box then the cell is not blocked.
+    // Checks if a vital cell (here, the end) becomes permanently blocked.
+    // For each neighbor, if there is a free cell or a movable box, the cell isn’t blocked.
     private static boolean isPermanentlyBlocked(Point cell, Set<Point> boxes, char[][] grid) {
         int rows = grid.length, cols = grid[0].length;
         int[] dr = {-1, 1, 0, 0};
@@ -139,92 +128,89 @@ public class box_solver {
                 continue;
             Point neighbor = new Point(nr, nc);
             if (!boxes.contains(neighbor))
-                return false; // There is a free neighbor.
-            else {
-                if (isBoxMovable(neighbor, grid, boxes))
-                    return false;
-            }
+                return false; // Free neighbor found.
+            else if (isBoxMovable(neighbor, grid, boxes))
+                return false;
         }
         return true;
     }
 
-    // The maze solver method.
-    // It returns an ordered list of box push moves (in the format "box -> (r, c) -> direction") that,
-    // when applied, yield a valid clear air path from the start ('s') to the end ('e') with the fewest pushes.
-    // If no solution is possible, it returns null.
+    // The maze solver. It returns an ordered list of push moves (as strings) that lead to a clear air path
+    // from the start ('s') to the end ('e') using the fewest pushes. Returns null if no solution exists.
     public static List<String> solve(char[][] grid) {
         int rows = grid.length, cols = grid[0].length;
         Point start = null, end = null;
         Set<Point> initialBoxes = new HashSet<>();
-
-        // Parse the grid to locate start ('s'), end ('e'), and boxes ('o').
-        // (There are no wall tiles in this grid.)
+        
+        // Parse the grid: identify start ('s'), end ('e'), and all boxes ('o').
         for (int r = 0; r < rows; r++){
             for (int c = 0; c < cols; c++){
                 char ch = grid[r][c];
-                if (ch == 's') {
+                if (ch == 's')
                     start = new Point(r, c);
-                } else if (ch == 'e') {
+                else if (ch == 'e')
                     end = new Point(r, c);
-                } else if (ch == 'o'){
+                else if (ch == 'o')
                     initialBoxes.add(new Point(r, c));
-                }
             }
         }
         if (start == null || end == null) {
             System.out.println("Start or end not defined in grid.");
             return null;
         }
-
-        // If the initial configuration already has an air path, then there is nothing to push.
+        
+        // If an air path already exists, no pushes are needed.
         if (pathExists(grid, initialBoxes, start, end))
             return new ArrayList<>();
-
-        // Use a breadth-first search over box configurations.
+        
+        // BFS state space: each state represents one configuration of box positions.
         Queue<State> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
         State initState = new State(initialBoxes, null, null);
         queue.add(initState);
         visited.add(initState.getKey());
-
-        // Define the four cardinal moves.
+        
+        // Define four cardinal move directions.
         int[] dr = {-1, 1, 0, 0};
         int[] dc = {0, 0, -1, 1};
         String[] dirNames = {"up", "down", "left", "right"};
-
-        while (!queue.isEmpty()){
+        
+        while (!queue.isEmpty()) {
             State curr = queue.poll();
+            // Try pushing every box from the current state.
             for (Point box : curr.boxes) {
-                for (int i = 0; i < 4; i++){
+                for (int i = 0; i < 4; i++) {
                     int newR = box.r + dr[i];
                     int newC = box.c + dc[i];
-
-                    // Check grid boundaries.
+                    // Ensure the move is inside the grid bounds.
                     if (newR < 0 || newR >= rows || newC < 0 || newC >= cols)
                         continue;
-                    // Cannot push a box into an already occupied cell.
+                    // Do not push into an already occupied cell.
                     if (curr.boxes.contains(new Point(newR, newC)))
                         continue;
-                    // Disallow pushing a box to any cell in the same row as the end.
-                    if (newR == end.r)
+                    // NEW RESTRICTION: Do not push a box into any cell that lies in the same row as the start.
+                    if (newR == start.r)
                         continue;
-
-                    // Create a new configuration by moving the current box.
+                    // Disallow pushing a box directly onto the end cell.
+                    if (newR == end.r && newC == end.c)
+                        continue;
+                    
+                    // Create a new configuration by moving the chosen box.
                     Set<Point> newBoxes = new HashSet<>(curr.boxes);
                     newBoxes.remove(box);
                     newBoxes.add(new Point(newR, newC));
-
-                    // Check if the end becomes permanently blocked.
+                    
+                    // Heuristic check: if the end becomes permanently blocked by this move, skip it.
                     if (isPermanentlyBlocked(end, newBoxes, grid))
                         continue;
-
+                    
                     State newState = new State(newBoxes, curr, new BoxMove(box.r, box.c, dirNames[i]));
                     String key = newState.getKey();
                     if (visited.contains(key))
                         continue;
                     visited.add(key);
-
-                    // If this configuration yields a clear air path, reconstruct the move list.
+                    
+                    // If this configuration yields a clear air path, reconstruct the sequence of moves.
                     if (pathExists(grid, newBoxes, start, end)) {
                         List<String> movesList = new ArrayList<>();
                         State temp = newState;
@@ -235,35 +221,34 @@ public class box_solver {
                         Collections.reverse(movesList);
                         return movesList;
                     }
-
+                    
                     queue.add(newState);
                 }
             }
         }
-
         // No sequence of pushes leads to a clear air path.
         return null;
     }
-
+    
+    // A sample main function for testing.
     public static void main(String[] args) {
-        // Note: This grid no longer includes wall tiles.
-        // The grid is fixed-size, which can help limit the search space.
+        // Create a grid without walls—only spaces, boxes ('o'), the start ('s'), and the end ('e') exist.
         char[][] grid = {
-                {' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' '},
-                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                {' ', 'o', ' ', 'o', ' ', 'o', 'o', 'o', ' '},
-                {' ', ' ', 'o', ' ', 'o', ' ', 'o', ' ', ' '},
-                {' ', ' ', 'o', 'o', ' ', 'o', ' ', ' ', ' '},
-                {' ', ' ', ' ', ' ', 'o', ' ', 'o', ' ', ' '},
-                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                {' ', ' ', ' ', ' ', 's', ' ', ' ', ' ', ' '}
+            {' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', 'o', ' ', 'o', ' ', 'o', 'o', 'o', ' '},
+            {' ', ' ', 'o', ' ', 'o', ' ', 'o', ' ', ' '},
+            {' ', ' ', 'o', 'o', ' ', 'o', ' ', ' ', ' '},
+            {' ', ' ', ' ', ' ', 'o', ' ', 'o', ' ', ' '},
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', ' ', 's', ' ', ' ', ' ', ' '}
         };
 
         List<String> solution = solve(grid);
         if (solution == null) {
             System.out.println("No solutions possible.");
         } else if (solution.isEmpty()) {
-            System.out.println("No box pushes needed. The air path is already clear.");
+            System.out.println("No box pushes needed. Air path is already clear.");
         } else {
             for (String move : solution) {
                 System.out.println(move);
