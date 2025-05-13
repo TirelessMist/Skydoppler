@@ -8,6 +8,7 @@ import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -15,6 +16,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -47,6 +49,15 @@ public class SkydopplerClient implements ClientModInitializer {
         textRenderer.initialize();
         ChatMatchHandler.loadJsonData();
         isRodCast = false;
+
+        Map<BlockPos, Block> waterPuzzleStructure = Map.of(
+                new BlockPos(0, 0, 0), Blocks.GRAY_STAINED_GLASS,
+                new BlockPos(1, 0, 0), Blocks.GRAY_STAINED_GLASS,
+                new BlockPos(2, 0, 0), Blocks.GRAY_STAINED_GLASS,
+                new BlockPos(3, 0, 0), Blocks.GRAY_STAINED_GLASS,
+                new BlockPos(4, 0, 0), Blocks.GRAY_STAINED_GLASS,
+                new BlockPos(5, 0, 0), Blocks.GRAY_STAINED_GLASS
+        );
 
         SkydopplerCommand.register();
 
@@ -83,9 +94,14 @@ public class SkydopplerClient implements ClientModInitializer {
             // Check if the hit result is a block hit
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 BlockHitResult blockHitResult = (BlockHitResult) hitResult;
-                if (client.world.getBlockState(blockHitResult.getBlockPos()).getBlock() == Blocks.GRAY_STAINED_GLASS)
-                    System.out.println("Extended raycast hit Gray Stained Glass at: " + blockHitResult.getBlockPos());
-                // You can now query the block further or perform additional logic here.
+                if (client.world.getBlockState(blockHitResult.getBlockPos()).getBlock() == Blocks.GRAY_STAINED_GLASS) {
+                    //System.out.println("Extended raycast hit Gray Stained Glass at: " + blockHitResult.getBlockPos());
+
+                    /*if (isStructureAtPosition(blockHitResult.getBlockPos()))
+                        System.out.println("Extended raycast hit Water Puzzle at: " + blockHitResult.getBlockPos());*/
+
+                    // You can now query the block further or perform additional logic here.
+                }
             }
 
 
@@ -158,6 +174,23 @@ public class SkydopplerClient implements ClientModInitializer {
             FishingHideState.rodCastActive = found;
         });
 
+    }
+
+    // Function to check if a block structure exists at a given position
+    public boolean isStructureAtPosition(BlockPos startPos, Map<BlockPos, Block> structure) {
+        if (client.world == null) return false;
+
+        for (Map.Entry<BlockPos, Block> entry : structure.entrySet()) {
+            BlockPos relativePos = startPos.add(entry.getKey());
+            Block expectedBlock = entry.getValue();
+            Block actualBlock = client.world.getBlockState(relativePos).getBlock();
+
+            if (!actualBlock.equals(expectedBlock)) {
+                return false; // Structure does not match
+            }
+        }
+
+        return true; // Structure matches
     }
 
 
