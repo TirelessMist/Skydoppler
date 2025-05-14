@@ -91,4 +91,37 @@ public class MapParser {
     private static FloorType determineFloorType(byte[][] mapData) {
 
     }
+
+    public class MapTile {
+        private char type;
+        private boolean whitecheck;
+        private boolean greencheck;
+
+        private char[] doors; // 0 = top entrance; 1 = right entrance; 2 = bottom entrance; 3 = left entrance;
+        // a = top black; b = right black; c = bottom black; d = left black;
+        // A = top red; B = right red; C = bottom red; D = left red;
+
+        public MapTile() {
+            type = null;
+            whitecheck = false;
+            greencheck = false;
+            doors = null;
+        }
+
+        public MapTile(char type, boolean whitecheck, boolean greencheck) {
+            this.type = type;
+            this.whitecheck = whitecheck;
+            this.greencheck = greencheck;
+
+            doors = null;
+        }
+
+        public MapTile(char type, boolean whitecheck, boolean greencheck, char[] doors) {
+            this.type = type;
+            this.whitecheck = whitecheck;
+            this.greencheck = greencheck;
+            
+            this.doors = doors;
+        }
+    }
 }
