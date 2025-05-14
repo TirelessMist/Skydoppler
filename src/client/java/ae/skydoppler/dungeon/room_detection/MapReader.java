@@ -1,16 +1,11 @@
-/*
 package ae.skydoppler.dungeon.room_detection;
 
+import ae.skydoppler.structs.Size;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.map.MapState;
 
 import java.awt.*;
 
 public class MapReader {
-
-    Point entranceRoom = null;
 
     public static void registerTickEndEvent() {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -21,44 +16,51 @@ public class MapReader {
                 return;
             }
 
-            // Check if there is a map item in the player's last hotbar slot
-            ItemStack mapStack = client.player.getInventory().getStack(8);
-            if (mapStack.getItem() instanceof FilledMapItem mapItem) {
-
-                // Get the map state
-                MapState mapState = FilledMapItem.getMapState(mapStack, client.world);
-
-                if (mapState != null) {
-                    // Check if the map is a dungeon map
-                    if (mapState.scale == 1) {
-                        // Read the map data
-                        int[][] mapData = new int[128][128];
-                        for (int x = 0; x < 128; x++) {
-                            for (int y = 0; y < 128; y++) {
-                                mapData[x][y] = mapState.colors[x + y * 128];
-                            }
-                        }
-
-                        // Process the map data to locate the entrance room
-                        Point entranceRoom = locateEntranceRoom(mapData);
-                    }
-                }
-
-            }
 
         });
     }
 
-    private static Point locateEntranceRoom(int[][] mapData) {
+    private static Point locateEntranceRoom(byte[][] mapData) {
         for (int row = 0; row < mapData.length; row++) {
             for (int col = 0; col < mapData[row].length; col++) {
                 // Assuming green tiles are represented by a specific color code, e.g., 3
-                if (mapData[row][col] == 3) {
+                if (mapData[row][col] == 30) {
+
+                    /*switch (getRoomDimensions(mapData, new Point(row, col))) {
+                        case TINY:
+                            System.out.println("Found a tiny room at: " + row + ", " + col);
+                            break;
+                        case SMALL:
+                            System.out.println("Found a small room at: " + row + ", " + col);
+                            break;
+                        case MEDIUM:
+                            System.out.println("Found a medium room at: " + row + ", " + col);
+                            break;
+                        case LARGE:
+                            System.out.println("Found a large room at: " + row + ", " + col);
+                            break;
+                    }*/
+
                     return new Point(row, col);
                 }
             }
         }
         return null; // Return null if no green tile is found
+    }
+
+    private static Size getRoomDimensions(byte[][] mapData, Point topleftCorner) {
+
+        byte color = mapData[topleftCorner.x][topleftCorner.y];
+
+        for (int row = topleftCorner.x; row < mapData.length; row++) {
+            for (int col = topleftCorner.y; col < mapData[row].length; col++) {
+                // Assuming the room is represented by a specific color code, e.g., 3
+                if (mapData[row][col] != color) {
+                    return new Size(row - topleftCorner.x, col - topleftCorner.y);
+                }
+            }
+        }
+        return null;
     }
 
     public enum FloorType {
@@ -71,4 +73,3 @@ public class MapReader {
 }
 
 
-*/
