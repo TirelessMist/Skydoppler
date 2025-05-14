@@ -8,11 +8,13 @@ import net.minecraft.item.map.MapState;
 
 public class MapParser {
 
+    FloorType floorType;
+
     /**
      * Retrieves the map from the player’s inventory slot 8, parses the pixel data into a 2D array,
      * and prints the array to the console.
      */
-    public static void parseMapFromSlot() {
+    public static char[][] parseMapFromSlot() {
         // Get the client instance and make sure the player is available.
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) {
@@ -43,6 +45,7 @@ public class MapParser {
         // The map color data is held in a byte array.
         // Minecraft maps are 128 x 128 pixels, so the array should contain 16384 bytes.
         byte[] colors = mapState.colors; // In Yarn, the colors array is typically publicly accessible.
+        // The map's width and height in pixels.
         final int width  = 128;
         final int height = 128;
         if (colors == null || colors.length < width * height) {
@@ -69,5 +72,23 @@ public class MapParser {
             }
             System.out.println(row.toString());
         }
+    }
+
+    private static char[][] convertToGrid(byte[][] mapData) {
+
+        char[][] grid;
+
+        for (int row = 0; row < mapData[0].length; row+=2 * size) {
+            for (int col = 0; col < mapData[1].length; col+=4) {
+
+                
+
+            }
+        }
+
+    }
+
+    private static FloorType determineFloorType(byte[][] mapData) {
+
     }
 }
