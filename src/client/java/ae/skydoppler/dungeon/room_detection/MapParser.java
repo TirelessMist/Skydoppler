@@ -78,10 +78,16 @@ public class MapParser {
 
         char[][] grid;
 
-        for (int row = 0; row < mapData[0].length; row+=2 * size) {
+        for (int row = 0; row < mapData[0].length; row += 2 * size) {
             for (int col = 0; col < mapData[1].length; col+=4) {
 
-                
+                byte color = mapData[row, col];
+
+                if (color != 0) { // if the grid tile is not blank
+
+                    
+
+                }
 
             }
         }
@@ -93,7 +99,8 @@ public class MapParser {
     }
 
     public class MapTile {
-        private char type;
+        private MapTileType type;
+        private char hash; // unique ID for different rooms of same type
         private boolean whitecheck;
         private boolean greencheck;
 
@@ -103,25 +110,40 @@ public class MapParser {
 
         public MapTile() {
             type = null;
+            hash = null;
             whitecheck = false;
             greencheck = false;
             doors = null;
         }
 
-        public MapTile(char type, boolean whitecheck, boolean greencheck) {
+        // use this for a tile without doors
+        public MapTile(MapTileType type, char hash, boolean whitecheck, boolean greencheck) {
             this.type = type;
             this.whitecheck = whitecheck;
             this.greencheck = greencheck;
+            this.hash = hash.
 
             doors = null;
         }
 
-        public MapTile(char type, boolean whitecheck, boolean greencheck, char[] doors) {
+        // use this for a tile with doors
+        public MapTile(MapTileType type, char hash, boolean whitecheck, boolean greencheck, char[] doors) {
             this.type = type;
             this.whitecheck = whitecheck;
             this.greencheck = greencheck;
+            this.hash = hash;
             
             this.doors = doors;
+        }
+
+        public enum MapTileType {
+            NORMAL,
+            ENTRANCE,
+            MINIBOSS,
+            FAIRY,
+            PUZZLE,
+            TRAP,
+            WATCHER
         }
     }
 }
