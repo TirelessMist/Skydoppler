@@ -26,6 +26,7 @@ public class MapReassembler {
             case 1: {
                 newMap = new Tile[7][9];
                 borderWidth = 22;
+                borderHeight = 11;
                 tileLength = 18;
                 break;
             }
@@ -33,6 +34,7 @@ public class MapReassembler {
             case 3: {
                 newMap = new Tile[9][9];
                 borderWidth = 11;
+                borderHeight = 11;
                 tileLength = 18;
                 break;
             }
@@ -40,6 +42,7 @@ public class MapReassembler {
             case 5: {
                 newMap = new Tile[11][9];
                 borderWidth = 5;
+                borderHeight = 5;
                 tileLength = 16;
                 break;
             }
@@ -68,7 +71,7 @@ public class MapReassembler {
 
     private static TileType getRoomTileAtPixel(byte[][] mapPixels, Point pos) {
 
-        for (int row = 0; row < mapPixels.length; row++) {
+        for (int row = ; row < mapPixels.length; row++) {
             for (int col = 0; col < mapPixels[0].length; col++) {
 
                 switch (mapPixels[row][col]) {
