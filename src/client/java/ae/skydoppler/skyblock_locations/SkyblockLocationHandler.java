@@ -2,6 +2,9 @@ package ae.skydoppler.skyblock_locations;
 
 import ae.skydoppler.SkydopplerClient;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class SkyblockLocationHandler {
     public static void setLocationFromString(String location) {
         // The location icon and accents are already removed from the string
@@ -26,7 +29,27 @@ public class SkyblockLocationHandler {
 
                     SkydopplerClient.currentZone = zone;
                     System.out.println("Current zone set to: " + zone.name());
-                    return;
+
+                    if (island == SkyblockIslandEnum.DUNGEON) {
+
+                        Pattern pattern = Pattern.compile("\\((.*?)\\)");
+                        Matcher matcher = pattern.matcher(location);
+
+                        if (matcher.find()) {
+                            String floor = matcher.group(1);
+
+                            if (floor.equalsIgnoreCase("e")) {
+                                SkydopplerClient.currentDungeonFloor = 0;
+                                return;
+                            }
+                            floor = floor.replaceFirst("([fm])", "");
+                            SkydopplerClient.currentDungeonFloor = Integer.parseInt(floor);
+
+                        }
+
+
+                    }
+
                 }
                 /*public <T extends NamedEnum> void printEnumName(T enumValue) {
                       System.out.println(enumValue.getName());
