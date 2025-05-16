@@ -3,6 +3,7 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.chat.command.SkydopplerCommand;
 import ae.skydoppler.dungeon.room_detection.MapParser;
+import ae.skydoppler.dungeon.room_detection.MapReassembler;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
@@ -23,10 +24,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
 import java.util.Map;
-
-import static ae.skydoppler.dungeon.solver.waterboard_solver.solveMaze;
 
 public class SkydopplerClient implements ClientModInitializer {
 
@@ -41,6 +39,8 @@ public class SkydopplerClient implements ClientModInitializer {
     public static boolean isPlayingSkyblock = false;
     public static boolean hideExplosionParticle = true;
     private TextRenderer textRenderer;
+
+    public static int currentDungeonFloor;
 
     @Override
     public void onInitializeClient() {
@@ -110,7 +110,20 @@ public class SkydopplerClient implements ClientModInitializer {
                 // add debug key stuff here if you need
 
 
-                MapParser.parseMapFromSlot();
+               byte[][] tempMap = MapParser.parseMapFromSlot();
+                if (tempMap != null) {
+                    System.out.println("===============================================");
+                    System.out.println("Map parsed successfully.");
+                    System.out.println("Current Dungeon Floor: " + SkydopplerClient.currentDungeonFloor);
+                    for (int i = 0; i < tempMap.length; i++) {
+                        for (int j = 0; j < tempMap[i].length; j++) {
+                            System.out.print(tempMap[i][j] + " ");
+                        }
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("Failed to parse map.");
+                }
 
             }
 
