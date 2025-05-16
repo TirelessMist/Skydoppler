@@ -66,8 +66,11 @@ public class MapReassembler {
         for (int row = 0; row < newMap.length; row++) {
             for (int col = 0; col < newMap[0].length; col++) {
 
+                // Point p is the top-left pixel of a room tile.
                 Point p = new Point(col * tileLength + borderWidth, row * tileLength + borderHeight);
-                newMap[row][col] = new Tile(getRoomTileAtPixel(mapPixels, p), getCheckTypeForRoom(mapPixels, p));
+                newMap[row][col] = new Tile(getRoomTileAtPixel(mapPixels, p), getCheckTypeForRoom(mapPixels, p), getDoorsForRoom(mapPixels, p));
+
+                // TODO: if the room is red room, if checkmark is white, it is ready, if checkmark is green, it is completed.
 
             }
         }
@@ -103,27 +106,19 @@ public class MapReassembler {
 
     }
 
-    private static TileType getDoorTileAtPixel(byte[][] mapPixels, Point pos) {
+    private static DoorType[] getDoorsForRoom(byte[][] mapPixels, Point pos) {
 
-        for (int row = 0; row < mapPixels.length; row++) {
-            for (int col = 0; col < mapPixels[0].length; col++) {
+        // TODO: Add checks for if the given room is a special kind that can only have one door to reduce unnessecary checks if it finds a door before it finishes checking all 4 sides.
 
-                switch (mapPixels[row][col]) {
+        DoorType[] doors = new DoorType[4];
+        
+        doors[0] = checkForDoor(mapPixels, new Point(pos.X + (tileLength / 2), pos.Y - 1)); // top
+        doors[1] = checkForDoor(mapPixels, new Point(pos.X + tileLength + 1, pos.Y + (tileLength / 2))); // right
+        doors[2] = checkForDoor(mapPixels, new Point(pos.X + (tileLength / 2), pos.Y + tileLength + 1)) // bottom
+        doors[3] = checkForDoor(mapPixels, new Point(pos.X - 1, pos.Y + (tileLength / 2))); // left
 
-                    case 0:
-                        return TileType.EMPTY;
-                    case 63:
-                        return TileType.NORMAL_DOOR;
-                    case 119:
-                        return TileType.WITHER_DOOR;
-                    case 18:
-                        return TileType.BLOOD_DOOR;
+        return doors;
 
-                }
-
-            }
-        }
-        return null;
     }
 
     private static CheckType getCheckTypeForRoom(byte[][] mapPixels, Point pos) {
@@ -150,9 +145,23 @@ public class MapReassembler {
 
     }
 
-    private static boolean checkForDoor(byte[][] mapPixels, Point pos) {
-        // This should be called by a function that checks for doors for a specific tile.
-        return false; // Placeholder.
+    private static DoorType getDoorAtPos(byte[][] mapPixels, Point pos) {
+        
+        switch (mapPixels[pos.X][pos.Y]) {
+
+            case 0:
+                return DoorType.NONE;
+            case 63:
+                return DoorType.NORMAL_DOOR;
+            case 119:
+                return DoorType.WITHER_DOOR;
+            case 18:
+                return DoorType.BLOOD_DOOR;
+            default:
+                return DoorType.NONE;
+
+        }
+
     }
 
     public enum TileType {
@@ -164,10 +173,7 @@ public class MapReassembler {
         MINIBOSS_ROOM,
         PUZZLE_ROOM,
         TRAP_ROOM,
-        BLOOD_ROOM,
-        NORMAL_DOOR,
-        WITHER_DOOR,
-        BLOOD_DOOR
+        BLOOD_ROOM
     }
 
     public enum CheckType {
@@ -176,18 +182,36 @@ public class MapReassembler {
         GREEN
     }
 
+    public enum DoorType {
+        NONE,
+        NORMAL_DOOR,
+        WITHER_DOOR,
+        BLOOD_DOOR
+    }
+
     public static class Tile {
+
         private TileType tileType;
-        private CheckType checkType;
+        private DoorType[] doors; // Index reference: 0 = up; 1 = right; 2 = down; 3 = left.
+
+        private CheckType checkType; // This value should never be null; instead, it is set to NONE.
 
         public Tile() {
             this.tileType = TileType.EMPTY;
             this.checkType = CheckType.NONE;
+            this.doors = null;
         }
 
-        public Tile(TileType tileType, CheckType checkType) {
+        public Tile(TileType tileType, DoorType[] doors) {
+            this.tileType = tileType;
+            this.checkType = CheckType.NONE;
+            this.doors = doors;
+        }
+
+        public Tile(TileType tileType, CheckType checkType, DoorType[] doors) {
             this.tileType = tileType;
             this.checkType = checkType;
+            this.doors = doors;
         }
 
         public TileType getTileType() {
@@ -196,6 +220,14 @@ public class MapReassembler {
 
         public void setTileType(TileType tileType) {
             this.tileType = tileType;
+        }
+
+        public DoorType[] getDoors() {
+            return doors;
+        }
+
+        public void setDoors(DoorType[] doors) {
+            this.doors = doors;
         }
 
         public CheckType getCheckType() {
