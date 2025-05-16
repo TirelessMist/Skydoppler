@@ -55,14 +55,19 @@ public class MapReassembler {
             }
             default: {
                 newMap = new Tile[0][0]; // Later, add actual calculation for the map size, as a fallback in case scoreboard dungeon floor detection doesn't work.
+                borderWidth = 0;
+                borderHeight = 0;
+                tileLength = 0;
+                break;
             }
         }
 
+        // For each tile in the new map (newMap), fill it in depending on its corresponding space in the mapPixels map data.
         for (int row = 0; row < newMap.length; row++) {
             for (int col = 0; col < newMap[0].length; col++) {
 
-                newMap[row][col] = new Tile();
-                newMap[row][col].setTileType(getRoomTileAtPixel(mapPixels, new Point(col * tileLength + borderWidth, row * tileLength + borderHeight)));
+                Point p = new Point(col * tileLength + borderWidth, row * tileLength + borderHeight);
+                newMap[row][col] = new Tile(getRoomTileAtPixel(mapPixels, p), getCheckTypeForRoom(mapPixels, p));
 
             }
         }
@@ -71,35 +76,31 @@ public class MapReassembler {
 
     private static TileType getRoomTileAtPixel(byte[][] mapPixels, Point pos) {
 
-        for (int row = ; row < mapPixels.length; row++) {
-            for (int col = 0; col < mapPixels[0].length; col++) {
+        switch (mapPixels[row][col]) {
 
-                switch (mapPixels[row][col]) {
+            case 0:
+                return TileType.EMPTY;
+            case 30:
+                return TileType.ENTRANCE_ROOM;
+            case 63:
+                return TileType.NORMAL_ROOM;
+            case 85:
+                return TileType.UNEXPLORED_ROOM;
+            case 66:
+                return TileType.PUZZLE_ROOM;
+            case 74:
+                return TileType.MINIBOSS_ROOM;
+            case 62:
+                return TileType.TRAP_ROOM;
+            case 82:
+                return TileType.FAIRY_ROOM;
+            case 18:
+                return TileType.BLOOD_ROOM;
+            case default:
+                return null;
 
-                    case 0:
-                        return TileType.EMPTY;
-                    case 30:
-                        return TileType.ENTRANCE_ROOM;
-                    case 63:
-                        return TileType.NORMAL_ROOM;
-                    case 85:
-                        return TileType.UNEXPLORED_ROOM;
-                    case 66:
-                        return TileType.PUZZLE_ROOM;
-                    case 74:
-                        return TileType.MINIBOSS_ROOM;
-                    case 62:
-                        return TileType.TRAP_ROOM;
-                    case 82:
-                        return TileType.FAIRY_ROOM;
-                    case 18:
-                        return TileType.BLOOD_ROOM;
-
-                }
-
-            }
         }
-        return null;
+
     }
 
     private static TileType getDoorTileAtPixel(byte[][] mapPixels, Point pos) {
@@ -123,6 +124,30 @@ public class MapReassembler {
             }
         }
         return null;
+    }
+
+    private static CheckType getCheckTypeForRoom(byte[][] mapPixels, Point pos) {
+
+        // In the case that the given room is the Entrance (same color as green checkmark), return none, as the Entrance room cannot have any checkmarks.
+        if (mapPixels[pos.X][pos.Y] == 30) return CheckType.NONE;
+
+        // TODO: change the checkmark offset values to the actual offsets, based on the tile size
+        int checkmarkOffsetX = 0;
+        int checkmarkOffsetY = 0;
+
+        byte checkmark = mapPixels[pos.X + checkmarkOffsetX][pos.Y + checkmarkOffsetY];
+
+        switch (checkmark) {
+
+            case 30:
+                return CheckType.GREEN;
+            case 34:
+                return CheckType.WHITE;
+            default:
+                return CheckType.NONE;
+
+        }
+
     }
 
     private static boolean checkForDoor(byte[][] mapPixels, Point pos) {
