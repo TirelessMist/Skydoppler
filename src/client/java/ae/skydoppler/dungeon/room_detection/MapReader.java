@@ -48,20 +48,7 @@ public class MapReader {
         return null; // Return null if no green tile is found
     }
 
-    private static Size getRoomDimensions(byte[][] mapData, Point topleftCorner) {
 
-        byte color = mapData[topleftCorner.x][topleftCorner.y];
-
-        for (int row = topleftCorner.x; row < mapData.length; row++) {
-            for (int col = topleftCorner.y; col < mapData[row].length; col++) {
-                // Assuming the room is represented by a specific color code, e.g., 3
-                if (mapData[row][col] != color) {
-                    return new Size(row - topleftCorner.x, col - topleftCorner.y);
-                }
-            }
-        }
-        return null;
-    }
 
     public enum FloorType {
         TINY, // entrance, f1
