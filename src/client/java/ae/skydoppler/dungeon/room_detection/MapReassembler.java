@@ -13,18 +13,20 @@ public class MapReassembler {
 
     public static Tile[][] reassembleMap(byte[][] mapPixels) {
 
+        // Takes in a grid of pixel values, and returns the grid in a modular tile format.
+
         Tile[][] newMap;
 
         // set map grid size based on the current dungeon floor from scoreboard
         switch (SkydopplerClient.currentDungeonFloor) {
             case 0: {
-                newMap = new Tile[7][7];
+                newMap = new Tile[4][4];
                 borderWidth = 22;
                 tileLength = 18;
                 break;
             }
             case 1: {
-                newMap = new Tile[7][9];
+                newMap = new Tile[4][5];
                 borderWidth = 22;
                 borderHeight = 11;
                 tileLength = 18;
@@ -32,7 +34,7 @@ public class MapReassembler {
             }
             case 2:
             case 3: {
-                newMap = new Tile[9][9];
+                newMap = new Tile[5][5];
                 borderWidth = 11;
                 borderHeight = 11;
                 tileLength = 18;
@@ -40,7 +42,7 @@ public class MapReassembler {
             }
             case 4:
             case 5: {
-                newMap = new Tile[11][9];
+                newMap = new Tile[6][5];
                 borderWidth = 5;
                 borderHeight = 5;
                 tileLength = 16;
@@ -48,7 +50,7 @@ public class MapReassembler {
             }
             case 6:
             case 7: {
-                newMap = new Tile[11][11];
+                newMap = new Tile[6][6];
                 borderWidth = 5;
                 tileLength = 16;
                 break;
@@ -66,11 +68,11 @@ public class MapReassembler {
         for (int row = 0; row < newMap.length; row++) {
             for (int col = 0; col < newMap[0].length; col++) {
 
-                // Point p is the top-left pixel of a room tile.
-                Point p = new Point(col * tileLength + borderWidth, row * tileLength + borderHeight);
+                // Point p is the top-left pixel of a room tile. The (col * 4) and (row * 4) is to account for room spacing, which is always 4 (verify).
+                Point p = new Point(col * tileLength + borderWidth + (col * 4), row * tileLength + borderHeight + (row * 4));
                 newMap[row][col] = new Tile(getRoomTileAtPixel(mapPixels, p), getCheckTypeForRoom(mapPixels, p), getDoorsForRoom(mapPixels, p));
 
-                // TODO: if the room is red room, if checkmark is white, it is ready, if checkmark is green, it is completed.
+                // TODO: if the room is red room, if checkmark is white, it is ready, if checkmark is green, it is completed. Add it in a map handler file.
 
             }
         }
@@ -79,7 +81,7 @@ public class MapReassembler {
 
     private static TileType getRoomTileAtPixel(byte[][] mapPixels, Point pos) {
 
-        switch (mapPixels[row][col]) {
+        switch (mapPixels[pos.x][pos.y]) {
 
             case 0:
                 return TileType.EMPTY;
@@ -99,11 +101,9 @@ public class MapReassembler {
                 return TileType.FAIRY_ROOM;
             case 18:
                 return TileType.BLOOD_ROOM;
-            case default:
-                return null;
 
         }
-
+        return null;
     }
 
     private static DoorType[] getDoorsForRoom(byte[][] mapPixels, Point pos) {
@@ -112,10 +112,10 @@ public class MapReassembler {
 
         DoorType[] doors = new DoorType[4];
         
-        doors[0] = checkForDoor(mapPixels, new Point(pos.X + (tileLength / 2), pos.Y - 1)); // top
-        doors[1] = checkForDoor(mapPixels, new Point(pos.X + tileLength + 1, pos.Y + (tileLength / 2))); // right
-        doors[2] = checkForDoor(mapPixels, new Point(pos.X + (tileLength / 2), pos.Y + tileLength + 1)) // bottom
-        doors[3] = checkForDoor(mapPixels, new Point(pos.X - 1, pos.Y + (tileLength / 2))); // left
+        doors[0] = getDoorAtPos(mapPixels, new Point(pos.x + (tileLength / 2), pos.y - 1)); // top
+        doors[1] = getDoorAtPos(mapPixels, new Point(pos.x + tileLength + 1, pos.y + (tileLength / 2))); // right
+        doors[2] = getDoorAtPos(mapPixels, new Point(pos.x + (tileLength / 2), pos.y + tileLength + 1)); // bottom
+        doors[3] = getDoorAtPos(mapPixels, new Point(pos.x - 1, pos.y + (tileLength / 2))); // left
 
         return doors;
 
@@ -124,13 +124,13 @@ public class MapReassembler {
     private static CheckType getCheckTypeForRoom(byte[][] mapPixels, Point pos) {
 
         // In the case that the given room is the Entrance (same color as green checkmark), return none, as the Entrance room cannot have any checkmarks.
-        if (mapPixels[pos.X][pos.Y] == 30) return CheckType.NONE;
+        if (mapPixels[pos.x][pos.y] == 30) return CheckType.NONE;
 
         // TODO: change the checkmark offset values to the actual offsets, based on the tile size
         int checkmarkOffsetX = 0;
         int checkmarkOffsetY = 0;
 
-        byte checkmark = mapPixels[pos.X + checkmarkOffsetX][pos.Y + checkmarkOffsetY];
+        byte checkmark = mapPixels[pos.x + checkmarkOffsetX][pos.y + checkmarkOffsetY];
 
         switch (checkmark) {
 
@@ -147,7 +147,7 @@ public class MapReassembler {
 
     private static DoorType getDoorAtPos(byte[][] mapPixels, Point pos) {
         
-        switch (mapPixels[pos.X][pos.Y]) {
+        switch (mapPixels[pos.x][pos.y]) {
 
             case 0:
                 return DoorType.NONE;
