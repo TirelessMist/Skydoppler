@@ -1,149 +1,91 @@
 package ae.skydoppler.dungeon.room_detection;
 
+import ae.skydoppler.structs.Size;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
-// In Yarn for 1.21.5, the map state class is usually found in this package.
 import net.minecraft.item.map.MapState;
+
+import java.awt.*;
 
 public class MapParser {
 
-    FloorType floorType;
+    MapReader.FloorType floorType;
 
     /**
-     * Retrieves the map from the player’s inventory slot 8, parses the pixel data into a 2D array,
-     * and prints the array to the console.
+     * Retrieves the map from the player’s inventory slot 8 (9th/last Hotbar Slot), parses the pixel data into a 2D array.
      */
-    public static char[][] parseMapFromSlot() {
+    public static byte[][] parseMapFromSlot() {
         // Get the client instance and make sure the player is available.
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) {
             System.out.println("No player available.");
-            return;
+            return null;
         }
 
         // Fetch the item from slot index 8 (typically the 9th slot in the hotbar).
         ItemStack stack = client.player.getInventory().getStack(8);
         if (stack.isEmpty()) {
             System.out.println("Slot 8 is empty.");
-            return;
+            return null;
         }
 
         // Verify that the item is a map (an instance of FilledMapItem).
         if (!(stack.getItem() instanceof FilledMapItem)) {
             System.out.println("The item in slot 8 is not a map.");
-            return;
+            return null;
         }
 
         // Retrieve the map state. This contains the map's data and requires the world.
         MapState mapState = FilledMapItem.getMapState(stack, client.world);
         if (mapState == null) {
             System.out.println("Map state not found.");
-            return;
+            return null;
         }
 
         // The map color data is held in a byte array.
-        // Minecraft maps are 128 x 128 pixels, so the array should contain 16384 bytes.
+        // Minecraft maps are 128 col 128 pixels, so the array should contain 16384 bytes.
         byte[] colors = mapState.colors; // In Yarn, the colors array is typically publicly accessible.
         // The map's width and height in pixels.
-        final int width  = 128;
+        final int width = 128;
         final int height = 128;
         if (colors == null || colors.length < width * height) {
             System.out.println("Invalid map color data.");
-            return;
+            return null;
         }
 
         // Create a 2D array to hold the color values (one cell per pixel).
-        int[][] mapPixels = new int[height][width];
+        byte[][] mapPixels = new byte[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                // Compute the flat array index corresponding to the (x, y) coordinate.
+                // Compute the flat array index corresponding to the (col, row) coordinate.
                 int index = x + (y * width);
                 // Since bytes in Java are signed, we use & 0xFF to convert the value to an unsigned int.
-                mapPixels[y][x] = colors[index] & 0xFF;
+                mapPixels[y][x] = colors[index];
             }
         }
 
-        // Print the 2D array to the console, row by row.
-        for (int y = 0; y < height; y++) {
-            StringBuilder row = new StringBuilder();
-            for (int x = 0; x < width; x++) {
-                row.append(mapPixels[y][x]).append(" ");
-            }
-            System.out.println(row.toString());
-        }
+        return mapPixels;
     }
 
-    private static char[][] convertToGrid(byte[][] mapData) {
-
-        char[][] grid;
-
-        for (int row = 0; row < mapData[0].length; row += 2 * size) {
-            for (int col = 0; col < mapData[1].length; col+=4) {
-
-                byte color = mapData[row, col];
-
-                if (color != 0) { // if the grid tile is not blank
-
-                    
-
-                }
-
-            }
-        }
-
-    }
-
-    private static FloorType determineFloorType(byte[][] mapData) {
-
-    }
-
-    public class MapTile {
-        private MapTileType type;
-        private char hash; // unique ID for different rooms of same type
-        private boolean whitecheck;
-        private boolean greencheck;
-
-        private char[] doors; // 0 = top entrance; 1 = right entrance; 2 = bottom entrance; 3 = left entrance;
-        // a = top black; b = right black; c = bottom black; d = left black;
-        // A = top red; B = right red; C = bottom red; D = left red;
-
-        public MapTile() {
-            type = null;
-            hash = null;
-            whitecheck = false;
-            greencheck = false;
-            doors = null;
-        }
-
-        // use this for a tile without doors
-        public MapTile(MapTileType type, char hash, boolean whitecheck, boolean greencheck) {
-            this.type = type;
-            this.whitecheck = whitecheck;
-            this.greencheck = greencheck;
-            this.hash = hash.
-
-            doors = null;
-        }
-
-        // use this for a tile with doors
-        public MapTile(MapTileType type, char hash, boolean whitecheck, boolean greencheck, char[] doors) {
-            this.type = type;
-            this.whitecheck = whitecheck;
-            this.greencheck = greencheck;
-            this.hash = hash;
-            
-            this.doors = doors;
-        }
-
-        public enum MapTileType {
-            NORMAL,
-            ENTRANCE,
-            MINIBOSS,
-            FAIRY,
-            PUZZLE,
-            TRAP,
-            WATCHER
-        }
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
