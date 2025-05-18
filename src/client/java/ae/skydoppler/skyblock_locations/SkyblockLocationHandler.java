@@ -40,10 +40,12 @@ public class SkyblockLocationHandler {
 
                             if (floor.equalsIgnoreCase("e")) {
                                 SkydopplerClient.currentDungeonFloor = 0;
+                                System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
                                 return;
                             }
                             floor = floor.replaceFirst("([fm])", "");
                             SkydopplerClient.currentDungeonFloor = Integer.parseInt(floor);
+                            System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
 
                         }
 
