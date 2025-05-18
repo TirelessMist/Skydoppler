@@ -5,34 +5,27 @@
 
 package ae.skydoppler.dungeon.map;
 
-import java.awt.Point;
-import java.util.List;
-
 import ae.skydoppler.dungeon.room_detection.MapParser;
 import ae.skydoppler.dungeon.room_detection.MapReassembler;
+import net.minecraft.item.map.MapState;
 
 /**
  *
  * @author VGRADN
  */
-public class MapHandler {
+public class DungeonMapHandler {
 
-    private MapReassembler.Tile[][] map;
+    public static MapReassembler.Tile[][] map = null;
 
-    public MapHandler() {
-        map = MapReassembler.reassembleMap(MapParser.parseMapFromSlot());
-    }
-
-    public MapReassembler.Tile[][] getMap() {
-        return map;
-    }
+    public static boolean useRawMap = false; // Set to true if you want to use the raw map data instead of the parsed map. Faster.
 
     // This should be called every time the map is updated.
-    public void updateMap() {
-        map = MapReassembler.reassembleMap(MapParser.parseMapFromSlot());
+    public static void updateMap(MapReassembler.Tile[][] mapTiles) {
+
+        map = mapTiles;
     }
 
-    public static class BloodPath {
+    /*public static class BloodPath {
 
         public static List<Point> getBlackDoorLocationsInOrder() {
         
@@ -40,5 +33,5 @@ public class MapHandler {
             return null; // Placeholder.
         }
 
-    }
+    }*/
 }
