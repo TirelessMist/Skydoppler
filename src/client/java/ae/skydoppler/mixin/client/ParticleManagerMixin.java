@@ -5,6 +5,7 @@ import ae.skydoppler.player_hiding.HideHubPlayersState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import org.spongepowered.asm.mixin.Mixin;
