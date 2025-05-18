@@ -3,16 +3,21 @@
   "package": "ae.skydoppler.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "BackgroundRendererMixin",
+    "BossBarHudMixin",
     "ChatHudMixin",
     "EntityRenderDispatcherMixin",
+    "GameRendererMixin",
+    "HeldItemRendererMixin",
     "InGameHudMixin",
     "InGameOverlayRendererMixin",
-    "ParticleManagerMixin",
+    "LightmapTextureManagerMixin",
     "ScoreboardMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
+    "MapStateMixin"
   ]
 }
