@@ -60,7 +60,14 @@ public class InGameHudMixin {
     @Inject(method = "renderMountHealth", at = @At("HEAD"), cancellable = true)
     private void onRenderMountHealth(DrawContext context, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideHealthBar)
+        if (HideVanillaHudElementsState.shouldHideMountHealth)
+            ci.cancel();
+    }
+
+    @Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
+    private void onRenderPortalOverlay(DrawContext context, float tickDelta, CallbackInfo ci) {
+
+        if (HideVanillaHudElementsState.shouldHidePortalOverlay)
             ci.cancel();
     }
 
