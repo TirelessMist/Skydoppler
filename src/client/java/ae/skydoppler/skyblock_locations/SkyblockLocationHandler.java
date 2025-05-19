@@ -24,6 +24,8 @@ public class SkyblockLocationHandler {
                 if (zone instanceof SkyblockIslandEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
                     System.out.println("Found location: " + zone);
 
+                    // TODO: add a check for island regions (eg. village, scarleton, etc.)
+
                     SkydopplerClient.currentIsland = island;
                     System.out.println("Current island set to: " + island);
 

@@ -1,0 +1,34 @@
+{
+  "config.ae.skydoppler.title": "Skydoppler Config",
+
+
+  "config.ae.skydoppler.category.general": "General",
+
+  "config.ae.skydoppler.option.hideFarPlayersMode": "Hide Far Players Mode",
+  "config.ae.skydoppler.option.hideFarPlayersMode.hideStartDistance": "Hide Start Distance",
+  "config.ae.skydoppler.option.hideFarPlayersMode.hideStartDistance.tooltip": "The distance from the player (in blocks) that players will be hidden. This only applies when Hide Far Players is enabled.",
+  "config.ae.skydoppler.option.hideFarPlayersMode.none" : "Disabled",
+  "config.ae.skydoppler.option.hideFarPlayersMode.village_only" : "Village Only",
+  "config.ae.skydoppler.option.hideFarPlayersMode.hub_entire": "Entire Hub",
+  "config.ae.skydoppler.option.hideFarPlayersMode.dungeon_and_normal_hub": "Dungeon and Entire Normal Hub",
+  "config.ae.skydoppler.option.hideFarPlayersMode.dungeon_and_village": "Dungeon and Village",
+
+  "config.ae.skydoppler.option.hidePlayersNearNpc": "Hide Players Near NPC",
+
+  "config.ae.skydoppler.option.subcategory.vanilla_hud": "Vanilla HUD Options",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.tooltip": "These options allow you to hide or show various elements of the vanilla HUD.",
+
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_hearts": "Hide Vanilla Hearts",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_hearts.tooltip": "Hide the vanilla health bar above the hotbar.",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_hunger_armor_bubbles": "Hide Hunger, Armor, and Bubbles Bars",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_mount_health": "Hide Mount Health Hearts",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_mount_health.tooltip": "Hide the health bar that appears above the hotbar when riding a horse, pig, or other mount.",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_effect_hud": "Hide Vanilla Status Effect HUD",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_effect_hud.tooltip": "Hides the icons that appear in the top-right corner of the screen when you have a status effect.",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.held_item_tooltips": "Show Held Item Tooltips",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.held_item_tooltips.tooltip": "Show the item name when switching to a new item in the hotbar.",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_portal_overlay": "Hide Nether Portal Overlay",
+  "config.ae.skydoppler.option.subcategory.vanilla_hud.hide_portal_overlay.tooltip": "Hides the fullscreen overlay that shows when the player is in a Nether Portal.",
+
+  "config.ae.skydoppler.category.dungeons": "Dungeons"
+}

@@ -1,7 +1,7 @@
 package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
-import ae.skydoppler.chat.command.SkydopplerCommand;
+import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.map.DungeonMapHandler;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
@@ -11,14 +11,13 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.BackgroundRenderer;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.OptionalDouble;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class SkydopplerClient implements ClientModInitializer {
 
@@ -36,18 +35,25 @@ public class SkydopplerClient implements ClientModInitializer {
     public static int currentDungeonFloor;
     private TextRenderer textRenderer;
 
+    public static SkydopplerConfig CONFIG;
+    public static final Path CONFIG_PATH = Paths.get(MinecraftClient.getInstance() // or use a proper run directory reference
+            .runDirectory.getAbsolutePath(), "config", "skydoppler.json");
+
     @Override
     public void onInitializeClient() {
 
         System.out.println("Skydoppler (Client) is initializing!");
+
+        // Load configuration on initialization
+        CONFIG = SkydopplerConfig.load(CONFIG_PATH);
+
+
         textRenderer = new TextRenderer(client);
         textRenderer.initialize();
         ChatMatchHandler.loadJsonData();
         isRodCast = false;
 
         dungeonMapHandler = new DungeonMapHandler();
-
-        SkydopplerCommand.register();
 
         playerDataStruct = new SkyblockPlayerDataStruct();
 
@@ -76,6 +82,5 @@ public class SkydopplerClient implements ClientModInitializer {
                     bobber -> bobber.getOwner() != null && bobber.getOwner().equals(client.player)
             ).isEmpty();
         });
-
     }
 }

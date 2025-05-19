@@ -5,14 +5,22 @@ import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 
 public class HideHubPlayersState {
     public enum HideLocationMode {
-        VILLAGE_ONLY, HUB_ENTIRE, DUNGEON_AND_NORMAL_HUB, DUNGEON_AND_VILLAGE
-    }
+        NONE, VILLAGE_ONLY, HUB_ENTIRE, DUNGEON_AND_NORMAL_HUB, DUNGEON_AND_VILLAGE;
 
-    public static HideLocationMode hideLocationMode = HideLocationMode.DUNGEON_AND_NORMAL_HUB;
-    public static double showRange = 12.0 /*0.1 * MinecraftClient.getInstance().worldRenderer.getViewDistance()*/;
+        private final String translationKey;
+
+        HideLocationMode() {
+            this.translationKey = "config.ae.skydoppler.option." + this.name().toLowerCase();
+        }
+
+        public String getTranslationKey() {
+            return translationKey;
+        }
+    }
+    public static int showRange = 12 /*0.1 * MinecraftClient.getInstance().worldRenderer.getViewDistance()*/;
 
     public static boolean shouldHidePlayers() {
-        switch (HideHubPlayersState.hideLocationMode) {
+        switch (SkydopplerClient.CONFIG.hideFarPlayersMode) {
             case HideHubPlayersState.HideLocationMode.HUB_ENTIRE -> {
                 return SkydopplerClient.currentIsland == SkyblockIslandEnum.HUB;
             }

@@ -1,5 +1,7 @@
 package ae.skydoppler.mixin.client;
 
+import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.glow.DroppedItemGlowingState;
 import ae.skydoppler.glow.PlayerGlowingState;
@@ -87,7 +89,8 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
     @Unique
     private boolean shouldHideHubPlayer(E entity) {
-        return !HidePlayerNearNpc.isPlayerAnNpc(entity) && entity.squaredDistanceTo(client.player) >= HideHubPlayersState.showRange * HideHubPlayersState.showRange;
+        int d = SkydopplerClient.CONFIG.hideFarPlayersModeDistance;
+        return !HidePlayerNearNpc.isPlayerAnNpc(entity) && entity.squaredDistanceTo(client.player) >= d * d;
     }
 
     @Unique

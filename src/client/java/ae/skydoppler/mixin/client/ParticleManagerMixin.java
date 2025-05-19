@@ -24,7 +24,9 @@ public class ParticleManagerMixin {
 
             double distanceSq = client.player.squaredDistanceTo(x, y, z);
 
-            if (distanceSq >= HideHubPlayersState.showRange * HideHubPlayersState.showRange) {
+            int d = SkydopplerClient.CONFIG.hideFarPlayersModeDistance;
+
+            if (distanceSq >= d * d) {
 
                 cir.setReturnValue(null); // cancel the particle if it is outside the range
             }
