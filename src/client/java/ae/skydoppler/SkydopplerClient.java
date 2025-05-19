@@ -36,6 +36,8 @@ public class SkydopplerClient implements ClientModInitializer {
     public static int currentDungeonFloor;
     private TextRenderer textRenderer;
 
+    // Test Comment - Delete
+
     @Override
     public void onInitializeClient() {
 
