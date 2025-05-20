@@ -79,6 +79,146 @@ public class MapReassembler {
         return newMap;
     }
 
+    private static MapVariantStruct getMapVariant(byte[][] mapPixels) {
+
+        int yDist = 0;
+
+        int topDist;
+        int bottomDist;
+
+        topDist = getDistanceFromYEdge(mapPixels, 0, 1);
+        if (topDist == null) {
+            bottomDist = getDistanceFromYEdge(mapPixels, 127, -1);
+            if (bottomDist == null)
+                return null;
+            else
+                yDist = bottomDist;
+
+        } else {
+            yDist = topDist;
+        }
+        
+        // TODO: add code to gather information and assemble a map variant based on the x and y distances. Remember to add checks for certain floors with rooms that stick out on the sides.
+
+        int xDist = 0;
+
+        int leftDist;
+        int rightDist;
+        
+        leftDist = getDistanceFromXEdge(mapPixels, 0, 1);
+        if (leftDist == null) {
+            rightDist = getDistanceFromXEdge(mapPixels, 127, -1);
+            if (rightDist == null)
+                return null;
+            else
+                xDist = rightDist;
+        } else {
+            xDist = leftDist;
+        }
+    }
+
+    /**
+     * Checks the entire row for a pixel of non-zero value,
+     * and returns the row number that the first occurence
+     * of a non-zero value is in. This should be called for
+     * the top edge, and if return null, for the bottom
+     * edge.
+     * 
+     * 
+     * @param mapPixels  Takes in a byte 2D array of the map's pixels (128x128).
+     * @param row        Changing variable in the recursive function. Always send in 0 or 127 as the starting row of the map.
+     * @param dir        The direction the function should iterate towards (1 = down; -1 = up).
+     * 
+     * <h1>Return Values</h1>
+     * <h3>Possibility cases:</h3>
+     * @return null means no possible map variant.
+     * @return int means possible map variant.
+     * 
+     * <h3>Variation cases:</h3>
+     * @return 22 means (e)
+     * @return 11 means (1,2,3)
+     * @return 5 means (4,5,6,7)
+     */
+    private static int getDistanceFromYEdge(byte[][] mapPixels, int row, int dir) {
+
+        // Possibility case
+        if ((127 - 22) > row > 22)
+            return null;
+
+        // Variation case
+        if (checkRowForNonZeroPixel(mapPixels, row))
+            return row;
+
+        // Recursive case
+        return getDistanceFromYEdge(mapPixels, row + dir)
+
+    }
+
+    /**
+     * Function used by the method @see #getDistanceFromYEdge(byte[][], int, int)
+     * Checks the given row for a non-zero pixel value, and if it finds one,
+     * returns true, otherwise, returns false.
+     */
+    private static boolean checkRowForNonZeroPixel(byte[][] mapPixels, int row) {
+
+        for (int col = 0; col < mapPixels[0].length; col++) {
+            if (mapPixels[row][col] != 0)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks the entire row for a pixel of non-zero value,
+     * and returns the row number that the first occurence
+     * of a non-zero value is in. This should be called for
+     * the top edge, and if return null, for the bottom
+     * edge.
+     * 
+     * 
+     * @param mapPixels  Takes in a byte 2D array of the map's pixels (128x128).
+     * @param col        Changing variable in the recursive function. Always send in 0 or 127 as the starting column of the map.
+     * @param dir        The direction the function should iterate towards (1 = right; -1 = left).
+     * 
+     * <h1>Return Values</h1>
+     * <h3>Possibility cases:</h3>
+     * @return null means no possible map variant.
+     * @return int means possible map variant.
+     * 
+     * <h3>Variation cases:</h3>
+     * @return 22 means (e,1)
+     * @return 11 means (2,3)
+     * @return 5 means (4,5,6,7)
+     */
+    private static int getDistanceFromXEdge(byte[][] mapPixels, int col, int dir) {
+
+        // Possibility case
+        if ((127 - 22) > col > 22)
+            return null;
+
+        // Variation case
+        if (checkColForNonZeroPixel(mapPixels, col))
+            return col;
+
+        // Recursive case
+        return getDistanceFromXEdge(mapPixels, col + dir)
+
+    }
+
+    /**
+     * Function used by the method @see #getDistanceFromXEdge(byte[][], int, int)
+     * Checks the given column for a non-zero pixel value, and if it finds one,
+     * returns true, otherwise, returns false.
+     */
+    private static boolean checkColForNonZeroPixel(byte[][] mapPixels, int col) {
+
+        for (int row = 0; row < mapPixels.length; row++) {
+            if (mapPixels[row][col] != 0)
+                return true;
+        }
+        return false;
+    }
+
     private static TileType getRoomTileAtPixel(byte[][] mapPixels, Point pos) {
 
         switch (mapPixels[pos.x][pos.y]) {
