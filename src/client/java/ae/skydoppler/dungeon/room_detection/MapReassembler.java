@@ -232,13 +232,13 @@ public class MapReassembler {
     private static CheckType getCheckTypeForRoom(byte[][] mapPixels, Point pos) {
 
         // In the case that the given room is the Entrance (same color as green checkmark), return none, as the Entrance room cannot have any checkmarks.
-        if (mapPixels[pos.x][pos.y] == 30) return CheckType.NONE;
+        if (mapPixels[pos.x][pos.y] == 30 || mapPixels[pos.x][pos.y] == 82) return CheckType.NONE;
 
-        // TODO: change the checkmark offset values to the actual offsets, based on the tile size
-        int checkmarkOffsetX = 0;
-        int checkmarkOffsetY = 0;
+        // the checkmark positions are always the same
+        int chX = 9;
+        int chY = 9;
 
-        byte checkmark = mapPixels[pos.x + checkmarkOffsetX][pos.y + checkmarkOffsetY];
+        byte checkmark = mapPixels[pos.x + chX][pos.y + chY];
 
         switch (checkmark) {
 
