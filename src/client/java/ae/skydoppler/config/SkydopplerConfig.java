@@ -13,11 +13,22 @@ import java.nio.file.StandardOpenOption;
 
 public class SkydopplerConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+
     public HideHubPlayersState.HideLocationMode hideFarPlayersMode = HideHubPlayersState.HideLocationMode.NONE;
-    public int hideFarPlayersModeDistance = 12;
+    public int hideFarPlayersRange = 12;
+
+    public long hidePlayersNearNpcRange = 125L;
     public boolean hidePlayersNearNpc = false;
 
+    public boolean showFog = true;
+
+    public boolean glowingDroppedItems = false;
+
     public VanillaHudConfig vanillaHudConfig = new VanillaHudConfig();
+
+    public boolean hidePlayersWhileFishing = false;
+    public boolean hideOtherFishingRods = false;
 
     // Load config from file
     public static SkydopplerConfig load(Path path) {
@@ -49,5 +60,7 @@ public class SkydopplerConfig {
         public boolean shouldHideHeldItemTooltip = false;
         public boolean shouldHideMountHealth = true;
         public boolean shouldHidePortalOverlay = true;
+        public boolean shouldHideFireOverlayFirstPerson = false;
+        public boolean shouldHideWitherBossbarsInSkyblock = false;
     }
 }
