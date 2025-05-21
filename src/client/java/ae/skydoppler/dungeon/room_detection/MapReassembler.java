@@ -1,15 +1,12 @@
 package ae.skydoppler.dungeon.room_detection;
 
-import ae.skydoppler.SkydopplerClient;
+import java.awt.Point;
 
-import java.awt.*;
+import ae.skydoppler.structs.Size;
 
 public class MapReassembler {
 
-    private static int borderWidth;
-    private static int borderHeight; // TODO: Set this to the correct value, hardcoded depending on the current dungeon floor (just like borderWidth is set).
-
-    private static int tileLength;
+    private static MapVariantStruct mapVariantStruct; // TODO: Set this to the correct value, hardcoded depending on the current dungeon floor (just like borderWidth is set).
 
     public static Tile[][] reassembleMap(byte[][] mapPixels) {
 
@@ -18,58 +15,45 @@ public class MapReassembler {
         Tile[][] newMap;
 
         // set map grid size based on the current dungeon floor from scoreboard
-        switch (SkydopplerClient.currentDungeonFloor) {
+        /*switch (SkydopplerClient.currentDungeonFloor) {
             case 0: {
-                newMap = new Tile[4][4];
-                borderWidth = 22;
-                tileLength = 18;
+                mapVariantStruct.initializeValues(22, 22, 18, new Size(4,4));
                 break;
             }
             case 1: {
-                newMap = new Tile[4][5];
-                borderWidth = 22;
-                borderHeight = 11;
-                tileLength = 18;
+                mapVariantStruct.initializeValues(22,11,18,new Size(4,5));
                 break;
             }
             case 2:
             case 3: {
-                newMap = new Tile[5][5];
-                borderWidth = 11;
-                borderHeight = 11;
-                tileLength = 18;
+                mapVariantStruct.initializeValues(11,11,18,new Size(5,5));
                 break;
             }
             case 4:
             case 5: {
-                newMap = new Tile[6][5];
-                borderWidth = 5;
-                borderHeight = 5;
-                tileLength = 16;
+                mapVariantStruct.initializeValues(5,5,16,new Size(6,5));
                 break;
             }
             case 6:
             case 7: {
-                newMap = new Tile[6][6];
-                borderWidth = 5;
-                tileLength = 16;
+                mapVariantStruct.initializeValues(5,5,16,new Size(6,6));
                 break;
             }
             default: {
-                newMap = new Tile[0][0]; // Later, add actual calculation for the map size, as a fallback in case scoreboard dungeon floor detection doesn't work.
-                borderWidth = 0;
-                borderHeight = 0;
-                tileLength = 0;
+                mapVariantStruct = getMapVariant(mapPixels);
                 break;
             }
-        }
+        }*/
+        mapVariantStruct = getMapVariant(mapPixels);
+        if (mapVariantStruct == null) return null;
+        newMap = new Tile[mapVariantStruct.gridSize.getW()][mapVariantStruct.gridSize.getH()];
 
         // For each tile in the new map (newMap), fill it in depending on its corresponding space in the mapPixels map data.
         for (int row = 0; row < newMap.length; row++) {
             for (int col = 0; col < newMap[0].length; col++) {
 
                 // Point p is the top-left pixel of a room tile. The (col * 4) and (row * 4) is to account for room spacing, which is always 4 (verify).
-                Point p = new Point(col * tileLength + borderWidth + (col * 4), row * tileLength + borderHeight + (row * 4));
+                Point p = new Point(col * mapVariantStruct.cellSize + mapVariantStruct.borderWidth + (col * 4), row * mapVariantStruct.cellSize + mapVariantStruct.borderHeight + (row * 4));
                 newMap[row][col] = new Tile(getRoomTileAtPixel(mapPixels, p), getCheckTypeForRoom(mapPixels, p), getDoorsForRoom(mapPixels, p));
 
                 // TODO: if the room is red room, if checkmark is white, it is ready, if checkmark is green, it is completed. Add it in a map handler file.
@@ -83,13 +67,13 @@ public class MapReassembler {
 
         int yDist = 0;
 
-        int topDist;
-        int bottomDist;
+        int topDist = 0;
+        int bottomDist = 0;
 
         topDist = getDistanceFromYEdge(mapPixels, 0, 1);
-        if (topDist == null) {
+        if (topDist == -1) {
             bottomDist = getDistanceFromYEdge(mapPixels, 127, -1);
-            if (bottomDist == null)
+            if (bottomDist == -1)
                 return null;
             else
                 yDist = bottomDist;
@@ -97,24 +81,26 @@ public class MapReassembler {
         } else {
             yDist = topDist;
         }
-        
+
         // TODO: add code to gather information and assemble a map variant based on the x and y distances. Remember to add checks for certain floors with rooms that stick out on the sides.
 
         int xDist = 0;
 
-        int leftDist;
-        int rightDist;
-        
+        int leftDist = 0;
+        int rightDist = 0;
+
         leftDist = getDistanceFromXEdge(mapPixels, 0, 1);
-        if (leftDist == null) {
+        if (leftDist == -1) {
             rightDist = getDistanceFromXEdge(mapPixels, 127, -1);
-            if (rightDist == null)
+            if (rightDist == -1)
                 return null;
             else
                 xDist = rightDist;
         } else {
             xDist = leftDist;
         }
+        //please add code to check if the xDist and yDist match certain cases. please make a thing that holds the different combinations of x and y values: floor 0 -> x= 22, y = 22; floor 1 -> x=22,y=11;floor 2 and 3 -> x=11,y=11; 
+        return null;
     }
 
     /**
@@ -123,34 +109,25 @@ public class MapReassembler {
      * of a non-zero value is in. This should be called for
      * the top edge, and if return null, for the bottom
      * edge.
-     * 
-     * 
-     * @param mapPixels  Takes in a byte 2D array of the map's pixels (128x128).
-     * @param row        Changing variable in the recursive function. Always send in 0 or 127 as the starting row of the map.
-     * @param dir        The direction the function should iterate towards (1 = down; -1 = up).
-     * 
-     * <h1>Return Values</h1>
-     * <h3>Possibility cases:</h3>
-     * @return null means no possible map variant.
-     * @return int means possible map variant.
-     * 
-     * <h3>Variation cases:</h3>
-     * @return 22 means (e)
-     * @return 11 means (1,2,3)
-     * @return 5 means (4,5,6,7)
+     *
+     * @param mapPixels Takes in a byte 2D array of the map's pixels (128x128).
+     * @param row       Changing variable in the recursive function. Always send in 0 or 127 as the starting row of the map.
+     * @param dir       The direction the function should iterate towards (1 = down; -1 = up).
+     *
+     * @return a row number if a non-zero pixel is found, otherwise -1.
      */
     private static int getDistanceFromYEdge(byte[][] mapPixels, int row, int dir) {
 
         // Possibility case
-        if ((127 - 22) > row > 22)
-            return null;
+        if ((127 - 22) > row && row > 22)
+            return -1;
 
         // Variation case
         if (checkRowForNonZeroPixel(mapPixels, row))
             return row;
 
         // Recursive case
-        return getDistanceFromYEdge(mapPixels, row + dir)
+        return getDistanceFromYEdge(mapPixels, row + dir, dir);
 
     }
 
@@ -174,34 +151,25 @@ public class MapReassembler {
      * of a non-zero value is in. This should be called for
      * the top edge, and if return null, for the bottom
      * edge.
-     * 
-     * 
-     * @param mapPixels  Takes in a byte 2D array of the map's pixels (128x128).
-     * @param col        Changing variable in the recursive function. Always send in 0 or 127 as the starting column of the map.
-     * @param dir        The direction the function should iterate towards (1 = right; -1 = left).
-     * 
-     * <h1>Return Values</h1>
-     * <h3>Possibility cases:</h3>
-     * @return null means no possible map variant.
-     * @return int means possible map variant.
-     * 
-     * <h3>Variation cases:</h3>
-     * @return 22 means (e,1)
-     * @return 11 means (2,3)
-     * @return 5 means (4,5,6,7)
+     *
+     * @param mapPixels Takes in a byte 2D array of the map's pixels (128x128).
+     * @param col       Changing variable in the recursive function. Always send in 0 or 127 as the starting column of the map.
+     * @param dir       The direction the function should iterate towards (1 = right; -1 = left).
+     *
+     * @return a column number if a non-zero pixel is found, otherwise -1.
      */
     private static int getDistanceFromXEdge(byte[][] mapPixels, int col, int dir) {
 
         // Possibility case
-        if ((127 - 22) > col > 22)
-            return null;
+        if ((127 - 22) > col && col > 22)
+            return -1;
 
         // Variation case
         if (checkColForNonZeroPixel(mapPixels, col))
             return col;
 
         // Recursive case
-        return getDistanceFromXEdge(mapPixels, col + dir)
+        return getDistanceFromXEdge(mapPixels, col + dir, dir);
 
     }
 
@@ -251,11 +219,11 @@ public class MapReassembler {
         // TODO: Add checks for if the given room is a special kind that can only have one door to reduce unnessecary checks if it finds a door before it finishes checking all 4 sides.
 
         DoorType[] doors = new DoorType[4];
-        
-        doors[0] = getDoorAtPos(mapPixels, new Point(pos.x + (tileLength / 2), pos.y - 1)); // top
-        doors[1] = getDoorAtPos(mapPixels, new Point(pos.x + tileLength + 1, pos.y + (tileLength / 2))); // right
-        doors[2] = getDoorAtPos(mapPixels, new Point(pos.x + (tileLength / 2), pos.y + tileLength + 1)); // bottom
-        doors[3] = getDoorAtPos(mapPixels, new Point(pos.x - 1, pos.y + (tileLength / 2))); // left
+
+        doors[0] = getDoorAtPos(mapPixels, new Point(pos.x + (mapVariantStruct.cellSize / 2), pos.y - 1)); // top
+        doors[1] = getDoorAtPos(mapPixels, new Point(pos.x + mapVariantStruct.cellSize + 1, pos.y + (mapVariantStruct.cellSize / 2))); // right
+        doors[2] = getDoorAtPos(mapPixels, new Point(pos.x + (mapVariantStruct.cellSize / 2), pos.y + mapVariantStruct.cellSize + 1)); // bottom
+        doors[3] = getDoorAtPos(mapPixels, new Point(pos.x - 1, pos.y + (mapVariantStruct.cellSize / 2))); // left
 
         return doors;
 
@@ -286,7 +254,7 @@ public class MapReassembler {
     }
 
     private static DoorType getDoorAtPos(byte[][] mapPixels, Point pos) {
-        
+
         switch (mapPixels[pos.x][pos.y]) {
 
             case 0:
@@ -327,6 +295,22 @@ public class MapReassembler {
         NORMAL_DOOR,
         WITHER_DOOR,
         BLOOD_DOOR
+    }
+
+    public static class MapVariantStruct {
+
+        public int borderWidth;
+        public int borderHeight;
+        public int cellSize;
+        public Size gridSize;
+
+        public void initializeValues(int borderWidth, int borderHeight, int cellSize, Size gridSize) {
+            this.borderWidth = borderWidth;
+            this.borderHeight = borderHeight;
+            this.cellSize = cellSize;
+            this.gridSize = gridSize;
+        }
+
     }
 
     public static class Tile {
