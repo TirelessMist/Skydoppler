@@ -7,6 +7,7 @@ import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RotationAxis;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HeldItemRenderer.class)
 public abstract class HeldItemRendererMixin {
@@ -38,18 +40,35 @@ public abstract class HeldItemRendererMixin {
         }
     }
 
+    /*@Inject(method = "renderArm", at = @At("HEAD"))
+    private void onRenderArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Arm arm, CallbackInfo ci) {
+
+        float rotX = 0;
+        float rotY = 0;
+        float rotZ = 0;
+        float posX = 0;
+        float posY = 0;
+        float posZ = 0;
+
+        float scale = 0.5f;
+        matrices.translate(posX, posY, posZ);
+
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotX));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
+        matrices.scale(scale, scale, scale);
+
+    }*/
+
     @ModifyExpressionValue(method = "updateHeldItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getAttackCooldownProgress(F)F"))
     public float attackCooldown(float original) {
         return 1f;
     }
 
-    @Inject(method = "applyEquipOffset", at = @At("HEAD"), cancellable = true)
-    public void onApplyEquipOffset(MatrixStack matrices, Arm arm, float equipProgress, CallbackInfo ci) {
-        if (true) {
-            int i = arm == Arm.RIGHT ? 1 : -1;
-            matrices.translate((float) i * 0.56f, -0.52f, -0.72f);
-            ci.cancel();
-        }
+    @Inject(method = "shouldSkipHandAnimationOnSwap", at = @At("HEAD"), cancellable = true)
+    private void onShouldSkipHandAnimationOnSwap(ItemStack from, ItemStack _to, CallbackInfoReturnable<Boolean> cir) {
+
+        cir.setReturnValue(!(from.isOf(Items.AIR) || _to.isOf(Items.AIR)));
     }
 
     @Inject(method = "applyEatOrDrinkTransformation", at = @At("HEAD"), cancellable = true)
