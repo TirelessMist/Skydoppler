@@ -78,6 +78,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
         }
     }
 
+    // TODO: add check for if the entity is an NPC, and if it is, don't hide it.
     @Unique
     private boolean shouldHideFishingEntity(E entity) {
         return (entity instanceof PlayerEntity player && !player.equals(client.player)
@@ -89,7 +90,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
     @Unique
     private boolean shouldHideHubPlayer(E entity) {
-        int d = SkydopplerClient.CONFIG.hideFarPlayersModeDistance;
+        int d = SkydopplerClient.CONFIG.hideFarPlayersRange;
         return !HidePlayerNearNpc.isPlayerAnNpc(entity) && entity.squaredDistanceTo(client.player) >= d * d;
     }
 

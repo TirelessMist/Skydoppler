@@ -1,5 +1,7 @@
 package ae.skydoppler.mixin.client;
 
+import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.model.EntityFireHideState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
@@ -16,7 +18,7 @@ public class InGameOverlayRendererMixin {
 
     @Inject(method = "renderFireOverlay", at = @At("HEAD"), cancellable = true)
     private static void onSetupOverlayColor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
-        if (EntityFireHideState.HideFirstPersonFire) {
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideFireOverlayFirstPerson) {
 
             ci.cancel();
         }
