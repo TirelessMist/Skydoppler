@@ -27,7 +27,7 @@ public class MapParser {
 
         // The map color data is held in a byte array.
         // Minecraft maps are 128 col 128 pixels, so the array should contain 16384 bytes.
-        byte[] colors = mapState.colors; // In Yarn, the colors array is typically publicly accessible.
+        byte[] colors = mapState.colors;
         // The map's width and height in pixels.
         final int width = 128;
         final int height = 128;
@@ -42,7 +42,6 @@ public class MapParser {
             for (int y = 0; y < width; y++) {
                 // Compute the flat array index corresponding to the (col, row) coordinate.
                 int index = x + (y * width);
-                // Since bytes in Java are signed, we use & 0xFF to convert the value to an unsigned int.
                 mapPixels[y][x] = colors[index];
             }
         }
