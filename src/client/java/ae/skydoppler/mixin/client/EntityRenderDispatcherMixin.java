@@ -1,11 +1,6 @@
 package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.config.SkydopplerConfig;
-import ae.skydoppler.fishing.FishingHideState;
-import ae.skydoppler.glow.DroppedItemGlowingState;
-import ae.skydoppler.glow.PlayerGlowingState;
-import ae.skydoppler.model.EntityFireHideState;
 import ae.skydoppler.player_hiding.HideHubPlayersState;
 import ae.skydoppler.player_hiding.HidePlayerNearNpc;
 import net.minecraft.client.MinecraftClient;
@@ -37,7 +32,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
     private void onRender(E entity, double x, double y, double z, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         if (client.world == null || client.player == null) return;
 
-        if (FishingHideState.rodCastActive && shouldHideFishingEntity(entity)) {
+        if (SkydopplerClient.isRodCast && shouldHideFishingEntity(entity)) {
             ci.cancel();
             return;
         }
@@ -58,12 +53,12 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
         }
 
-        if (DroppedItemGlowingState.glowing && entity instanceof ItemEntity item) {
+        if (SkydopplerClient.CONFIG.glowingDroppedItems && entity instanceof ItemEntity item) {
             item.setGlowing(true);
             return;
         }
 
-        if (PlayerGlowingState.shouldGlow && entity instanceof PlayerEntity && !HidePlayerNearNpc.isPlayerAnNpc(entity)) {
+        if (SkydopplerClient.CONFIG.glowingPlayers && entity instanceof PlayerEntity && !HidePlayerNearNpc.isPlayerAnNpc(entity)) {
 
             entity.setGlowing(true);
         }
@@ -72,21 +67,22 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
     @Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
     private void onRenderFire(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, Quaternionf rotation, CallbackInfo ci) {
 
-        if (EntityFireHideState.HideFireOnEntities) {
+        if (SkydopplerClient.CONFIG.hideThirdPersonFireOverlay) {
 
             ci.cancel();
         }
     }
 
-    // TODO: add check for if the entity is an NPC, and if it is, don't hide it.
     @Unique
     private boolean shouldHideFishingEntity(E entity) {
+        int range = SkydopplerClient.CONFIG.hidePlayersWhileFishingRange;
+        int rangeSquared = range * range;
         return (entity instanceof PlayerEntity player && !player.equals(client.player)
                 && !HidePlayerNearNpc.isPlayerAnNpc(player)
-                && player.squaredDistanceTo(client.player) <= FishingHideState.hideRange * FishingHideState.hideRange)
+                && player.squaredDistanceTo(client.player) <= rangeSquared)
                 || (entity instanceof FishingBobberEntity bobber && bobber.getOwner() != null
                 && !bobber.getOwner().equals(client.player)
-                && bobber.squaredDistanceTo(client.player) <= FishingHideState.hideRange * FishingHideState.hideRange);
+                && bobber.squaredDistanceTo(client.player) <= rangeSquared);
     }
 
     @Unique
@@ -97,9 +93,10 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
 
     @Unique
     private boolean isEntityNearNpc(PlayerEntity entity) {
+        float range = SkydopplerClient.CONFIG.hidePlayersNearNpcRange;
         return StreamSupport.stream(client.world.getEntities().spliterator(), false)
                 .filter(e -> e instanceof PlayerEntity && HidePlayerNearNpc.isPlayerAnNpc(e))
-                .anyMatch(e -> entity.squaredDistanceTo(e) <= HidePlayerNearNpc.hideRange * HidePlayerNearNpc.hideRange);
+                .anyMatch(e -> entity.squaredDistanceTo(e) <= range * range);
     }
 
 }
