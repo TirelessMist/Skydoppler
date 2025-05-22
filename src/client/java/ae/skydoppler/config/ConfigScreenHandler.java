@@ -95,16 +95,58 @@ public class ConfigScreenHandler {
         //endregion
 
 
+        //region alwaysSprint
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.alwaysSprint"), config.alwaysSprint)
+                .setDefaultValue(true)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.alwaysSprint.tooltip"))
+                .setSaveConsumer(newValue -> config.alwaysSprint = newValue)
+                .build());
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.alwaysSprintOnlyInSkyblock"), config.alwaysSprintOnlyInSkyblock)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.alwaysSprintOnlyInSkyblock.tooltip"))
+                .setSaveConsumer(newValue -> config.alwaysSprintOnlyInSkyblock = newValue)
+                .build());
+
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.showFog"), config.showFog)
                 .setDefaultValue(true)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.showFog.tooltip"))
                 .setSaveConsumer(newValue -> config.showFog = newValue)
                 .build());
 
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.doFullbright"), config.doFullbright)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.doFullbright.tooltip"))
+                .setSaveConsumer(newValue -> config.doFullbright = newValue)
+                .build());
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideClouds"), config.hideClouds)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideClouds.tooltip"))
+                .setSaveConsumer(newValue -> config.hideClouds = newValue)
+                .build());
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideNightVisionEffect"), config.hideNightVisionEffect)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideNightVisionEffect.tooltip"))
+                .setSaveConsumer(newValue -> config.hideNightVisionEffect = newValue)
+                .build());
+
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.glowingDroppedItems"), config.glowingDroppedItems)
                 .setDefaultValue(false)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.glowingDroppedItems.tooltip"))
                 .setSaveConsumer(newValue -> config.glowingDroppedItems = newValue)
+                .build());
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.glowingPlayers"), config.glowingPlayers)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.glowingPlayers.tooltip"))
+                .setSaveConsumer(newValue -> config.glowingPlayers = newValue)
+                .build());
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideThirdPersonFireOverlay"), config.hideThirdPersonFireOverlay)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideThirdPersonFireOverlay.tooltip"))
+                .setSaveConsumer(newValue -> config.hideThirdPersonFireOverlay = newValue)
                 .build());
 
         //noinspection rawtypes
@@ -165,6 +207,13 @@ public class ConfigScreenHandler {
                 .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.hidePlayersWhileFishing.tooltip"))
                 .setSaveConsumer(newValue -> config.hidePlayersWhileFishing = newValue)
                 .build());
+
+        fishingCategory.addEntry(entryBuilder.startIntSlider(Text.translatable("config.ae.skydoppler.fishing.option.hidePlayersWhileFishingRange"), config.hidePlayersWhileFishingRange, 2, 64)
+                .setDefaultValue(12)
+                .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.hidePlayersWhileFishingRange.tooltip"))
+                .setSaveConsumer(newValue -> config.hidePlayersWhileFishingRange = newValue)
+                .build());
+
         fishingCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.hideOtherFishingRods"), config.hideOtherFishingRods)
                 .setDefaultValue(false)
                 .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.hideOtherFishingRods.tooltip"))
