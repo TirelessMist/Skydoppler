@@ -2,7 +2,6 @@ package ae.skydoppler.chat;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.TextRenderer;
-import ae.skydoppler.fishing.SeacreatureMessageState;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -80,19 +79,19 @@ public class ChatMatchHandler {
             if (CheckMatch(chatMessage, matchStrings, ChatMatchType.match_exactly, ChatMatchCaseSensitivityType.case_sensitive)) {
                 String displayText = obj.get("displayText").getAsString();
 
-                if (SeacreatureMessageState.showTitle) {
+                if (SkydopplerClient.CONFIG.seacreatureMessageConfig.showTitle) {
                     TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
                 }
 
-                if (client.player != null && SeacreatureMessageState.shouldPlaySound) {
+                if (client.player != null && SkydopplerClient.CONFIG.seacreatureMessageConfig.shouldPlaySound) {
                     client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
                 }
 
-                if (SeacreatureMessageState.showCustomChatMessage) {
+                if (SkydopplerClient.CONFIG.seacreatureMessageConfig.showCustomChatMessage) {
                     returnString = "§eYou fished up a " + displayText + "§e.";
                 }
 
-                if (SeacreatureMessageState.shouldHideOriginalMessage) {
+                if (SkydopplerClient.CONFIG.seacreatureMessageConfig.shouldHideOriginalMessage) {
                     returnString = "\\hide" + returnString;
                 }
 
