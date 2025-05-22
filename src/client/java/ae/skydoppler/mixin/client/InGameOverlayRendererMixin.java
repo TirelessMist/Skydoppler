@@ -1,8 +1,6 @@
 package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.config.SkydopplerConfig;
-import ae.skydoppler.model.EntityFireHideState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
