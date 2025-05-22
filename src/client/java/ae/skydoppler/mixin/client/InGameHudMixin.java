@@ -1,12 +1,10 @@
 package ae.skydoppler.mixin.client;
 
-import ae.skydoppler.hud.HideVanillaHudElementsState;
-import ae.skydoppler.model.EntityFireHideState;
+import ae.skydoppler.SkydopplerClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,56 +16,56 @@ public class InGameHudMixin {
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
     private void onRenderStatusEffectOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideStatusEffectOverlay)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideStatusEffectOverlay)
             ci.cancel();
     }
 
     @Inject(method = "renderFood", at = @At("HEAD"), cancellable = true)
     private void onRenderFood(DrawContext context, PlayerEntity player, int top, int right, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideHungerArmorBubbles)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideHungerArmorBubbles)
             ci.cancel();
     }
 
     @Inject(method = "renderArmor", at = @At("HEAD"), cancellable = true)
     private static void onRenderArmor(DrawContext context, PlayerEntity player, int i, int j, int k, int x, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideHungerArmorBubbles)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideHungerArmorBubbles)
             ci.cancel();
     }
 
     @Inject(method = "renderAirBubbles", at = @At("HEAD"), cancellable = true)
     private void onRenderAirBubbles(DrawContext context, PlayerEntity player, int heartCount, int top, int left, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideHungerArmorBubbles)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideHungerArmorBubbles)
             ci.cancel();
     }
 
     @Inject(method = "renderHeldItemTooltip", at = @At("HEAD"), cancellable = true)
     private void onRenderHeldItemTooltip(DrawContext context, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideHeldItemTooltip)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideHeldItemTooltip)
             ci.cancel();
     }
 
     @Inject(method = "renderHealthBar", at = @At("HEAD"), cancellable = true)
     private void onRenderHealthBar(DrawContext context, PlayerEntity player, int x, int y, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideHealthBar)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideHealthBar)
             ci.cancel();
     }
 
     @Inject(method = "renderMountHealth", at = @At("HEAD"), cancellable = true)
     private void onRenderMountHealth(DrawContext context, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHideMountHealth)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideMountHealth)
             ci.cancel();
     }
 
     @Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
     private void onRenderPortalOverlay(DrawContext context, float tickDelta, CallbackInfo ci) {
 
-        if (HideVanillaHudElementsState.shouldHidePortalOverlay)
+        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHidePortalOverlay)
             ci.cancel();
     }
 
