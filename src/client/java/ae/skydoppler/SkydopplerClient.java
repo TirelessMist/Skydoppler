@@ -3,7 +3,6 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.map.DungeonMapHandler;
-import ae.skydoppler.fishing.FishingHideState;
 import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
@@ -68,17 +67,17 @@ public class SkydopplerClient implements ClientModInitializer {
             }
 
             if (client.world == null || client.player == null) {
-                FishingHideState.rodCastActive = false;
+                isRodCast = false;
                 return;
             }
 
-            double r = FishingHideState.hideRange;
+            double r = CONFIG.hidePlayersWhileFishingRange;
             Box box = new Box(
                     client.player.getX() - r, client.player.getY() - r, client.player.getZ() - r,
                     client.player.getX() + r, client.player.getY() + r, client.player.getZ() + r
             );
 
-            FishingHideState.rodCastActive = !client.world.getEntitiesByClass(FishingBobberEntity.class, box,
+            isRodCast = !client.world.getEntitiesByClass(FishingBobberEntity.class, box,
                     bobber -> bobber.getOwner() != null && bobber.getOwner().equals(client.player)
             ).isEmpty();
         });
