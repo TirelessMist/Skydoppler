@@ -12,12 +12,14 @@
     "InGameHudMixin",
     "InGameOverlayRendererMixin",
     "LightmapTextureManagerMixin",
+    "ClientPlayerEntityMixin",
     "ScoreboardMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "MapStateMixin"
+    "MapStateMixin",
+    "KeyBindingMixin"
   ]
 }
