@@ -20,18 +20,18 @@ public class ParticleManagerMixin {
 
     @Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At("HEAD"), cancellable = true)
     private void onAddParticle(ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, CallbackInfoReturnable<Particle> cir) {
-        if (HideHubPlayersState.shouldHidePlayers() && client.player != null) {
+        /*if (HideHubPlayersState.shouldHidePlayers() && client.player != null) {
 
             double distanceSq = client.player.squaredDistanceTo(x, y, z);
 
-            int d = SkydopplerClient.CONFIG.hideFarPlayersModeDistance;
+            int d = SkydopplerClient.CONFIG.hideFarPlayersRange;
 
             if (distanceSq >= d * d) {
 
                 cir.setReturnValue(null); // cancel the particle if it is outside the range
             }
 
-        } else if (parameters.getType() == ParticleTypes.EXPLOSION && SkydopplerClient.hideExplosionParticle) {
+        } else */if (parameters.getType() == ParticleTypes.EXPLOSION && SkydopplerClient.CONFIG.hideExplosionParticle) {
 
             cir.setReturnValue(null); // cancel the particle if it is an explosion particle
 
