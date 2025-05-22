@@ -1,13 +1,17 @@
 package ae.skydoppler.config;
 
+import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.player_hiding.HideHubPlayersState;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.api.Requirement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ConfigScreenHandler {
 
@@ -23,9 +27,53 @@ public class ConfigScreenHandler {
         var generalCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.general"));
 
 
-        // TODO: add hide players in hub range (and fix region detection).
+        //region hideFarPlayers
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.doFarPlayerHiding"), config.doFarPlayerHiding)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.doFarPlayerHiding.tooltip"))
+                .setSaveConsumer(v -> config.doFarPlayerHiding = v)
+                .build()
+        );
+
+        generalCategory.addEntry(entryBuilder.startEnumSelector(
+                        Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode"),
+                        HideHubPlayersState.HideLocationMode.class,
+                        config.hideFarPlayersMode
+                )
+                .setDefaultValue(HideHubPlayersState.HideLocationMode.HUB_ENTIRE)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode.tooltip"))
+                .setEnumNameProvider(mode -> Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode." + mode.name().toLowerCase()))
+                .setTooltipSupplier(mode -> Optional.of(new Text[]{
+                        Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode." + mode.name().toLowerCase() + ".tooltip")
+                }))
+                .setSaveConsumer(newValue -> config.hideFarPlayersMode = newValue)
+
+                .build());
+
+        /*generalCategory.addEntry(entryBuilder.startDropdownMenu(
+                                Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode"),
+                                DropdownMenuBuilder.TopCellElementBuilder.of(
+                                        config.hideFarPlayersMode,
+                                        mode -> Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode." + HideHubPlayersState.HideLocationMode.valueOf(mode).toString().toLowerCase()).getString()
+                                )
+                        )
+                        .setDefaultValue(HideHubPlayersState.HideLocationMode.HUB_ENTIRE)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode.tooltip"))
+                        .build()
+        );*/
+
+        generalCategory.addEntry(entryBuilder.startIntSlider(Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode.hideStartDistance"), config.hideFarPlayersRange, 2, 64)
+                .setDefaultValue(12)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode.hideStartDistance.tooltip"))
+                .setSaveConsumer(v -> config.hideFarPlayersRange = v)
+                .build()
+        );
+
+        //endregion
 
 
+        //region hidePlayersNearNpc
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpc"), config.hidePlayersNearNpc)
                 .setDefaultValue(false)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpc.tooltip"))
@@ -33,11 +81,19 @@ public class ConfigScreenHandler {
                 .build());
 
         // TODO: add conversion to divide long by 100 to get decimal number.
-        generalCategory.addEntry(entryBuilder.startLongSlider(Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpcRange"), config.hidePlayersNearNpcRange, 0L, 500L)
-                .setDefaultValue(125L)
+        generalCategory.addEntry(entryBuilder.startIntSlider(
+                        Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpcRange"),
+                        (int) (config.hidePlayersNearNpcRange * 100), // stored as float, converted to int, visually converted to float, returned as float
+                        50, // 0.50f * 100
+                        500 // 5.00f * 100
+                )
+                .setDefaultValue(125)
+                .setTextGetter(val -> Text.literal(String.format("%.2f", val / 100.0f)))
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpcRange.tooltip"))
-                .setSaveConsumer(newValue -> config.hidePlayersNearNpcRange = newValue)
+                .setSaveConsumer(newValue -> config.hidePlayersNearNpcRange = newValue / 100.0f)
                 .build());
+        //endregion
+
 
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.showFog"), config.showFog)
                 .setDefaultValue(true)
@@ -100,7 +156,7 @@ public class ConfigScreenHandler {
 
         //endregion
 
-        //region Description
+        //region FISHING_CATEGORY
 
         var fishingCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.fishing"));
 
@@ -114,8 +170,48 @@ public class ConfigScreenHandler {
                 .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.hideOtherFishingRods.tooltip"))
                 .setSaveConsumer(newValue -> config.hideOtherFishingRods = newValue)
                 .build());
+        fishingCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.doLegendarySeacreatureAlerts"), config.doLegendarySeacreatureAlerts)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.doLegendarySeacreatureAlerts.tooltip"))
+                .setSaveConsumer(newValue -> config.doLegendarySeacreatureAlerts = newValue)
+                .build());
+
+        //noinspection rawtypes
+        List<AbstractConfigListEntry> seacreatureMessageConfigEntries = List.of(
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldHideOriginalMessage"), config.seacreatureMessageConfig.shouldHideOriginalMessage)
+                        .setDefaultValue(true)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldHideOriginalMessage.tooltip"))
+                        .setSaveConsumer(newValue -> config.seacreatureMessageConfig.shouldHideOriginalMessage = newValue)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showCustomChatMessage"), config.seacreatureMessageConfig.showCustomChatMessage)
+                        .setDefaultValue(true)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showCustomChatMessage.tooltip"))
+                        .setSaveConsumer(newValue -> config.seacreatureMessageConfig.showCustomChatMessage = newValue)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showTitle"), config.seacreatureMessageConfig.showTitle)
+                        .setDefaultValue(true)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showTitle.tooltip"))
+                        .setSaveConsumer(newValue -> config.seacreatureMessageConfig.showTitle = newValue)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound"), config.seacreatureMessageConfig.shouldPlaySound)
+                        .setDefaultValue(true)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound.tooltip"))
+                        .setSaveConsumer(newValue -> config.seacreatureMessageConfig.shouldPlaySound = newValue)
+                        .build()
+        );
+
+        fishingCategory.addEntry(entryBuilder.startSubCategory(
+                                Text.translatable("config.ae.skydoppler.general.option.subcategory.seacreatureMessageConfig"),
+                                seacreatureMessageConfigEntries
+                        )
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.subcategory.seacreatureMessageConfig.tooltip"))
+                        .build()
+        );
 
         //endregion
+
+
+        builder.setSavingRunnable(() -> config.save(SkydopplerClient.CONFIG_PATH));
 
 
         return builder.build();

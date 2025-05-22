@@ -14,11 +14,13 @@ import java.nio.file.StandardOpenOption;
 public class SkydopplerConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-
-    public HideHubPlayersState.HideLocationMode hideFarPlayersMode = HideHubPlayersState.HideLocationMode.NONE;
+    public boolean doFarPlayerHiding = false;
+    public HideHubPlayersState.HideLocationMode hideFarPlayersMode = HideHubPlayersState.HideLocationMode.HUB_ENTIRE;
     public int hideFarPlayersRange = 12;
 
-    public long hidePlayersNearNpcRange = 125L;
+    public boolean hideExplosionParticle = true;
+
+    public float hidePlayersNearNpcRange = 1.25f;
     public boolean hidePlayersNearNpc = false;
 
     public boolean showFog = true;
@@ -29,6 +31,9 @@ public class SkydopplerConfig {
 
     public boolean hidePlayersWhileFishing = false;
     public boolean hideOtherFishingRods = false;
+    public boolean doLegendarySeacreatureAlerts = true;
+    public SeacreatureMessageConfig seacreatureMessageConfig = new SeacreatureMessageConfig();
+
 
     // Load config from file
     public static SkydopplerConfig load(Path path) {
@@ -62,5 +67,12 @@ public class SkydopplerConfig {
         public boolean shouldHidePortalOverlay = true;
         public boolean shouldHideFireOverlayFirstPerson = false;
         public boolean shouldHideWitherBossbarsInSkyblock = false;
+    }
+
+    public static class SeacreatureMessageConfig {
+        public boolean shouldHideOriginalMessage = true;
+        public boolean showCustomChatMessage = true;
+        public boolean showTitle = true;
+        public boolean shouldPlaySound = true;
     }
 }
