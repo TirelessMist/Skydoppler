@@ -1,7 +1,6 @@
 package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.world_rendering.WorldRenderingState;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Fog;
