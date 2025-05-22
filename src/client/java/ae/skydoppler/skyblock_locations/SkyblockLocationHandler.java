@@ -32,6 +32,11 @@ public class SkyblockLocationHandler {
                     SkydopplerClient.currentZone = zone;
                     System.out.println("Current zone set to: " + zone.name());
 
+                    if (zone instanceof SkyblockIslandEnum.EnumRegion) {
+
+                        SkydopplerClient.currentRegion = ((SkyblockIslandEnum.EnumRegion) zone).getRegion();
+                    }
+
                     if (island == SkyblockIslandEnum.DUNGEON) {
 
                         Pattern pattern = Pattern.compile("\\((.*?)\\)");
