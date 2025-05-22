@@ -6,7 +6,7 @@ import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
 public class HideHubPlayersState {
     public static int showRange = 12 /*0.1 * MinecraftClient.getInstance().worldRenderer.getViewDistance()*/;
 
-    public static boolean shouldHidePlayers() {
+    public static boolean shouldDoHubHiding() {
 
         if (!SkydopplerClient.CONFIG.doFarPlayerHiding) return false;
 

@@ -37,7 +37,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
             return;
         }
 
-        if (HideHubPlayersState.shouldHidePlayers() && shouldHideHubPlayer(entity)) {
+        if (HideHubPlayersState.shouldDoHubHiding() && shouldHideHubPlayer(entity)) {
             ci.cancel();
             return;
         }

@@ -45,6 +45,9 @@ public class SkydopplerConfig {
     public SeacreatureMessageConfig seacreatureMessageConfig = new SeacreatureMessageConfig();
 
 
+    public boolean hideMageBeams = true;
+
+
     // Load config from file
     public static SkydopplerConfig load(Path path) {
         if (Files.exists(path)) {

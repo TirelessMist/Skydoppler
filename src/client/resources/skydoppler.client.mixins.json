@@ -6,20 +6,21 @@
     "BackgroundRendererMixin",
     "BossBarHudMixin",
     "ChatHudMixin",
+    "ClientPlayerEntityMixin",
     "EntityRenderDispatcherMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "InGameOverlayRendererMixin",
     "LightmapTextureManagerMixin",
-    "ClientPlayerEntityMixin",
+    "ParticleManagerMixin",
     "ScoreboardMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "MapStateMixin",
-    "KeyBindingMixin"
+    "KeyBindingMixin",
+    "MapStateMixin"
   ]
 }
