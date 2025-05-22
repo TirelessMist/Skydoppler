@@ -82,6 +82,7 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
     @Unique
     private boolean shouldHideFishingEntity(E entity) {
         return (entity instanceof PlayerEntity player && !player.equals(client.player)
+                && !HidePlayerNearNpc.isPlayerAnNpc(player)
                 && player.squaredDistanceTo(client.player) <= FishingHideState.hideRange * FishingHideState.hideRange)
                 || (entity instanceof FishingBobberEntity bobber && bobber.getOwner() != null
                 && !bobber.getOwner().equals(client.player)
