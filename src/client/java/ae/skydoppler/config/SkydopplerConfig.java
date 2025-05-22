@@ -23,13 +23,23 @@ public class SkydopplerConfig {
     public float hidePlayersNearNpcRange = 1.25f;
     public boolean hidePlayersNearNpc = false;
 
+    public boolean alwaysSprint = true;
+    public boolean alwaysSprintOnlyInSkyblock = false;
+
     public boolean showFog = true;
+    public boolean doFullbright = false;
+    public boolean hideClouds = false;
+    public boolean hideNightVisionEffect = false;
 
     public boolean glowingDroppedItems = false;
+    public boolean glowingPlayers = false;
 
+    public boolean hideThirdPersonFireOverlay = false;
     public VanillaHudConfig vanillaHudConfig = new VanillaHudConfig();
 
     public boolean hidePlayersWhileFishing = false;
+    public int hidePlayersWhileFishingRange = 12;
+
     public boolean hideOtherFishingRods = false;
     public boolean doLegendarySeacreatureAlerts = true;
     public SeacreatureMessageConfig seacreatureMessageConfig = new SeacreatureMessageConfig();
