@@ -1,7 +1,7 @@
 {
   "config.ae.skydoppler.title": "Skydoppler Config",
   "config.ae.skydoppler.category.general": "General",
-  "config.ae.skydoppler.category.dungeons": "Dungeons",
+  "config.ae.skydoppler.category.dungeon": "Dungeons",
   "config.ae.skydoppler.category.fishing": "Fishing",
   "config.ae.skydoppler.general.option.hideFarPlayersMode": "Hide Far Players Mode",
   "config.ae.skydoppler.general.option.hideFarPlayersMode.tooltip": "This option allows you to hide players that are far away from you in hubs. This is useful for improving performance and visibility.",
@@ -52,6 +52,9 @@
   "config.ae.skydoppler.general.option.vanillaHudConfig.hide_fire_overlay_first_person.tooltip": "Hides the fire overlay that shows when the player is on fire in first person.",
   "config.ae.skydoppler.general.option.hideThirdPersonFireOverlay": "Hide Fire on Entities",
   "config.ae.skydoppler.general.option.hideThirdPersonFireOverlay.tooltip": "Hides the fire overlay that shows on entities.",
+  "config.ae.skydoppler.dungeon.option.hideMageBeams": "Hide Self Mage Beams",
+  "config.ae.skydoppler.dungeon.option.hideMageBeams.tooltip": "Hides only the player's mage beam, not everyone else's. Disable firework particles if you want to hide all mage beams.",
+  "config.ae.skydoppler.dungeon.option.openDungeonMapEditor": "Open Dungeon Map Editor...",
   "config.ae.skydoppler.fishing.option.hidePlayersWhileFishing": "Hide Players While Fishing",
   "config.ae.skydoppler.fishing.option.hidePlayersWhileFishing.tooltip": "Hide players while fishing. This is useful in crowded areas like the hub during a Fishing Festival.",
   "config.ae.skydoppler.fishing.option.hidePlayersWhileFishingRange": "Hide Players While Fishing Range",

@@ -5,7 +5,6 @@ import ae.skydoppler.player_hiding.HideHubPlayersState;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.api.Requirement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -22,6 +21,7 @@ public class ConfigScreenHandler {
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
+        builder.setGlobalizedExpanded(true);
 
         //region GENERAL_CATEGORY
         var generalCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.general"));
@@ -106,6 +106,7 @@ public class ConfigScreenHandler {
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.alwaysSprintOnlyInSkyblock.tooltip"))
                 .setSaveConsumer(newValue -> config.alwaysSprintOnlyInSkyblock = newValue)
                 .build());
+        //endregion
 
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.showFog"), config.showFog)
                 .setDefaultValue(true)
@@ -149,6 +150,7 @@ public class ConfigScreenHandler {
                 .setSaveConsumer(newValue -> config.hideThirdPersonFireOverlay = newValue)
                 .build());
 
+        //region vanillaHudConfig
         //noinspection rawtypes
         List<AbstractConfigListEntry> vanillaHudEntries = java.util.List.of(
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts"), config.vanillaHudConfig.shouldHideHealthBar)
@@ -195,6 +197,26 @@ public class ConfigScreenHandler {
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.subcategory.vanilla_hud.tooltip"))
                         .build()
         );
+
+        //endregion
+        //endregion
+
+        //region DUNGEON_CATEGORY
+
+        var dungeonCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.dungeon"));
+
+
+        dungeonCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.dungeon.option.hideMageBeams"), config.hideMageBeams)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.dungeon.option.hideMageBeams.tooltip"))
+                .setSaveConsumer(v -> config.hideMageBeams = v)
+                .build()
+        );
+
+        dungeonCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.dungeon.option.openDungeonMapEditor"), false)
+                .setDefaultValue(false)
+                .setYesNoTextSupplier(b -> Text.translatable("config.ae.skydoppler.dungeon.option.openDungeonMapEditor"))
+                .build());
 
         //endregion
 
