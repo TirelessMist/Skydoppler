@@ -22,7 +22,8 @@ public class ParticleManagerMixin {
     @Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;",
             at = @At("HEAD"), cancellable = true)
     private void onAddParticle(ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, CallbackInfoReturnable<Particle> cir) {
-        if (client.player == null || parameters.getType() == null) {
+        
+        if (client.player == null || parameters.getType() == null || parameters == null || parametrs.getType() == ParticleTypes.NO_RENDER) {
             return; // Skip if the player or particle type is null
         }
 
