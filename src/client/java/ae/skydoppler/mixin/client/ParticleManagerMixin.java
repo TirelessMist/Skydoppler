@@ -23,7 +23,7 @@ public class ParticleManagerMixin {
             at = @At("HEAD"), cancellable = true)
     private void onAddParticle(ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, CallbackInfoReturnable<Particle> cir) {
         
-        if (client.player == null || parameters.getType() == null || parameters == null || parametrs.getType() == ParticleTypes.NO_RENDER) {
+        if (client.player == null || parameters.getType() == null || parameters.getType() == null) {
             return; // Skip if the player or particle type is null
         }
 
