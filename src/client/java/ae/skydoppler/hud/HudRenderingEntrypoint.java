@@ -2,7 +2,7 @@ package ae.skydoppler.hud;
 
 import ae.skydoppler.Skydoppler;
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
+import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
@@ -33,7 +33,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         // x1, x2, y1, y2, z, color
         //context.fill(0, 0, 10, 10, 0, lerpedColor);
 
-        if (SkydopplerClient.currentIsland == SkyblockIslandEnum.DUNGEON) {
+        if (SkydopplerClient.currentIsland == SkyblockLocationEnum.DUNGEON) {
             DungeonHudModules.DungeonMapModule.render(context, tickCounter);
         }
     }

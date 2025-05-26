@@ -1,12 +1,12 @@
 package ae.skydoppler.skyblock_locations;
 
 public enum SkyblockSlayerLocations {
-    ZOMBIE(new Enum[]{SkyblockIslandEnum.HubZones.CATACOMBS_ENTRANCE, SkyblockIslandEnum.HubZones.COAL_MINE, SkyblockIslandEnum.HubZones.GRAVEYARD}),
-    SPIDER(new Enum[]{SkyblockIslandEnum.SPIDER_DEN, SkyblockIslandEnum.CrimsonIsleZones.BURNING_DESERT}),
-    WOLF(new Enum[] {SkyblockIslandEnum.HubZones.RUINS, SkyblockIslandEnum.TheParkZones.HOWLING_CAVE}),
-    ENDERMAN(new Enum[] {SkyblockIslandEnum.THE_END}),
-    BLAZE(new Enum[] {SkyblockIslandEnum.CrimsonIsleZones.STRONGHOLD, SkyblockIslandEnum.CrimsonIsleZones.SMOLDERING_TOMB}),
-    VAMPIRE(new Enum[] {SkyblockIslandEnum.RiftRegions.VAMPIRE});
+    ZOMBIE(new Enum[]{SkyblockLocationEnum.HubZones.CATACOMBS_ENTRANCE, SkyblockLocationEnum.HubZones.COAL_MINE, SkyblockLocationEnum.HubZones.GRAVEYARD}),
+    SPIDER(new Enum[]{SkyblockLocationEnum.SPIDER_DEN, SkyblockLocationEnum.CrimsonIsleZones.BURNING_DESERT}),
+    WOLF(new Enum[] {SkyblockLocationEnum.HubZones.RUINS, SkyblockLocationEnum.TheParkZones.HOWLING_CAVE}),
+    ENDERMAN(new Enum[] {SkyblockLocationEnum.THE_END}),
+    BLAZE(new Enum[] {SkyblockLocationEnum.CrimsonIsleZones.STRONGHOLD, SkyblockLocationEnum.CrimsonIsleZones.SMOLDERING_TOMB}),
+    VAMPIRE(new Enum[] {SkyblockLocationEnum.RiftRegions.VAMPIRE});
 
     private final Enum<?>[] locations;
 

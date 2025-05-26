@@ -3,7 +3,7 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.map.DungeonMapHandler;
-import ae.skydoppler.skyblock_locations.SkyblockIslandEnum;
+import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -24,8 +24,8 @@ public class SkydopplerClient implements ClientModInitializer {
 
     public static KeyBinding debugKey;
     public static SkyblockPlayerDataStruct playerDataStruct;
-    public static SkyblockIslandEnum currentIsland = SkyblockIslandEnum.NONE;
-    public static Enum<?> currentZone = SkyblockIslandEnum.NONE.getZonesForIsland()[0];
+    public static SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
+    public static Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
     public static Enum<?> currentRegion = null;
     public static boolean isRodCast;
     public static boolean isPlayingSkyblock = false;

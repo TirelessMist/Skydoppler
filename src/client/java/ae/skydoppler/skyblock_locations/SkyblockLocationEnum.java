@@ -1,6 +1,6 @@
 package ae.skydoppler.skyblock_locations;
 
-public enum SkyblockIslandEnum {
+public enum SkyblockLocationEnum {
 
     NONE(SkyblockIslandCategoryEnum.NONE, NoneZones.class),
 
@@ -36,7 +36,7 @@ public enum SkyblockIslandEnum {
     private final SkyblockIslandCategoryEnum islandType;
     private final Class<? extends Enum<?>> zoneClass;
 
-    SkyblockIslandEnum(SkyblockIslandCategoryEnum islandType, Class<? extends Enum<?>> zoneClass) {
+    SkyblockLocationEnum(SkyblockIslandCategoryEnum islandType, Class<? extends Enum<?>> zoneClass) {
         this.islandType = islandType;
         this.zoneClass = zoneClass;
     }
