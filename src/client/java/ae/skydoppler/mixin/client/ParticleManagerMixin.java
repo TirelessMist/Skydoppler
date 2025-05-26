@@ -20,7 +20,7 @@ public class ParticleManagerMixin {
     private final MinecraftClient client = MinecraftClient.getInstance();
 
     @Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;",
-            at = @At("HEAD"), cancellable = true)
+        at = @At("HEAD"), cancellable = true)
     private void onAddParticle(ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, CallbackInfoReturnable<Particle> cir) {
         
         if (client.player == null || parameters.getType() == null || parameters.getType() == null) {
@@ -38,7 +38,7 @@ public class ParticleManagerMixin {
             }
         }
 
-        // Handle explosion particles
+        /*// Handle explosion particles
         if (parameters.getType() == ParticleTypes.EXPLOSION && SkydopplerClient.CONFIG.hideExplosionParticle) {
             cir.setReturnValue(null); // Cancel explosion particles
             return;
@@ -49,7 +49,7 @@ public class ParticleManagerMixin {
             if (isPlayerAimingAtParticle(x, y, z)) {
                 cir.setReturnValue(null); // Cancel firework particles if the player is aiming at them
             }
-        }
+        }*/
     }
 
     @Unique
