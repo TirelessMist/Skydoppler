@@ -16,15 +16,16 @@ public class SkyblockLocationHandler {
             return;
         }
 
-        for (SkyblockIslandEnum island : SkyblockIslandEnum.values()) {
+        // Go through each island and check if the location is in the zones for that island.
+        for (SkyblockLocationEnum island : SkyblockLocationEnum.values()) {
 
             Enum<?>[] zones = island.getZonesForIsland();
 
             for (Enum<?> zone : zones) {
-                if (zone instanceof SkyblockIslandEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
-                    System.out.println("Found location: " + zone);
 
-                    // TODO: add a check for island regions (eg. village, scarleton, etc.)
+                // Cast the zone to the correct type, and check if the name of the zone matches the location.
+                if (zone instanceof SkyblockLocationEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
+                    System.out.println("Found location: " + zone);
 
                     SkydopplerClient.currentIsland = island;
                     System.out.println("Current island set to: " + island);
@@ -32,12 +33,20 @@ public class SkyblockLocationHandler {
                     SkydopplerClient.currentZone = zone;
                     System.out.println("Current zone set to: " + zone.name());
 
-                    if (zone instanceof SkyblockIslandEnum.EnumRegion) {
+                    // If the zone contains any region, set it to the zone's (unknown) region by using a generic getRegion interface method.
+                    if (zone instanceof SkyblockLocationEnum.EnumRegion) {
 
-                        SkydopplerClient.currentRegion = ((SkyblockIslandEnum.EnumRegion) zone).getRegion();
+                        SkydopplerClient.currentRegion = ((SkyblockLocationEnum.EnumRegion) zone).getRegion();
+                        System.out.println("Current region set to: " + SkydopplerClient.currentRegion);
+
+                    } else {
+
+                        SkydopplerClient.currentRegion = null;
+                        System.out.println("Current region set to: null");
+
                     }
 
-                    if (island == SkyblockIslandEnum.DUNGEON) {
+                    if (island == SkyblockLocationEnum.DUNGEON) {
 
                         Pattern pattern = Pattern.compile("\\((.*?)\\)");
                         Matcher matcher = pattern.matcher(location);
@@ -58,7 +67,7 @@ public class SkyblockLocationHandler {
 
 
                     }
-
+                    break;
                 }
                 /*public <T extends NamedEnum> void printEnumName(T enumValue) {
                       System.out.println(enumValue.getName());
