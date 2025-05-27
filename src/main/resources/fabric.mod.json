@@ -23,7 +23,7 @@
 			"ae.skydoppler.hud.HudRenderingEntrypoint"
 		],
 		"modmenu": [
-			"ae.skydoppler.config.SkydopplerModMenuIntegration"
+			"ae.skydoppler.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
