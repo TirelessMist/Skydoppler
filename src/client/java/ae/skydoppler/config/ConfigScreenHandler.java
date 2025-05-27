@@ -1,10 +1,10 @@
 package ae.skydoppler.config;
 
+import ae.skydoppler.MistConfig.ModConfigBuilder;
+import ae.skydoppler.MistConfig.ModConfigEntryBuilder;
+import ae.skydoppler.MistConfig.ModConfigListEntry;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.player_hiding.HideHubPlayersState;
-import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -15,13 +15,11 @@ import java.util.Optional;
 public class ConfigScreenHandler {
 
     public static Screen buildConfigScreen(SkydopplerConfig config) {
-        ConfigBuilder builder = ConfigBuilder.create()
+        ModConfigBuilder builder = ModConfigBuilder.create()
                 .setParentScreen(MinecraftClient.getInstance().currentScreen)
                 .setTitle(Text.translatable("config.ae.skydoppler.title"));
 
-        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-
-        builder.setGlobalizedExpanded(true);
+        ModConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         //region GENERAL_CATEGORY
         var generalCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.general"));
@@ -151,8 +149,7 @@ public class ConfigScreenHandler {
                 .build());
 
         //region vanillaHudConfig
-        //noinspection rawtypes
-        List<AbstractConfigListEntry> vanillaHudEntries = java.util.List.of(
+        List<ModConfigListEntry> vanillaHudEntries = java.util.List.of(
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts"), config.vanillaHudConfig.shouldHideHealthBar)
                         .setDefaultValue(false)
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts.tooltip"))
@@ -194,7 +191,6 @@ public class ConfigScreenHandler {
                                 Text.translatable("config.ae.skydoppler.general.option.subcategory.vanilla_hud"),
                                 vanillaHudEntries
                         )
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.subcategory.vanilla_hud.tooltip"))
                         .build()
         );
 
@@ -212,11 +208,6 @@ public class ConfigScreenHandler {
                 .setSaveConsumer(v -> config.hideMageBeams = v)
                 .build()
         );
-
-        dungeonCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.dungeon.option.openDungeonMapEditor"), false)
-                .setDefaultValue(false)
-                .setYesNoTextSupplier(b -> Text.translatable("config.ae.skydoppler.dungeon.option.openDungeonMapEditor"))
-                .build());
 
         //endregion
 
@@ -248,7 +239,7 @@ public class ConfigScreenHandler {
                 .build());
 
         //noinspection rawtypes
-        List<AbstractConfigListEntry> seacreatureMessageConfigEntries = List.of(
+        List<ModConfigListEntry> seacreatureMessageConfigEntries = List.of(
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldHideOriginalMessage"), config.seacreatureMessageConfig.shouldHideOriginalMessage)
                         .setDefaultValue(true)
                         .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldHideOriginalMessage.tooltip"))
@@ -275,7 +266,6 @@ public class ConfigScreenHandler {
                                 Text.translatable("config.ae.skydoppler.general.option.subcategory.seacreatureMessageConfig"),
                                 seacreatureMessageConfigEntries
                         )
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.subcategory.seacreatureMessageConfig.tooltip"))
                         .build()
         );
 
