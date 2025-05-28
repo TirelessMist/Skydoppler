@@ -1,8 +1,5 @@
 package ae.skydoppler.config;
 
-import ae.skydoppler.MistConfig.ModConfigBuilder;
-import ae.skydoppler.MistConfig.ModConfigEntryBuilder;
-import ae.skydoppler.MistConfig.ModConfigListEntry;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.player_hiding.HideHubPlayersState;
 import net.minecraft.client.MinecraftClient;
