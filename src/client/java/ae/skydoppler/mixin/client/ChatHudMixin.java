@@ -22,7 +22,8 @@ public class ChatHudMixin {
 
         String messageString = StyleConverter.ConvertToFormattedString(chatMessage);
 
-        System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage + "\"");
+        if (SkydopplerClient.debugModeEnabled)
+            System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage + "\"");
 
         String returnValue = ChatMatchHandler.checkForMatches(messageString);
 

@@ -16,12 +16,14 @@ public class MapParser {
         // Get the client instance and make sure the player is available.
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) {
-            System.out.println("No player available.");
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("No player available.");
             return null;
         }
 
         if (mapState == null) {
-            System.out.println("Map state not found.");
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("Map state not found.");
             return null;
         }
 
@@ -32,7 +34,8 @@ public class MapParser {
         final int width = 128;
         final int height = 128;
         if (colors == null || colors.length < width * height) {
-            System.out.println("Invalid map color data.");
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("Invalid map color data.");
             return null;
         }
 

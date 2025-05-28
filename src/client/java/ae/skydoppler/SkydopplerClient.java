@@ -44,7 +44,8 @@ public class SkydopplerClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
-        System.out.println("Skydoppler (Client) is initializing!");
+        if (SkydopplerClient.debugModeEnabled)
+            System.out.println("Skydoppler (Client) is initializing!");
 
         // Load configuration on initialization
         CONFIG = SkydopplerConfig.load(CONFIG_PATH);
@@ -59,7 +60,10 @@ public class SkydopplerClient implements ClientModInitializer {
 
         playerDataStruct = new SkyblockPlayerDataStruct();
 
-        debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
+        if (SkydopplerClient.debugModeEnabled)
+            debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
+        else
+            debugKey = null;
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 

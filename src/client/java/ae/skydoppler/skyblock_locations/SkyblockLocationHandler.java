@@ -9,10 +9,12 @@ public class SkyblockLocationHandler {
     public static void setLocationFromString(String location) {
         // The location icon and accents are already removed from the string
 
-        System.out.println("============RAW LOCATION: " + '"' + location + "\"============");
+        if (SkydopplerClient.debugModeEnabled)
+            System.out.println("============RAW LOCATION: " + '"' + location + "\"============");
 
         if (location.equalsIgnoreCase("none")) {
-            System.out.println("Location is none, not setting anything.");
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("Location is none, not setting anything.");
             return;
         }
 
@@ -29,24 +31,29 @@ public class SkyblockLocationHandler {
 
                     // Cast the zone to the correct type, and check if the name of the zone matches the location.
                     if (zone instanceof SkyblockLocationEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
-                        System.out.println("Found location: " + zone);
+                        if (SkydopplerClient.debugModeEnabled)
+                            System.out.println("Found location: " + zone);
 
                         SkydopplerClient.currentIsland = island;
-                        System.out.println("Current island set to: " + island);
+                        if (SkydopplerClient.debugModeEnabled)
+                            System.out.println("Current island set to: " + island);
 
                         SkydopplerClient.currentZone = zone;
-                        System.out.println("Current zone set to: " + zone.name());
+                        if (SkydopplerClient.debugModeEnabled)
+                            System.out.println("Current zone set to: " + zone.name());
 
                         // If the zone contains any region, set it to the zone's (unknown) region by using a generic getRegion interface method.
                         if (zone instanceof SkyblockLocationEnum.EnumRegion) {
 
                             SkydopplerClient.currentRegion = ((SkyblockLocationEnum.EnumRegion) zone).getRegion();
-                            System.out.println("Current region set to: " + SkydopplerClient.currentRegion);
+                            if (SkydopplerClient.debugModeEnabled)
+                                    System.out.println("Current region set to: " + SkydopplerClient.currentRegion);
 
                         } else {
 
                             SkydopplerClient.currentRegion = null;
-                            System.out.println("Current region set to: null");
+                            if (SkydopplerClient.debugModeEnabled)
+                                    System.out.println("Current region set to: null");
 
                         }
 
@@ -60,12 +67,14 @@ public class SkyblockLocationHandler {
 
                                 if (floor.equalsIgnoreCase("e")) {
                                     SkydopplerClient.currentDungeonFloor = 0;
-                                    System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
+                                    if (SkydopplerClient.debugModeEnabled)
+                                        System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
                                     return;
                                 }
                                 floor = floor.replaceFirst("([fm])", "");
                                 SkydopplerClient.currentDungeonFloor = Integer.parseInt(floor);
-                                System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
+                                if (SkydopplerClient.debugModeEnabled)
+                                    System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
 
                             }
 
@@ -89,21 +98,25 @@ public class SkyblockLocationHandler {
 
                     // Cast the zone to the correct type, and check if the name of the zone matches the location.
                     if (zone instanceof SkyblockLocationEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
-                        System.out.println("Found location: " + zone);
+                        if (SkydopplerClient.debugModeEnabled)
+                                System.out.println("Found location: " + zone);
 
                         SkydopplerClient.currentZone = zone;
-                        System.out.println("Current zone set to: " + zone.name());
+                        if (SkydopplerClient.debugModeEnabled)
+                                System.out.println("Current zone set to: " + zone.name());
 
                         // If the zone contains any region, set it to the zone's (unknown) region by using a generic getRegion interface method.
                         if (zone instanceof SkyblockLocationEnum.EnumRegion) {
 
                             SkydopplerClient.currentRegion = ((SkyblockLocationEnum.EnumRegion) zone).getRegion();
-                            System.out.println("Current region set to: " + SkydopplerClient.currentRegion);
+                            if (SkydopplerClient.debugModeEnabled)
+                                System.out.println("Current region set to: " + SkydopplerClient.currentRegion);
 
                         } else {
 
                             SkydopplerClient.currentRegion = null;
-                            System.out.println("Current region set to: null");
+                            if (SkydopplerClient.debugModeEnabled)
+                                System.out.println("Current region set to: null");
 
                         }
 
@@ -117,12 +130,14 @@ public class SkyblockLocationHandler {
 
                                 if (floor.equalsIgnoreCase("e")) {
                                     SkydopplerClient.currentDungeonFloor = 0;
-                                    System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
+                                    if (SkydopplerClient.debugModeEnabled)
+                                        System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
                                     return;
                                 }
                                 floor = floor.replaceFirst("([fm])", "");
                                 SkydopplerClient.currentDungeonFloor = Integer.parseInt(floor);
-                                System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
+                                if (SkydopplerClient.debugModeEnabled)
+                                    System.out.println("Current dungeon floor set to: " + SkydopplerClient.currentDungeonFloor);
 
                             }
 

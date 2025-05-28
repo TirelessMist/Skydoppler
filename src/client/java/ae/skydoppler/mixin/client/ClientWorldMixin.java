@@ -20,12 +20,14 @@ public class ClientWorldMixin {
 
     @Inject(method = "disconnect", at = @At("HEAD"))
     private void onDisconnect(CallbackInfo ci) {
-        System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Disconnecting from the world ----OOOOOOOOOOOOOOOO");
+        if (SkydopplerClient.debugModeEnabled)
+            System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Disconnecting from the world ----OOOOOOOOOOOOOOOO");
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(ClientPlayNetworkHandler networkHandler, ClientWorld.Properties properties, RegistryKey registryRef, RegistryEntry dimensionType, int loadDistance, int simulationDistance, WorldRenderer worldRenderer, boolean debugWorld, long seed, int seaLevel, CallbackInfo ci) {
-        System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Initializing world ----OOOOOOOOOOOOOOOO");
+        if (SkydopplerClient.debugModeEnabled)
+            System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Initializing world ----OOOOOOOOOOOOOOOO");
 
         SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
         Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];

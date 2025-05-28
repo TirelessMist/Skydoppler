@@ -49,7 +49,8 @@ public abstract class ScoreboardMixin {
 
     @Inject(method = "addObjective(Ljava/lang/String;Lnet/minecraft/scoreboard/ScoreboardCriterion;Lnet/minecraft/text/Text;Lnet/minecraft/scoreboard/ScoreboardCriterion$RenderType;ZLnet/minecraft/scoreboard/number/NumberFormat;)Lnet/minecraft/scoreboard/ScoreboardObjective;", at = @At("HEAD"))
     private void onAddObjective(String name, ScoreboardCriterion criterion, Text displayName, ScoreboardCriterion.RenderType renderType, boolean displayAutoUpdate, NumberFormat numberFormat, CallbackInfoReturnable<ScoreboardObjective> cir) {
-        System.out.println("Adding objective: " + name);
+        if (SkydopplerClient.debugModeEnabled)
+            System.out.println("Adding objective: " + name);
 
         name = name.trim();
         if (criterion == ScoreboardCriterion.DUMMY) {
