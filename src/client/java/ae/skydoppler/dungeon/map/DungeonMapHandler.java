@@ -13,7 +13,7 @@ import net.minecraft.item.map.MapState;
  *
  * @author VGRADN
  */
-public class DungeonMapHandler {
+public static class DungeonMapHandler {
 
     public static MapReassembler.Tile[][] map = null;
 

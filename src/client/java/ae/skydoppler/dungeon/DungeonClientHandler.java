@@ -11,4 +11,7 @@ package ae.skydoppler.dungeon;
  */
 public class DungeonClientHandler {
 
+    public static DungeonMapHandler dungeonMapHandler;
+    public static int currentDungeonFloor;
+
 }

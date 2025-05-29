@@ -27,14 +27,14 @@ public class SkydopplerClient implements ClientModInitializer {
     public static Boolean debugModeEnabled = true;
 
     public static SkyblockPlayerDataStruct playerDataStruct;
+
     public static SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
     public static Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
     public static Enum<?> currentRegion = null;
+
     public static boolean isRodCast;
     public static boolean isPlayingSkyblock = false;
-    public static boolean hideExplosionParticle = true;
-    public static DungeonMapHandler dungeonMapHandler; // TODO: add these dungeon variables to a separate dungeon-handling class
-    public static int currentDungeonFloor;
+    
     private TextRenderer textRenderer;
 
     public static SkydopplerConfig CONFIG;
@@ -55,8 +55,6 @@ public class SkydopplerClient implements ClientModInitializer {
         textRenderer.initialize();
         ChatMatchHandler.loadJsonData();
         isRodCast = false;
-
-        dungeonMapHandler = new DungeonMapHandler();
 
         playerDataStruct = new SkyblockPlayerDataStruct();
 
