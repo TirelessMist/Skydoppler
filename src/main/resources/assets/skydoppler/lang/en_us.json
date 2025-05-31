@@ -72,5 +72,21 @@
   "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showTitle": "Show Title",
   "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showTitle.tooltip": "Show a title on screen when a legendary sea creature is caught.",
   "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound": "Play Sound",
-  "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound.tooltip": "Play a ding sound when a legendary sea creature is caught."
+  "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound.tooltip": "Play a ding sound when a legendary sea creature is caught.",
+  "config.ae.skydoppler.helditem.title": "Hand Renderer Config",
+  "config.ae.skydoppler.helditem.pos_x": "Pos X",
+  "config.ae.skydoppler.helditem.pos_y": "Pos Y",
+  "config.ae.skydoppler.helditem.pos_z": "Pos Z",
+  "config.ae.skydoppler.helditem.rot_x": "Rot X",
+  "config.ae.skydoppler.helditem.rot_y": "Rot Y",
+  "config.ae.skydoppler.helditem.rot_z": "Rot Z",
+  "config.ae.skydoppler.helditem.scale": "Scale",
+  "config.ae.skydoppler.helditem.swing_speed_multiplier": "Swing Speed Multiplier",
+  "config.ae.skydoppler.helditem.disable_swap_animation": "Disable Swap Animation: %s",
+  "config.ae.skydoppler.helditem.disable_modern_swing": "Disable Modern Swing: %s",
+  "config.ae.skydoppler.helditem.main_arm": "Main Arm: %s",
+  "config.ae.skydoppler.helditem.test_punch": "Test Punch",
+  "config.ae.skydoppler.helditem.exit": "Exit",
+  "left": "Left",
+  "right": "Right"
 }
