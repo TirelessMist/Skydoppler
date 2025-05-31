@@ -87,6 +87,9 @@
   "config.ae.skydoppler.helditem.main_arm": "Main Arm: %s",
   "config.ae.skydoppler.helditem.test_punch": "Test Punch",
   "config.ae.skydoppler.helditem.exit": "Exit",
+  "config.ae.skydoppler.helditem.exit.tooltip": "Everything is saved automatically, so you can just exit.",
   "left": "Left",
-  "right": "Right"
+  "right": "Right",
+  "on": "ON",
+  "off": "OFF"
 }
