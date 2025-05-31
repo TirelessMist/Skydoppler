@@ -2,9 +2,7 @@ package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.config.SkydopplerConfig;
-import ae.skydoppler.config.held_item_config.HeldItemConfigScreenHandler;
 import ae.skydoppler.dungeon.DungeonClientHandler;
-import ae.skydoppler.dungeon.map.DungeonMapHandler;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
@@ -41,7 +39,6 @@ public class SkydopplerClient implements ClientModInitializer {
     private TextRenderer textRenderer;
 
     public static SkydopplerConfig CONFIG;
-    public static HeldItemConfigScreenHandler heldItemConfigScreenHandler = new HeldItemConfigScreenHandler();
     public static final Path CONFIG_PATH = Paths.get(MinecraftClient.getInstance() // or use a proper run directory reference
             .runDirectory.getAbsolutePath(), "config", "skydoppler.json");
 
@@ -72,8 +69,8 @@ public class SkydopplerClient implements ClientModInitializer {
             if (client.player == null || client.world == null) return;
 
             while (debugKey.wasPressed()) {
-                // add debug key stuff here if you need
-                heldItemConfigScreenHandler.openConfigScreen();
+                // Open the Held Item Config screen when debug key is pressed
+                client.setScreen(new ae.skydoppler.config.held_item_config.HeldItemConfigScreen(null));
             }
 
             if (client.world == null || client.player == null) {
@@ -93,3 +90,4 @@ public class SkydopplerClient implements ClientModInitializer {
         });
     }
 }
+

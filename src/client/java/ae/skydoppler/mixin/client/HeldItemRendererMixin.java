@@ -1,5 +1,7 @@
 package ae.skydoppler.mixin.client;
 
+import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.config.SkydopplerConfig;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -22,15 +24,17 @@ public abstract class HeldItemRendererMixin {
 
     @Inject(method = "renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/" + "minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/" + "MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemDisplayContext;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
     public void onRenderHeldItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        SkydopplerConfig config = SkydopplerClient.CONFIG;
         if (hand == Hand.MAIN_HAND) {
-            float rotX = 0;
-            float rotY = 0;
-            float rotZ = 0;
-            float posX = 0;
-            float posY = 0;
-            float posZ = 0;
+            float rotX = config.heldItemRendererConfig.rotX;
+            float rotY = config.heldItemRendererConfig.rotY;
+            float rotZ = config.heldItemRendererConfig.rotZ;
+            float posX = config.heldItemRendererConfig.posX;
+            float posY = config.heldItemRendererConfig.posY;
+            float posZ = config.heldItemRendererConfig.posZ;
 
-            float scale = 0.5f;
+            float scale = config.heldItemRendererConfig.scale;
+
             matrices.translate(posX, posY, posZ);
 
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotX));
@@ -62,18 +66,26 @@ public abstract class HeldItemRendererMixin {
 
     @ModifyExpressionValue(method = "updateHeldItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getAttackCooldownProgress(F)F"))
     public float attackCooldown(float original) {
-        return 1f;
+        SkydopplerConfig config = SkydopplerClient.CONFIG;
+        if (config.heldItemRendererConfig.disableModernSwing) {
+            return 1f;
+        } else {
+            return original;
+        }
     }
 
     @Inject(method = "shouldSkipHandAnimationOnSwap", at = @At("HEAD"), cancellable = true)
     private void onShouldSkipHandAnimationOnSwap(ItemStack from, ItemStack _to, CallbackInfoReturnable<Boolean> cir) {
-
-        cir.setReturnValue(!(from.isOf(Items.AIR) || _to.isOf(Items.AIR)));
+        if (SkydopplerClient.CONFIG.heldItemRendererConfig.disableSwapAnimation) {
+            cir.setReturnValue(!(from.isOf(Items.AIR) || _to.isOf(Items.AIR)));
+        }
     }
 
     @Inject(method = "applyEatOrDrinkTransformation", at = @At("HEAD"), cancellable = true)
     public void onDrink(MatrixStack matrices, float tickProgress, Arm arm, ItemStack stack, PlayerEntity player, CallbackInfo ci) {
-        ci.cancel();
+        if (SkydopplerClient.CONFIG.heldItemRendererConfig.disableSwapAnimation) {
+            ci.cancel();
+        }
     }
 
 }

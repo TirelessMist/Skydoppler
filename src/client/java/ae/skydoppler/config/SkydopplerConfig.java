@@ -47,6 +47,8 @@ public class SkydopplerConfig {
 
     public boolean hideMageBeams = true;
 
+    public HeldItemRendererConfig heldItemRendererConfig = new HeldItemRendererConfig();
+
 
     // Load config from file
     public static SkydopplerConfig load(Path path) {
