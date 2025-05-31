@@ -1,5 +1,6 @@
 package ae.skydoppler.mixin.client;
 
+import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.chat.StyleConverter;
 import net.minecraft.client.MinecraftClient;

@@ -1,5 +1,6 @@
 package ae.skydoppler.dungeon.room_detection;
 
+import ae.skydoppler.SkydopplerClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
