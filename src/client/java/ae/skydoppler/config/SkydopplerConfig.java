@@ -88,4 +88,17 @@ public class SkydopplerConfig {
         public boolean showTitle = true;
         public boolean shouldPlaySound = true;
     }
+
+    public static class HeldItemRendererConfig {
+        public float posX = 0.0f;
+        public float posY = 0.0f;
+        public float posZ = 0.0f;
+        public float rotX = 0.0f;
+        public float rotY = 0.0f;
+        public float rotZ = 0.0f;
+        public float scale = 1.0f;
+
+        public boolean disableSwapAnimation = false;
+        public boolean disableModernSwing = false;
+    }
 }

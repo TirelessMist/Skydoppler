@@ -2,6 +2,9 @@ package ae.skydoppler.config;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.player_hiding.HideHubPlayersState;
+import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
+import me.shedaniel.clothconfig2.api.ConfigBuilder;
+import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -12,11 +15,13 @@ import java.util.Optional;
 public class ConfigScreenHandler {
 
     public static Screen buildConfigScreen(SkydopplerConfig config) {
-        ModConfigBuilder builder = ModConfigBuilder.create()
+        ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(MinecraftClient.getInstance().currentScreen)
                 .setTitle(Text.translatable("config.ae.skydoppler.title"));
 
-        ModConfigEntryBuilder entryBuilder = builder.entryBuilder();
+        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+
+        builder.setGlobalized(true);
 
         //region GENERAL_CATEGORY
         var generalCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.general"));
@@ -146,7 +151,8 @@ public class ConfigScreenHandler {
                 .build());
 
         //region vanillaHudConfig
-        List<ModConfigListEntry> vanillaHudEntries = java.util.List.of(
+        //noinspection rawtypes
+        List<AbstractConfigListEntry> vanillaHudEntries = java.util.List.of(
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts"), config.vanillaHudConfig.shouldHideHealthBar)
                         .setDefaultValue(false)
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts.tooltip"))
@@ -236,7 +242,7 @@ public class ConfigScreenHandler {
                 .build());
 
         //noinspection rawtypes
-        List<ModConfigListEntry> seacreatureMessageConfigEntries = List.of(
+        List<AbstractConfigListEntry> seacreatureMessageConfigEntries = List.of(
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldHideOriginalMessage"), config.seacreatureMessageConfig.shouldHideOriginalMessage)
                         .setDefaultValue(true)
                         .setTooltip(Text.translatable("config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldHideOriginalMessage.tooltip"))

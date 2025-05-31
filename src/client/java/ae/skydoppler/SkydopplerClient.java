@@ -2,6 +2,8 @@ package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.config.SkydopplerConfig;
+import ae.skydoppler.config.held_item_config.HeldItemConfigScreenHandler;
+import ae.skydoppler.dungeon.DungeonClientHandler;
 import ae.skydoppler.dungeon.map.DungeonMapHandler;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
@@ -27,6 +29,7 @@ public class SkydopplerClient implements ClientModInitializer {
     public static Boolean debugModeEnabled = true;
 
     public static SkyblockPlayerDataStruct playerDataStruct;
+    public static DungeonClientHandler dungeonClientHandler;
 
     public static SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
     public static Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
@@ -38,6 +41,7 @@ public class SkydopplerClient implements ClientModInitializer {
     private TextRenderer textRenderer;
 
     public static SkydopplerConfig CONFIG;
+    public static HeldItemConfigScreenHandler heldItemConfigScreenHandler = new HeldItemConfigScreenHandler();
     public static final Path CONFIG_PATH = Paths.get(MinecraftClient.getInstance() // or use a proper run directory reference
             .runDirectory.getAbsolutePath(), "config", "skydoppler.json");
 
@@ -69,6 +73,7 @@ public class SkydopplerClient implements ClientModInitializer {
 
             while (debugKey.wasPressed()) {
                 // add debug key stuff here if you need
+                heldItemConfigScreenHandler.openConfigScreen();
             }
 
             if (client.world == null || client.player == null) {
