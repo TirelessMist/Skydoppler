@@ -100,6 +100,8 @@ public class SkydopplerConfig {
         public float rotZ = 0.0f;
         public float scale = 1.0f;
 
+        public float swingSpeedMultiplier = 1.0f;
+
         public boolean disableSwapAnimation = false;
         public boolean disableModernSwing = false;
     }
