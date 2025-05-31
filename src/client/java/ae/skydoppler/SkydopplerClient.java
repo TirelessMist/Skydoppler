@@ -1,14 +1,12 @@
 package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
-import ae.skydoppler.command.SkydopplerCommandHandler;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import ae.skydoppler.dungeon.DungeonClientHandler;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
@@ -47,11 +45,6 @@ public class SkydopplerClient implements ClientModInitializer {
         // Load configuration on initialization
         CONFIG = SkydopplerConfig.load(CONFIG_PATH);
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-
-            SkydopplerCommandHandler.registerCommands(dispatcher);
-
-        });
 
         textRenderer = new TextRenderer(client);
         textRenderer.initialize();

@@ -12,6 +12,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +26,11 @@ public class HeldItemConfigScreen extends Screen {
     private final Screen parent;
 
     public HeldItemConfigScreen(Screen parent) {
-        super(Text.literal("Hand Renderer Config"));
+        super(Text.translatable("config.ae.skydoppler.helditem.title"));
         this.config = SkydopplerClient.CONFIG;
         this.parent = parent;
         this.panelWidth = (int) (this.width * 0.25f);
-        this.isLeftHanded = client.player.getMainArm() == Arm.LEFT;
+        this.isLeftHanded = client.options.getMainArm().getValue() == Arm.LEFT;
     }
 
     @Override
@@ -43,31 +44,55 @@ public class HeldItemConfigScreen extends Screen {
 
         // Float sliders
         sliders.clear();
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Pos X", config.heldItemRendererConfig.posX, -2.0f, 2.0f, v -> { config.heldItemRendererConfig.posX = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.pos_x").getString(), config.heldItemRendererConfig.posX, -2.0f, 2.0f, v -> {
+            config.heldItemRendererConfig.posX = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Pos Y", config.heldItemRendererConfig.posY, -2.0f, 2.0f, v -> { config.heldItemRendererConfig.posY = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.pos_y").getString(), config.heldItemRendererConfig.posY, -2.0f, 2.0f, v -> {
+            config.heldItemRendererConfig.posY = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Pos Z", config.heldItemRendererConfig.posZ, -2.0f, 2.0f, v -> { config.heldItemRendererConfig.posZ = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.pos_z").getString(), config.heldItemRendererConfig.posZ, -2.0f, 2.0f, v -> {
+            config.heldItemRendererConfig.posZ = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Rot X", config.heldItemRendererConfig.rotX, -180.0f, 180.0f, v -> { config.heldItemRendererConfig.rotX = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.rot_x").getString(), config.heldItemRendererConfig.rotX, -180.0f, 180.0f, v -> {
+            config.heldItemRendererConfig.rotX = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Rot Y", config.heldItemRendererConfig.rotY, -180.0f, 180.0f, v -> { config.heldItemRendererConfig.rotY = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.rot_y").getString(), config.heldItemRendererConfig.rotY, -180.0f, 180.0f, v -> {
+            config.heldItemRendererConfig.rotY = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Rot Z", config.heldItemRendererConfig.rotZ, -180.0f, 180.0f, v -> { config.heldItemRendererConfig.rotZ = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.rot_z").getString(), config.heldItemRendererConfig.rotZ, -180.0f, 180.0f, v -> {
+            config.heldItemRendererConfig.rotZ = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Scale", config.heldItemRendererConfig.scale, 0.1f, 3.0f, v -> { config.heldItemRendererConfig.scale = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.scale").getString(), config.heldItemRendererConfig.scale, 0.1f, 3.0f, v -> {
+            config.heldItemRendererConfig.scale = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
-        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, "Swing Speed Multiplier", config.heldItemRendererConfig.swingSpeedMultiplier, 0.1f, 3.0f, v -> { config.heldItemRendererConfig.swingSpeedMultiplier = v; config.save(SkydopplerClient.CONFIG_PATH); }));
+        sliders.add(new FloatSlider(x + 10, y, sliderWidth, sliderHeight, Text.translatable("config.ae.skydoppler.helditem.swing_speed_multiplier").getString(), config.heldItemRendererConfig.swingSpeedMultiplier, 0.1f, 3.0f, v -> {
+            config.heldItemRendererConfig.swingSpeedMultiplier = v;
+            config.save(SkydopplerClient.CONFIG_PATH);
+        }));
         y += spacing;
 
         // Boolean toggles
         checkboxes.clear();
         // Use ButtonWidget as a toggle for disableSwapAnimation
         ButtonWidget swapAnimToggle = ButtonWidget.builder(
-                        Text.literal("Disable Swap Animation: " + (config.heldItemRendererConfig.disableSwapAnimation ? "ON" : "OFF")),
+                        Text.translatable("config.ae.skydoppler.helditem.disable_swap_animation", config.heldItemRendererConfig.disableSwapAnimation ? "ON" : "OFF"),
                         btn -> {
                             config.heldItemRendererConfig.disableSwapAnimation = !config.heldItemRendererConfig.disableSwapAnimation;
-                            btn.setMessage(Text.literal("Disable Swap Animation: " + (config.heldItemRendererConfig.disableSwapAnimation ? "ON" : "OFF")));
+                            btn.setMessage(Text.translatable("config.ae.skydoppler.helditem.disable_swap_animation", config.heldItemRendererConfig.disableSwapAnimation ? "ON" : "OFF"));
                             config.save(SkydopplerClient.CONFIG_PATH);
                         })
                 .position(x + 10, y)
@@ -77,10 +102,10 @@ public class HeldItemConfigScreen extends Screen {
         y += spacing;
         // Use ButtonWidget as a toggle for disableModernSwing
         ButtonWidget modernSwingToggle = ButtonWidget.builder(
-                        Text.literal("Disable Modern Swing: " + (config.heldItemRendererConfig.disableModernSwing ? "ON" : "OFF")),
+                        Text.translatable("config.ae.skydoppler.helditem.disable_modern_swing", config.heldItemRendererConfig.disableModernSwing ? "ON" : "OFF"),
                         btn -> {
                             config.heldItemRendererConfig.disableModernSwing = !config.heldItemRendererConfig.disableModernSwing;
-                            btn.setMessage(Text.literal("Disable Modern Swing: " + (config.heldItemRendererConfig.disableModernSwing ? "ON" : "OFF")));
+                            btn.setMessage(Text.translatable("config.ae.skydoppler.helditem.disable_modern_swing", config.heldItemRendererConfig.disableModernSwing ? "ON" : "OFF"));
                             config.save(SkydopplerClient.CONFIG_PATH);
                         })
                 .position(x + 10, y)
@@ -90,13 +115,13 @@ public class HeldItemConfigScreen extends Screen {
         y += spacing;
         // Use ButtonWidget as a toggle for the player's main arm
         ButtonWidget mainArm = ButtonWidget.builder(
-                        Text.literal("Main Arm: " + (client.options.getMainArm().getValue() == Arm.LEFT ? "Left" : "Right")),
+                        Text.translatable("config.ae.skydoppler.helditem.main_arm", client.options.getMainArm().getValue() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()),
                         btn -> {
                             // Update both the player's main arm and the game options setting
                             boolean setLeft = client.options.getMainArm().getValue() == Arm.RIGHT;
                             client.player.setMainArm(setLeft ? Arm.LEFT : Arm.RIGHT);
                             client.options.getMainArm().setValue(setLeft ? Arm.LEFT : Arm.RIGHT);
-                            btn.setMessage(Text.literal("Main Arm: " + (client.player.getMainArm() == Arm.LEFT ? "Left" : "Right")));
+                            btn.setMessage(Text.translatable("config.ae.skydoppler.helditem.main_arm", client.player.getMainArm() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()));
                             client.setScreen(new ae.skydoppler.config.held_item_config.HeldItemConfigScreen(parent)); // Reinitialize to update the screen
                         })
                 .position(x + 10, y)
@@ -106,7 +131,7 @@ public class HeldItemConfigScreen extends Screen {
         y += spacing;
         // Use ButtonWidget as a button to trigger a hand swing/punch action
         ButtonWidget testPunch = ButtonWidget.builder(
-                        Text.literal("Test Punch"),
+                        Text.translatable("config.ae.skydoppler.helditem.test_punch"),
                         btn -> {
                             if (client.player != null) {
                                 client.player.swingHand(Hand.MAIN_HAND);
@@ -127,15 +152,26 @@ public class HeldItemConfigScreen extends Screen {
         }
 
         // Exit button
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Exit"), btn -> this.close()).position(x + 10, this.height - 30).size(sliderWidth, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.helditem.exit"), btn -> this.close()).position(x + 10, this.height - 30).size(sliderWidth, 20).build());
 
     }
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-        drawContext.fill(0, 0, panelWidth, this.height, 0xAA000000);
-        super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawText(this.textRenderer, this.title, panelWidth / 2, 8, 0xFFFFFF, true);
+        super.render(drawContext, mouseX, mouseY, delta); // Render all elements first
+
+        int panelX = isLeftHanded ? this.width - panelWidth : 0;
+        int panelY = 0;
+        int panelRight = isLeftHanded ? this.width : panelWidth;
+        int panelBottom = this.height;
+        int panelColor = new Color(255, 0, 0, 128).getRGB(); // Add transparency for better visibility
+
+        // Draw the panel background
+        drawContext.fill(panelX, panelY, panelRight, panelBottom, panelColor);
+
+        // Draw the title text
+        int titleX = panelX + 10; // Adjusted for left or right alignment
+        drawContext.drawText(this.textRenderer, this.title, titleX, 8, 0xFFFFFF, true);
     }
 
     @Override
