@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,11 +19,12 @@ public class ParticleManagerMixin {
     private final MinecraftClient client = MinecraftClient.getInstance();
 
     @Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;",
-        at = @At("HEAD"), cancellable = true)
+            at = @At(value = "HEAD"), cancellable = true)
     private void onAddParticle(ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ, CallbackInfoReturnable<Particle> cir) {
-        
-        if (client.player == null || parameters.getType() == null || parameters.getType() == null) {
-            return; // Skip if the player or particle type is null
+
+        // Ensure parameters and particle type are not null
+        if (parameters == null || parameters.getType() == null || client.player == null) {
+            return; // Skip processing if any critical value is null
         }
 
         // Handle far player hiding
@@ -33,10 +33,11 @@ public class ParticleManagerMixin {
             int maxDistance = SkydopplerClient.CONFIG.hideFarPlayersRange;
 
             if (distanceSq >= maxDistance * maxDistance) {
-                cir.setReturnValue(null); // Cancel particles outside the range
+                cir.setReturnValue(null); // Cancel particles outside the distance
                 return;
             }
         }
+
 
         /*// Handle explosion particles
         if (parameters.getType() == ParticleTypes.EXPLOSION && SkydopplerClient.CONFIG.hideExplosionParticle) {
