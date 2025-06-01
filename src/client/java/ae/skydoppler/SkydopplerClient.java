@@ -1,6 +1,7 @@
 package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
+import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import ae.skydoppler.dungeon.DungeonClientHandler;
@@ -57,6 +58,8 @@ public class SkydopplerClient implements ClientModInitializer {
             debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
         else
             debugKey = null;
+
+        SkydopplerCommand.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
