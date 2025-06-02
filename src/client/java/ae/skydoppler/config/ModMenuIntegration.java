@@ -8,8 +8,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (parent -> {;
-            return ConfigScreenHandler.buildConfigScreen(SkydopplerClient.CONFIG);
-        });
+        return (parent -> ConfigScreenHandler.buildConfigScreen(SkydopplerClient.CONFIG, parent));
     }
 }
