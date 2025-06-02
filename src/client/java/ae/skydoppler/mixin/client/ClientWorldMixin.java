@@ -29,9 +29,13 @@ public class ClientWorldMixin {
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Initializing world ----OOOOOOOOOOOOOOOO");
 
+        if (SkydopplerClient.isPlayingSkyblock)
+            SkydopplerClient.startIslandWarpTimer();
+
         SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
         Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
         Enum<?> currentRegion = null;
     }
+
 
 }

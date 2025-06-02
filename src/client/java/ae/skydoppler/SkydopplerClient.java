@@ -14,6 +14,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
 
@@ -28,7 +32,7 @@ public class SkydopplerClient implements ClientModInitializer {
     public static KeyBinding debugKey;
     public static Boolean debugModeEnabled = true;
     public static SkyblockPlayerDataStruct playerDataStruct;
-    public static DungeonClientHandler dungeonClientHandler;
+    public static DungeonClientHandler dungeonClientHandler = new DungeonClientHandler();
     public static SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
     public static Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
     public static Enum<?> currentRegion = null;
@@ -36,6 +40,13 @@ public class SkydopplerClient implements ClientModInitializer {
     public static boolean isPlayingSkyblock = false;
     public static SkydopplerConfig CONFIG;
     private TextRenderer textRenderer;
+    private static int islandWarpTimerTicks = 0;
+    private static boolean islandWarpTimerActive = false;
+
+    public static void startIslandWarpTimer() {
+        islandWarpTimerTicks = 60; // 3 seconds at 20 ticks per second
+        islandWarpTimerActive = true;
+    }
 
     @Override
     public void onInitializeClient() {
@@ -66,7 +77,7 @@ public class SkydopplerClient implements ClientModInitializer {
             if (client.player == null || client.world == null) return;
 
             while (debugKey.wasPressed()) {
-                client.setScreen(new HeldItemConfigScreen(null));
+                client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
             }
 
             if (client.world == null || client.player == null) {
@@ -83,6 +94,17 @@ public class SkydopplerClient implements ClientModInitializer {
             isRodCast = !client.world.getEntitiesByClass(FishingBobberEntity.class, box,
                     bobber -> bobber.getOwner() != null && bobber.getOwner().equals(client.player)
             ).isEmpty();
+
+            if (islandWarpTimerActive && client.player != null) {
+                if (islandWarpTimerTicks > 0) {
+                    islandWarpTimerTicks--;
+                } else {
+                    // Play ding sound
+                    client.player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.MASTER, 1.0f, 1.0f);
+                    client.player.sendMessage(Text.literal("§7PLAYER_TRANSFER_COOLDOWN_EXPIRED"), false);
+                    islandWarpTimerActive = false;
+                }
+            }
         });
     }
 }
