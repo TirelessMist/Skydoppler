@@ -53,6 +53,11 @@ public abstract class ScoreboardMixin {
             System.out.println("Adding objective: " + name);
 
         name = name.trim();
+
+        if (name.equalsIgnoreCase("health")) {
+            return;
+        }
+
         if (criterion == ScoreboardCriterion.DUMMY) {
             SkydopplerClient.isPlayingSkyblock = name.equalsIgnoreCase("SBScoreboard");
         }
