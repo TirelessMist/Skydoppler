@@ -26,6 +26,8 @@ public class SkydopplerConfig {
     public boolean alwaysSprint = true;
     public boolean alwaysSprintOnlyInSkyblock = false;
 
+    public boolean do1_8Mode = false;
+
     public boolean showFog = true;
     public boolean doFullbright = false;
     public boolean hideClouds = false;
