@@ -12,6 +12,7 @@ import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,11 +27,15 @@ public class HeldItemConfigScreen extends Screen {
     private final Screen parent;
     private int panelWidth;
 
-    public HeldItemConfigScreen(Screen parent) {
+    public HeldItemConfigScreen(SkydopplerConfig config, Screen parent) {
         super(Text.translatable("config.ae.skydoppler.helditem.title"));
-        this.config = SkydopplerClient.CONFIG;
+        this.config = config;
         this.parent = parent;
         this.isLeftHanded = client.options.getMainArm().getValue() == Arm.LEFT;
+    }
+
+    public static Screen buildConfigScreen(@NotNull SkydopplerConfig config, Screen parent) {
+        return new HeldItemConfigScreen(config, parent);
     }
 
     @Override
@@ -75,7 +80,7 @@ public class HeldItemConfigScreen extends Screen {
                             client.player.setMainArm(setLeft ? Arm.LEFT : Arm.RIGHT);
                             client.options.getMainArm().setValue(setLeft ? Arm.LEFT : Arm.RIGHT);
                             btn.setMessage(Text.translatable("config.ae.skydoppler.helditem.main_arm", client.player.getMainArm() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()));
-                            client.setScreen(new HeldItemConfigScreen(parent));
+                            client.setScreen(HeldItemConfigScreen.buildConfigScreen(SkydopplerClient.CONFIG, this.parent));
                         })
                 .position(x + 10, y)
                 .size(sliderWidth, sliderHeight)

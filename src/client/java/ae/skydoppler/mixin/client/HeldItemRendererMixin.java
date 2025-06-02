@@ -2,6 +2,7 @@ package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.config.SkydopplerConfig;
+import ae.skydoppler.util.BlockingHelper;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -37,9 +38,9 @@ public abstract class HeldItemRendererMixin {
 
             matrices.translate(posX, posY, posZ);
 
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotX));
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
-            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
+            matrices.multiply(BlockingHelper.isBlocking ? RotationAxis.POSITIVE_X.rotationDegrees(rotX - 86.6f) : RotationAxis.POSITIVE_X.rotationDegrees(rotX));
+            matrices.multiply(BlockingHelper.isBlocking ? RotationAxis.POSITIVE_Y.rotationDegrees(rotY + 18.68f) : RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
+            matrices.multiply(BlockingHelper.isBlocking ? RotationAxis.POSITIVE_Z.rotationDegrees(rotZ + 72.17f) : RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
             matrices.scale(scale, scale, scale);
         }
     }

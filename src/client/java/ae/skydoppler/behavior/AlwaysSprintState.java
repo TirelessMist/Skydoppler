@@ -1,6 +1,8 @@
 package ae.skydoppler.behavior;
 
 import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.util.BlockingHelper;
+import com.jcraft.jorbis.Block;
 import net.minecraft.client.network.ClientPlayerEntity;
 
 public class AlwaysSprintState {
@@ -16,6 +18,7 @@ public class AlwaysSprintState {
                 !player.isDescending() &&
                 !player.isClimbing() &&
                 !player.isUsingItem() &&
+                !BlockingHelper.isBlocking &&
                 !player.isUsingRiptide() &&
                 !player.isSpectator() &&
                 !player.isCrawling();
