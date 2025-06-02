@@ -5,18 +5,18 @@ import ae.skydoppler.player_hiding.HideHubPlayersState;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ConfigScreenHandler {
 
-    public static Screen buildConfigScreen(SkydopplerConfig config) {
+    public static Screen buildConfigScreen(@NotNull SkydopplerConfig config, Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
-                .setParentScreen(MinecraftClient.getInstance().currentScreen)
+                .setParentScreen(parent)
                 .setTitle(Text.translatable("config.ae.skydoppler.title"));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
@@ -108,6 +108,12 @@ public class ConfigScreenHandler {
                 .build());
         //endregion
 
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.do1_8mode"), config.do1_8Mode)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.do1_8mode.tooltip"))
+                .setSaveConsumer(newValue -> config.do1_8Mode = newValue)
+                .build());
+
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.showFog"), config.showFog)
                 .setDefaultValue(true)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.showFog.tooltip"))
@@ -148,6 +154,12 @@ public class ConfigScreenHandler {
                 .setDefaultValue(false)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideThirdPersonFireOverlay.tooltip"))
                 .setSaveConsumer(newValue -> config.hideThirdPersonFireOverlay = newValue)
+                .build());
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideExplosionParticles"),config.hideExplosionParticle)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideExplosionParticles.tooltip"))
+                .setSaveConsumer(newValue -> config.hideExplosionParticle = newValue)
                 .build());
 
         //region vanillaHudConfig
