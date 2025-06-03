@@ -23,10 +23,10 @@ public class SkydopplerConfig {
     public float hidePlayersNearNpcRange = 1.25f;
     public boolean hidePlayersNearNpc = false;
 
+    public boolean doTransferCooldownFinishedAlert = true;
+
     public boolean alwaysSprint = true;
     public boolean alwaysSprintOnlyInSkyblock = false;
-
-    public boolean do1_8Mode = false;
 
     public boolean showFog = true;
     public boolean doFullbright = false;
@@ -35,6 +35,8 @@ public class SkydopplerConfig {
 
     public boolean glowingDroppedItems = false;
     public boolean glowingPlayers = false;
+
+    public OldVersionParityConfig oldVersionParityConfig = new OldVersionParityConfig();
 
     public boolean hideThirdPersonFireOverlay = false;
     public VanillaHudConfig vanillaHudConfig = new VanillaHudConfig();
@@ -106,5 +108,13 @@ public class SkydopplerConfig {
 
         public boolean disableSwapAnimation = false;
         public boolean disableModernSwing = false;
+    }
+
+    public static class OldVersionParityConfig {
+        public boolean doSwordBlocking = false;
+        public boolean do1_7Animations = false;
+        public boolean disableModernAttackIndicator = false;
+        public boolean doOldCrouchHeight = false;
+        public boolean doOldGlassPaneHitbox = false;
     }
 }

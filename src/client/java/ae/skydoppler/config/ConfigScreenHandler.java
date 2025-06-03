@@ -80,7 +80,6 @@ public class ConfigScreenHandler {
                 .setSaveConsumer(newValue -> config.hidePlayersNearNpc = newValue)
                 .build());
 
-        // TODO: add conversion to divide long by 100 to get decimal number.
         generalCategory.addEntry(entryBuilder.startIntSlider(
                         Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpcRange"),
                         (int) (config.hidePlayersNearNpcRange * 100), // stored as float, converted to int, visually converted to float, returned as float
@@ -93,6 +92,12 @@ public class ConfigScreenHandler {
                 .setSaveConsumer(newValue -> config.hidePlayersNearNpcRange = newValue / 100.0f)
                 .build());
         //endregion
+
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.doTransferCooldownFinishedAlert"), config.doTransferCooldownFinishedAlert)
+                .setDefaultValue(true)
+                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.doTransferCooldownFinishedAlert.tooltip"))
+                .setSaveConsumer(v -> config.doTransferCooldownFinishedAlert = v)
+                .build());
 
 
         //region alwaysSprint
@@ -107,12 +112,6 @@ public class ConfigScreenHandler {
                 .setSaveConsumer(newValue -> config.alwaysSprintOnlyInSkyblock = newValue)
                 .build());
         //endregion
-
-        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.do1_8mode"), config.do1_8Mode)
-                .setDefaultValue(false)
-                .setTooltip(Text.translatable("config.ae.skydoppler.general.option.do1_8mode.tooltip"))
-                .setSaveConsumer(newValue -> config.do1_8Mode = newValue)
-                .build());
 
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.showFog"), config.showFog)
                 .setDefaultValue(true)
@@ -150,13 +149,51 @@ public class ConfigScreenHandler {
                 .setSaveConsumer(newValue -> config.glowingPlayers = newValue)
                 .build());
 
+        //region oldVersionParityConfig
+
+        List<AbstractConfigListEntry> oldVersionParityEntries = List.of(
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doSwordBlocking"), config.oldVersionParityConfig.doSwordBlocking)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doSwordBlocking.tooltip"))
+                        .setSaveConsumer(v -> config.oldVersionParityConfig.doSwordBlocking = v)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.do1_7Animations"), config.oldVersionParityConfig.do1_7Animations)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.do1_7Animations.tooltip"))
+                        .setSaveConsumer(v -> config.oldVersionParityConfig.do1_7Animations = v)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.disableModernAttackIndicator"), config.oldVersionParityConfig.disableModernAttackIndicator)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.disableModernAttackIndicator.tooltip"))
+                        .setSaveConsumer(v -> config.oldVersionParityConfig.disableModernAttackIndicator = v)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldCrouchHeight"), config.oldVersionParityConfig.doOldCrouchHeight)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldCrouchHeight.tooltip"))
+                        .setSaveConsumer(v -> config.oldVersionParityConfig.doOldCrouchHeight = v)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldGlassPaneHitbox"), config.oldVersionParityConfig.doOldGlassPaneHitbox)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldGlassPaneHitbox.tooltip"))
+                        .setSaveConsumer(v -> config.oldVersionParityConfig.doOldGlassPaneHitbox = v)
+                        .build()
+        );
+
+        generalCategory.addEntry(entryBuilder.startSubCategory(
+                                Text.translatable("config.ae.skydoppler.general.option.subcategory.oldVersionParityConfig"),
+                                oldVersionParityEntries
+                        )
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.subcategory.oldVersionParityConfig.tooltip"))
+                        .build()
+        );
+
         generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideThirdPersonFireOverlay"), config.hideThirdPersonFireOverlay)
                 .setDefaultValue(false)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideThirdPersonFireOverlay.tooltip"))
                 .setSaveConsumer(newValue -> config.hideThirdPersonFireOverlay = newValue)
                 .build());
 
-        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideExplosionParticles"),config.hideExplosionParticle)
+        generalCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.hideExplosionParticles"), config.hideExplosionParticle)
                 .setDefaultValue(false)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideExplosionParticles.tooltip"))
                 .setSaveConsumer(newValue -> config.hideExplosionParticle = newValue)
