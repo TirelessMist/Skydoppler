@@ -1,4 +1,4 @@
-package ae.skydoppler.util;
+package ae.skydoppler.old_version_parity;
 
 import net.minecraft.client.MinecraftClient;
 
@@ -12,7 +12,6 @@ public class BlockingHelper {
         if (client.player != null) {
             if (blocking)
                 client.player.setSprinting(false); // Ensure player stops sprinting when blocking
-            client.player.setSneaking(blocking); // Set sneaking state to match blocking
         }
     }
 

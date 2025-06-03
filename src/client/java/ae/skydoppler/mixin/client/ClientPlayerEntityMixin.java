@@ -1,7 +1,7 @@
 package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.behavior.AlwaysSprintState;
-import ae.skydoppler.util.BlockingHelper;
+import ae.skydoppler.old_version_parity.BlockingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;

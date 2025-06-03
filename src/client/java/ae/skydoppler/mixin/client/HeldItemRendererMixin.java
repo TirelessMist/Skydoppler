@@ -2,7 +2,7 @@ package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.config.SkydopplerConfig;
-import ae.skydoppler.util.BlockingHelper;
+import ae.skydoppler.old_version_parity.BlockingHelper;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;

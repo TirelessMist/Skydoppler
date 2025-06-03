@@ -2,7 +2,7 @@ package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.behavior.AlwaysSprintState;
-import ae.skydoppler.util.BlockingHelper;
+import ae.skydoppler.old_version_parity.BlockingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,14 +19,14 @@ public class KeyBindingMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
 
-        if ((Object) this == client.options.useKey && SkydopplerClient.CONFIG.do1_8Mode) {
+        if ((Object) this == client.options.useKey && SkydopplerClient.CONFIG.oldVersionParityConfig.doSwordBlocking) {
             if (SkydopplerClient.debugModeEnabled)
                 System.out.println("Blocking: " + pressed);
             BlockingHelper.setBlocking(pressed);
         }
 
         // If the player is trying to attack or sprint while blocking (and 1.8 mode is enabled), cancel the action
-        if (((Object) this == client.options.attackKey || (Object) this == client.options.sprintKey) && SkydopplerClient.CONFIG.do1_8Mode && BlockingHelper.isBlocking) {
+        if (((Object) this == client.options.attackKey || (Object) this == client.options.sprintKey) && SkydopplerClient.CONFIG.oldVersionParityConfig.doSwordBlocking && BlockingHelper.isBlocking && !SkydopplerClient.CONFIG.oldVersionParityConfig.do1_7Animations) {
             ci.cancel();
             return;
         }

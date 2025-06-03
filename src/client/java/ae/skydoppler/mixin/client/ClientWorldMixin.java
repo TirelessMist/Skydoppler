@@ -3,13 +3,10 @@ package ae.skydoppler.mixin.client;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.ObjectAllocator;
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.Vec3d;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,13 +26,14 @@ public class ClientWorldMixin {
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Initializing world ----OOOOOOOOOOOOOOOO");
 
-        if (SkydopplerClient.isPlayingSkyblock)
+        if (SkydopplerClient.isPlayingSkyblock && SkydopplerClient.CONFIG.doTransferCooldownFinishedAlert) {
             SkydopplerClient.startIslandWarpTimer();
 
-        SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
-        Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
-        Enum<?> currentRegion = null;
+            SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
+            Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
+            Enum<?> currentRegion = null;
+        }
+
+
     }
-
-
 }
