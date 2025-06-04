@@ -78,8 +78,8 @@ public class SkydopplerConfig {
     }
 
     public static class VanillaHudConfig {
-        public boolean shouldHideHungerArmorBubbles = true;
         public boolean shouldHideHealthBar = false;
+        public boolean shouldHideHungerArmorBubbles = true;
         public boolean shouldHideStatusEffectOverlay = true;
         public boolean shouldHideHeldItemTooltip = false;
         public boolean shouldHideMountHealth = true;

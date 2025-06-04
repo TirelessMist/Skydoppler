@@ -82,7 +82,7 @@ public class ConfigScreenHandler {
 
         generalCategory.addEntry(entryBuilder.startIntSlider(
                         Text.translatable("config.ae.skydoppler.general.option.hidePlayersNearNpcRange"),
-                        (int) (config.hidePlayersNearNpcRange * 100), // stored as float, converted to int, visually converted to float, returned as float
+                        (int) (config.hidePlayersNearNpcRange * 100), // stored as float, converted to int (b/c of no float support), visually converted to float, returned as float
                         50, // 0.50f * 100
                         500 // 5.00f * 100
                 )
@@ -151,6 +151,7 @@ public class ConfigScreenHandler {
 
         //region oldVersionParityConfig
 
+        //noinspection rawtypes
         List<AbstractConfigListEntry> oldVersionParityEntries = List.of(
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doSwordBlocking"), config.oldVersionParityConfig.doSwordBlocking)
                         .setDefaultValue(false)
@@ -202,40 +203,45 @@ public class ConfigScreenHandler {
         //region vanillaHudConfig
         //noinspection rawtypes
         List<AbstractConfigListEntry> vanillaHudEntries = java.util.List.of(
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts"), config.vanillaHudConfig.shouldHideHealthBar)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHealthBar"), config.vanillaHudConfig.shouldHideHealthBar)
                         .setDefaultValue(false)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hearts.tooltip"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHealthBar.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideHealthBar = newValue)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hunger_armor_bubbles"), config.vanillaHudConfig.shouldHideHungerArmorBubbles)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHungerArmorBubbles"), config.vanillaHudConfig.shouldHideHungerArmorBubbles)
                         .setDefaultValue(true)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_hunger_armor_bubbles"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHungerArmorBubbles.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideHungerArmorBubbles = newValue)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_effect_hud"), config.vanillaHudConfig.shouldHideStatusEffectOverlay)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideStatusEffectOverlay"), config.vanillaHudConfig.shouldHideStatusEffectOverlay)
                         .setDefaultValue(true)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_effect_hud.tooltip"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideStatusEffectOverlay.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideStatusEffectOverlay = newValue)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.held_item_tooltips"), config.vanillaHudConfig.shouldHideHeldItemTooltip)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHeldItemTooltip"), config.vanillaHudConfig.shouldHideHeldItemTooltip)
                         .setDefaultValue(false)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.held_item_tooltips.tooltip"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHeldItemTooltip.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideHeldItemTooltip = newValue)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_mount_health"), config.vanillaHudConfig.shouldHideMountHealth)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideMountHealth"), config.vanillaHudConfig.shouldHideMountHealth)
                         .setDefaultValue(true)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_mount_health.tooltip"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideMountHealth.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideMountHealth = newValue)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_portal_overlay"), config.vanillaHudConfig.shouldHidePortalOverlay)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHidePortalOverlay"), config.vanillaHudConfig.shouldHidePortalOverlay)
                         .setDefaultValue(true)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_portal_overlay.tooltip"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHidePortalOverlay.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHidePortalOverlay = newValue)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_fire_overlay_first_person"), config.vanillaHudConfig.shouldHideFireOverlayFirstPerson)
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideFireOverlayFirstPerson"), config.vanillaHudConfig.shouldHideFireOverlayFirstPerson)
                         .setDefaultValue(false)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hide_fire_overlay_first_person.tooltip"))
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideFireOverlayFirstPerson.tooltip"))
                         .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideFireOverlayFirstPerson = newValue)
+                        .build(),
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideWitherBossbarsInSkyblock"), config.vanillaHudConfig.shouldHideWitherBossbarsInSkyblock)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideWitherBossbarsInSkyblock.tooltip"))
+                        .setSaveConsumer(newValue -> config.vanillaHudConfig.shouldHideWitherBossbarsInSkyblock = newValue)
                         .build()
         );
 
