@@ -7,6 +7,7 @@
     "BossBarHudMixin",
     "ChatHudMixin",
     "ClientPlayerEntityMixin",
+    "ClientPlayerInteractionManagerMixin",
     "ClientWorldMixin",
     "EntityRenderDispatcherMixin",
     "GameRendererMixin",
@@ -23,6 +24,8 @@
   "mixins": [
     "KeyBindingMixin",
     "LivingEntityMixin",
-    "MapStateMixin"
+    "MapStateMixin",
+    "PlayerEntityMixin",
+    "PlayerInventoryMixin"
   ]
 }
