@@ -246,9 +246,10 @@ public class ConfigScreenHandler {
         );
 
         generalCategory.addEntry(entryBuilder.startSubCategory(
-                                Text.translatable("config.ae.skydoppler.general.option.subcategory.vanilla_hud"),
+                                Text.translatable("config.ae.skydoppler.general.option.subcategory.vanillaHudConfig"),
                                 vanillaHudEntries
                         )
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.subcategory.vanillaHudConfig.tooltip"))
                         .build()
         );
 

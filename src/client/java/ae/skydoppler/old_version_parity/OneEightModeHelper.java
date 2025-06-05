@@ -12,6 +12,10 @@ public class OneEightModeHelper {
 
     public static final float CROUCH_MOVEMENT_SPEED_1_8 = 0.3f; // crouch movement speed in 1.8
 
+    public static final float BLOCKING_ROT_X = -86.6f;
+    public static final float BLOCKING_ROT_Y = 18.68f;
+    public static final float BLOCKING_ROT_Z = 72.17f;
+
     public static float getCrouchHeight() {
         return SkydopplerClient.CONFIG.oldVersionParityConfig.doOldCrouchHeight ? CROUCH_HEIGHT_1_8 : CROUCH_HEIGHT_MODERN;
     }

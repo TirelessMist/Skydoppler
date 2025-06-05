@@ -1,14 +1,12 @@
 package ae.skydoppler.mixin.client;
 
-import ae.skydoppler.dungeon.map.DungeonMapHandler;
+import ae.skydoppler.api.BlockingAccessor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.type.MapIdComponent;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.map.MapState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,7 +18,25 @@ public class PlayerInventoryMixin {
     private void onSetStack(int slot, ItemStack stack, CallbackInfo ci) {
 
 
+    }
 
+    @Inject(method = "setSelectedSlot", at = @At("HEAD"))
+    private void onSetSelectedSlot(int slot, CallbackInfo ci) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.player == null) return;
+
+        ItemStack stack = client.player.getInventory().getStack(slot);
+        boolean isSword = stack.getItem().getTranslationKey().contains("sword");
+        boolean isUsingItem = client.options.useKey.isPressed();
+
+        BlockingAccessor playerAccessor = (BlockingAccessor)client.player;
+        boolean isBlocking = playerAccessor.skydoppler$isBlocking();
+
+        if (!isSword && isBlocking) {
+            playerAccessor.skydoppler$setBlocking(false);
+        } else if (isSword && !isBlocking && isUsingItem) {
+            playerAccessor.skydoppler$setBlocking(true);
+        }
     }
 
 }

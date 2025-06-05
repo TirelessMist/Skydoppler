@@ -1,20 +1,26 @@
 package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.api.BlockingAccessor;
 import ae.skydoppler.config.SkydopplerConfig;
-import ae.skydoppler.old_version_parity.BlockingHelper;
+import ae.skydoppler.old_version_parity.OneEightModeHelper;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,6 +28,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HeldItemRenderer.class)
 public abstract class HeldItemRendererMixin {
+
+    @Unique
+    private boolean isPlayerBlocking() {
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return false;
+        return ((BlockingAccessor) player).skydoppler$isBlocking();
+    }
 
     @Inject(method = "renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/" + "minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/" + "MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemDisplayContext;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
     public void onRenderHeldItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
@@ -38,32 +51,37 @@ public abstract class HeldItemRendererMixin {
 
             matrices.translate(posX, posY, posZ);
 
-            matrices.multiply(BlockingHelper.isBlocking ? RotationAxis.POSITIVE_X.rotationDegrees(rotX - 86.6f) : RotationAxis.POSITIVE_X.rotationDegrees(rotX));
-            matrices.multiply(BlockingHelper.isBlocking ? RotationAxis.POSITIVE_Y.rotationDegrees(rotY + 18.68f) : RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
-            matrices.multiply(BlockingHelper.isBlocking ? RotationAxis.POSITIVE_Z.rotationDegrees(rotZ + 72.17f) : RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
+            boolean blocking = isPlayerBlocking();
+            matrices.multiply(blocking ? RotationAxis.POSITIVE_X.rotationDegrees(rotX + OneEightModeHelper.BLOCKING_ROT_X) : RotationAxis.POSITIVE_X.rotationDegrees(rotX));
+            matrices.multiply(blocking ? RotationAxis.POSITIVE_Y.rotationDegrees(rotY + OneEightModeHelper.BLOCKING_ROT_Y) : RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
+            matrices.multiply(blocking ? RotationAxis.POSITIVE_Z.rotationDegrees(rotZ + OneEightModeHelper.BLOCKING_ROT_Z) : RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
             matrices.scale(scale, scale, scale);
         }
     }
 
-    /*@Inject(method = "renderArm", at = @At("HEAD"))
+    @Inject(method = "renderArm", at = @At("HEAD"))
     private void onRenderArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Arm arm, CallbackInfo ci) {
+        SkydopplerConfig config = SkydopplerClient.CONFIG;
 
-        float rotX = 0;
-        float rotY = 0;
-        float rotZ = 0;
-        float posX = 0;
-        float posY = 0;
-        float posZ = 0;
+        float rotX = config.heldItemRendererConfig.rotX;
+        float rotY = config.heldItemRendererConfig.rotY;
+        float rotZ = config.heldItemRendererConfig.rotZ;
+        float posX = config.heldItemRendererConfig.posX;
+        float posY = config.heldItemRendererConfig.posY;
+        float posZ = config.heldItemRendererConfig.posZ;
 
-        float scale = 0.5f;
+        float scale = config.heldItemRendererConfig.scale;
         matrices.translate(posX, posY, posZ);
 
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotX));
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
+        boolean blocking = isPlayerBlocking();
+        matrices.multiply(blocking ? RotationAxis.POSITIVE_X.rotationDegrees(rotX + OneEightModeHelper.BLOCKING_ROT_X) : RotationAxis.POSITIVE_X.rotationDegrees(rotX));
+        matrices.multiply(blocking ? RotationAxis.POSITIVE_Y.rotationDegrees(rotY + OneEightModeHelper.BLOCKING_ROT_Y) : RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
+        matrices.multiply(blocking ? RotationAxis.POSITIVE_Z.rotationDegrees(rotZ + OneEightModeHelper.BLOCKING_ROT_Z) : RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
         matrices.scale(scale, scale, scale);
 
-    }*/
+    }
+
+    // TODO: Add third-person blocking animation.
 
     @ModifyExpressionValue(method = "updateHeldItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getAttackCooldownProgress(F)F"))
     public float attackCooldown(float original) {
