@@ -2,6 +2,7 @@ package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.command.SkydopplerCommand;
+import ae.skydoppler.config.ConfigScreenHandler;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import ae.skydoppler.dungeon.DungeonClientHandler;
@@ -15,7 +16,6 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
@@ -48,15 +48,22 @@ public class SkydopplerClient implements ClientModInitializer {
         islandWarpTimerActive = true;
     }
 
+    public static void openMainConfigScreen() {
+        client.setScreen(ConfigScreenHandler.buildConfigScreen(CONFIG, null));
+    }
+    public static void openHeldItemConfigScreen() {
+        client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
+    }
+
     @Override
     public void onInitializeClient() {
+        SkydopplerCommand.registerCommands();
 
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("Skydoppler (Client) is initializing!");
 
         // Load configuration on initialization
         CONFIG = SkydopplerConfig.load(CONFIG_PATH);
-
 
         textRenderer = new TextRenderer(client);
         textRenderer.initialize();
@@ -69,8 +76,6 @@ public class SkydopplerClient implements ClientModInitializer {
             debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
         else
             debugKey = null;
-
-        SkydopplerCommand.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
