@@ -1,7 +1,6 @@
 package ae.skydoppler.chat;
 
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.TextRenderer;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatMatchHandler {
-    
+
     private static final MinecraftClient client = MinecraftClient.getInstance();
     private static JsonObject chat_matches_json;
     private static JsonArray chat_matches_entries;
@@ -42,7 +41,7 @@ public class ChatMatchHandler {
                 matchStrings.add(jsonElement.getAsString());
 
             if (CheckMatch(chatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
-                
+
                 String displayText = obj.get("displayText").getAsString();
 
                 if (obj.get("playSound").getAsBoolean()) {
@@ -60,7 +59,9 @@ public class ChatMatchHandler {
 
                 } else returnString = displayText;
 
-                TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
+                client.inGameHud.setTitle(Text.literal(displayText));
+                client.inGameHud.setSubtitle(Text.empty());
+                client.inGameHud.setTitleTicks(0, 90, 0);
                 //System.out.println("Chat Match Display Text: " + obj.get("displayText"));
             }
 
@@ -80,7 +81,9 @@ public class ChatMatchHandler {
                 String displayText = obj.get("displayText").getAsString();
 
                 if (SkydopplerClient.CONFIG.seacreatureMessageConfig.showTitle) {
-                    TextRenderer.DisplayTitle(Text.literal(displayText), Text.empty(), 0, 90, 0);
+                    client.inGameHud.setTitle(Text.literal(displayText));
+                    client.inGameHud.setSubtitle(Text.empty());
+                    client.inGameHud.setTitleTicks(0, 90, 0);
                 }
 
                 if (client.player != null && SkydopplerClient.CONFIG.seacreatureMessageConfig.shouldPlaySound) {
@@ -115,6 +118,7 @@ public class ChatMatchHandler {
             for (String s : matchStrings) {
                 if (chatMessage.equals(s)) {
                     isMatch = true; // checking quick case before all computation work
+                    break;
                 }
             }
             return isMatch;
