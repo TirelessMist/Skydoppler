@@ -203,6 +203,11 @@ public class ConfigScreenHandler {
         //region vanillaHudConfig
         //noinspection rawtypes
         List<AbstractConfigListEntry> vanillaHudEntries = java.util.List.of(
+                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hideChatIndicators"), config.vanillaHudConfig.hideChatIndicators)
+                        .setDefaultValue(false)
+                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.hideChatIndicators.tooltip"))
+                        .setSaveConsumer(newValue -> config.vanillaHudConfig.hideChatIndicators = newValue)
+                        .build(),
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHealthBar"), config.vanillaHudConfig.shouldHideHealthBar)
                         .setDefaultValue(false)
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHealthBar.tooltip"))

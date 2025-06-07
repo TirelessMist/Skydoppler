@@ -39,6 +39,8 @@
   "config.ae.skydoppler.general.option.glowingPlayers.tooltip": "Makes all players glow all the time, depending on their server-assigned glow color.",
   "config.ae.skydoppler.general.option.subcategory.vanillaHudConfig": "Vanilla HUD Options",
   "config.ae.skydoppler.general.option.subcategory.vanillaHudConfig.tooltip": "These options allow you to hide or show various elements of the vanilla HUD.",
+  "config.ae.skydoppler.general.option.vanillaHudConfig.hideChatIndicators": "Hide Secure Chat Indicators",
+  "config.ae.skydoppler.general.option.vanillaHudConfig.hideChatIndicators.tooltip": "Hides the colored indicators that appear on the left of every chat message.",
   "config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHealthBar": "Hide Vanilla Hearts",
   "config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHealthBar.tooltip": "Hide the vanilla health bar above the hotbar.",
   "config.ae.skydoppler.general.option.vanillaHudConfig.shouldHideHungerArmorBubbles": "Hide Hunger, Armor, and Bubbles Bars",

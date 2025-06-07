@@ -77,6 +77,7 @@ public class SkydopplerConfig {
     }
 
     public static class VanillaHudConfig {
+        public boolean hideChatIndicators = true;
         public boolean shouldHideHealthBar = false;
         public boolean shouldHideHungerArmorBubbles = true;
         public boolean shouldHideStatusEffectOverlay = true;
