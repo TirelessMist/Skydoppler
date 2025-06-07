@@ -1,11 +1,6 @@
 package ae.skydoppler.scoreboard;
 
-import ae.skydoppler.TextRenderer;
 import ae.skydoppler.skyblock_locations.SkyblockLocationHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 
 import java.text.Normalizer;
 import java.util.regex.Matcher;
@@ -49,7 +44,6 @@ public class ScoreboardHandler {
             // Convert to an integer and round up
             int roundedNumber = (int) Math.ceil(Double.parseDouble(cleanedNumber));
 
-            return;
         }
 
     }

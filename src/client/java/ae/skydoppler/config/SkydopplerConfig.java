@@ -1,6 +1,6 @@
 package ae.skydoppler.config;
 
-import ae.skydoppler.player_hiding.HideHubPlayersState;
+import ae.skydoppler.player_hiding.PlayerHidingHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -15,7 +15,7 @@ public class SkydopplerConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public boolean doFarPlayerHiding = false;
-    public HideHubPlayersState.HideLocationMode hideFarPlayersMode = HideHubPlayersState.HideLocationMode.HUB_ENTIRE;
+    public PlayerHidingHelper.HubHideLocationMode hideFarPlayersMode = PlayerHidingHelper.HubHideLocationMode.HUB_ENTIRE;
     public int hideFarPlayersRange = 12;
 
     public boolean hideExplosionParticle = true;

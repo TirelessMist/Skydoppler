@@ -1,7 +1,7 @@
 package ae.skydoppler.config;
 
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.player_hiding.HideHubPlayersState;
+import ae.skydoppler.player_hiding.PlayerHidingHelper;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -38,10 +38,10 @@ public class ConfigScreenHandler {
 
         generalCategory.addEntry(entryBuilder.startEnumSelector(
                         Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode"),
-                        HideHubPlayersState.HideLocationMode.class,
+                        PlayerHidingHelper.HubHideLocationMode.class,
                         config.hideFarPlayersMode
                 )
-                .setDefaultValue(HideHubPlayersState.HideLocationMode.HUB_ENTIRE)
+                .setDefaultValue(PlayerHidingHelper.HubHideLocationMode.HUB_ENTIRE)
                 .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode.tooltip"))
                 .setEnumNameProvider(mode -> Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode." + mode.name().toLowerCase()))
                 .setTooltipSupplier(mode -> Optional.of(new Text[]{
@@ -55,10 +55,10 @@ public class ConfigScreenHandler {
                                 Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode"),
                                 DropdownMenuBuilder.TopCellElementBuilder.of(
                                         config.hideFarPlayersMode,
-                                        mode -> Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode." + HideHubPlayersState.HideLocationMode.valueOf(mode).toString().toLowerCase()).getString()
+                                        mode -> Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode." + HideHubPlayersState.HubHideLocationMode.valueOf(mode).toString().toLowerCase()).getString()
                                 )
                         )
-                        .setDefaultValue(HideHubPlayersState.HideLocationMode.HUB_ENTIRE)
+                        .setDefaultValue(HideHubPlayersState.HubHideLocationMode.HUB_ENTIRE)
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.hideFarPlayersMode.tooltip"))
                         .build()
         );*/
