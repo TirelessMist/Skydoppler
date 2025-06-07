@@ -24,102 +24,60 @@ public abstract class EntityRenderDispatcherMixin<E extends Entity> {
     @Unique
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
-    @Unique
-    private double squaredDistanceToPlayer;
-
-    @Unique
-    private static double distanceToPlayer(Entity entity) {
-        return entity.squaredDistanceTo(client.player);
-    }
-
     @Inject(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("HEAD"), cancellable = true)
     private void onRender(E entity, double x, double y, double z, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-
         if (client.world == null || client.player == null) return;
 
-        squaredDistanceToPlayer = distanceToPlayer(entity);
+        double distSq = entity.squaredDistanceTo(client.player);
 
-        // If the entity is an NPC, add it to the list of NPCs inside PlayerHidingHelper.
         if (PlayerHidingHelper.isPlayerAnNpc(entity)) {
             PlayerHidingHelper.npcPositions.add(entity.getPos());
         }
 
-
-        //region Glowing
-        if (SkydopplerClient.CONFIG.glowingDroppedItems && entity instanceof ItemEntity item) {
-            item.setGlowing(true);
+        if (SkydopplerClient.CONFIG.glowingDroppedItems && entity instanceof ItemEntity) {
+            entity.setGlowing(true);
         }
-
         if (SkydopplerClient.CONFIG.glowingPlayers && entity instanceof PlayerEntity && !PlayerHidingHelper.isPlayerAnNpc(entity)) {
             entity.setGlowing(true);
         }
-        //endregion
 
-        //region Hiding
-        if (SkydopplerClient.isRodCast && shouldHideFishingPlayer(entity)) {
+        if (SkydopplerClient.isRodCast) {
+            if (entity instanceof PlayerEntity player
+                    && !player.equals(client.player)
+                    && !PlayerHidingHelper.isPlayerAnNpc(player)
+                    && distSq <= SkydopplerClient.CONFIG.hidePlayersWhileFishingRange * SkydopplerClient.CONFIG.hidePlayersWhileFishingRange) {
+                ci.cancel();
+                return;
+            }
+            if (entity instanceof FishingBobberEntity bobber
+                    && SkydopplerClient.CONFIG.hideOtherFishingRods
+                    && bobber.getOwner() != null
+                    && !bobber.getOwner().equals(client.player)) {
+                ci.cancel();
+                return;
+            }
+        }
+
+        if (PlayerHidingHelper.shouldDoHubHiding()
+                && !PlayerHidingHelper.isPlayerAnNpc(entity)
+                && distSq >= SkydopplerClient.CONFIG.hideFarPlayersRange * SkydopplerClient.CONFIG.hideFarPlayersRange) {
             ci.cancel();
             return;
         }
 
-        if (SkydopplerClient.isRodCast && shouldHideFishingRod(entity)) {
-            ci.cancel();
-            return;
+        if (SkydopplerClient.CONFIG.hidePlayersNearNpc
+                && entity instanceof PlayerEntity
+                && !entity.equals(client.player)
+                && !PlayerHidingHelper.isPlayerAnNpc(entity)) {
+            float rangeSq = SkydopplerClient.CONFIG.hidePlayersNearNpcRange * SkydopplerClient.CONFIG.hidePlayersNearNpcRange;
+            if (PlayerHidingHelper.npcPositions.stream().anyMatch(pos -> pos.squaredDistanceTo(entity.getPos()) <= rangeSq)) {
+                ci.cancel();
+            }
         }
-
-        if (PlayerHidingHelper.shouldDoHubHiding() && shouldHideHubPlayer(entity)) {
-            ci.cancel();
-            return;
-        }
-
-        if (SkydopplerClient.CONFIG.hidePlayersNearNpc && shouldHidePlayerNearNpc(entity)) {
-            ci.cancel();
-            return;
-        }
-        //endregion
-
     }
 
     @Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
     private void onRenderFire(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, Quaternionf rotation, CallbackInfo ci) {
-
-        if (SkydopplerClient.CONFIG.hideThirdPersonFireOverlay) {
-            ci.cancel();
-        }
+        if (SkydopplerClient.CONFIG.hideThirdPersonFireOverlay) ci.cancel();
     }
-
-    //region Hiding Helper Methods
-    @Unique
-    private boolean shouldHideFishingPlayer(E entity) {
-        int range = SkydopplerClient.CONFIG.hidePlayersWhileFishingRange;
-        int rangeSquared = range * range;
-
-        return (entity instanceof PlayerEntity player // check if the entity is a player
-                && !player.equals(client.player) // ensure it's not the local player
-                && !PlayerHidingHelper.isPlayerAnNpc(player) // check if the player is not an NPC
-                && squaredDistanceToPlayer <= rangeSquared); // check if the player is within the specified range
-    }
-
-    @Unique
-    private boolean shouldHideFishingRod(E entity) {
-        return entity instanceof FishingBobberEntity bobber && SkydopplerClient.CONFIG.hideOtherFishingRods
-                && bobber.getOwner() != null && !bobber.getOwner().equals(client.player);
-    }
-
-    @Unique
-    private boolean shouldHideHubPlayer(E entity) {
-        int d = SkydopplerClient.CONFIG.hideFarPlayersRange;
-        return !PlayerHidingHelper.isPlayerAnNpc(entity) && squaredDistanceToPlayer >= d * d;
-    }
-
-    @Unique
-    private boolean shouldHidePlayerNearNpc(E entity) {
-        if (!(entity instanceof PlayerEntity) || entity.equals(client.player) || PlayerHidingHelper.isPlayerAnNpc(entity)) {
-            return false;
-        }
-        float rangeSquared = SkydopplerClient.CONFIG.hidePlayersNearNpcRange * SkydopplerClient.CONFIG.hidePlayersNearNpcRange;
-        return PlayerHidingHelper.npcPositions.stream()
-                .anyMatch(pos -> pos.squaredDistanceTo(entity.getPos()) <= rangeSquared);
-    }
-    //endregion
-
 }

@@ -2,7 +2,6 @@ package ae.skydoppler;
 
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.command.SkydopplerCommand;
-import ae.skydoppler.config.ConfigScreenHandler;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import ae.skydoppler.dungeon.DungeonClientHandler;
@@ -28,18 +27,21 @@ public class SkydopplerClient implements ClientModInitializer {
 
     public static final Path CONFIG_PATH = Paths.get(MinecraftClient.getInstance() // or use a proper run directory reference
             .runDirectory.getAbsolutePath(), "config", "skydoppler.json");
-    public static MinecraftClient client = MinecraftClient.getInstance();
+    public static final Boolean debugModeEnabled = true;
     public static KeyBinding debugKey;
-    public static Boolean debugModeEnabled = true;
-    public static SkyblockPlayerDataStruct playerDataStruct;
+    public static SkyblockPlayerDataStruct playerDataStruct = new SkyblockPlayerDataStruct();
+
     public static DungeonClientHandler dungeonClientHandler = new DungeonClientHandler();
     public static SkyblockLocationEnum currentIsland = SkyblockLocationEnum.NONE;
     public static Enum<?> currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
     public static Enum<?> currentRegion = null;
+
     public static boolean isRodCast;
+
     public static boolean isPlayingSkyblock = false;
+
     public static SkydopplerConfig CONFIG;
-    private TextRenderer textRenderer;
+
     private static int islandWarpTimerTicks = 0;
     private static boolean islandWarpTimerActive = false;
 
@@ -48,29 +50,19 @@ public class SkydopplerClient implements ClientModInitializer {
         islandWarpTimerActive = true;
     }
 
-    public static void openMainConfigScreen() {
-        client.setScreen(ConfigScreenHandler.buildConfigScreen(CONFIG, null));
-    }
-    public static void openHeldItemConfigScreen() {
-        client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
-    }
-
     @Override
     public void onInitializeClient() {
+
         SkydopplerCommand.registerCommands();
 
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("Skydoppler (Client) is initializing!");
 
-        // Load configuration on initialization
         CONFIG = SkydopplerConfig.load(CONFIG_PATH);
 
-        textRenderer = new TextRenderer(client);
-        textRenderer.initialize();
         ChatMatchHandler.loadJsonData();
-        isRodCast = false;
 
-        playerDataStruct = new SkyblockPlayerDataStruct();
+        isRodCast = false;
 
         if (SkydopplerClient.debugModeEnabled)
             debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
@@ -104,7 +96,6 @@ public class SkydopplerClient implements ClientModInitializer {
                 if (islandWarpTimerTicks > 0) {
                     islandWarpTimerTicks--;
                 } else {
-                    // Play ding sound
                     client.player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.MASTER, 1.0f, 1.0f);
                     client.player.sendMessage(Text.literal("§7PLAYER_TRANSFER_COOLDOWN_EXPIRED"), false);
                     islandWarpTimerActive = false;
