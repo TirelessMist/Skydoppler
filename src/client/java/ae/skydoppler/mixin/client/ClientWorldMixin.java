@@ -39,6 +39,7 @@ public class ClientWorldMixin {
             SkydopplerClient.currentIsland = SkyblockLocationEnum.NONE;
             SkydopplerClient.currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
             SkydopplerClient.currentRegion = null;
+            SkydopplerClient.isRodCast = false;
             PlayerHidingHelper.npcPositions = new java.util.ArrayList<>();
         }
 

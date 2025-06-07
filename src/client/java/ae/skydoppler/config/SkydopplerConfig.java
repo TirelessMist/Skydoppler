@@ -113,7 +113,6 @@ public class SkydopplerConfig {
     public static class OldVersionParityConfig {
         public boolean doSwordBlocking = false;
         public boolean do1_7Animations = false;
-        public boolean disableModernAttackIndicator = false;
         public boolean doOldCrouchHeight = false;
         public boolean doOldGlassPaneHitbox = false;
     }

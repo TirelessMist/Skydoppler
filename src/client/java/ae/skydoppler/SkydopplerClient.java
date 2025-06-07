@@ -13,11 +13,9 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
@@ -77,21 +75,6 @@ public class SkydopplerClient implements ClientModInitializer {
                 client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
             }
 
-            if (client.world == null || client.player == null) {
-                isRodCast = false;
-                return;
-            }
-
-            double r = CONFIG.hidePlayersWhileFishingRange;
-            Box box = new Box(
-                    client.player.getX() - r, client.player.getY() - r, client.player.getZ() - r,
-                    client.player.getX() + r, client.player.getY() + r, client.player.getZ() + r
-            );
-
-            isRodCast = !client.world.getEntitiesByClass(FishingBobberEntity.class, box,
-                    bobber -> bobber.getOwner() != null && bobber.getOwner().equals(client.player)
-            ).isEmpty();
-
             if (islandWarpTimerActive && client.player != null) {
                 if (islandWarpTimerTicks > 0) {
                     islandWarpTimerTicks--;
@@ -104,4 +87,3 @@ public class SkydopplerClient implements ClientModInitializer {
         });
     }
 }
-

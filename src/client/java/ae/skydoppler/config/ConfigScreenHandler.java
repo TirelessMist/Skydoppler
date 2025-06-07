@@ -163,11 +163,6 @@ public class ConfigScreenHandler {
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.do1_7Animations.tooltip"))
                         .setSaveConsumer(v -> config.oldVersionParityConfig.do1_7Animations = v)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.disableModernAttackIndicator"), config.oldVersionParityConfig.disableModernAttackIndicator)
-                        .setDefaultValue(false)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.disableModernAttackIndicator.tooltip"))
-                        .setSaveConsumer(v -> config.oldVersionParityConfig.disableModernAttackIndicator = v)
-                        .build(),
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldCrouchHeight"), config.oldVersionParityConfig.doOldCrouchHeight)
                         .setDefaultValue(false)
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldCrouchHeight.tooltip"))

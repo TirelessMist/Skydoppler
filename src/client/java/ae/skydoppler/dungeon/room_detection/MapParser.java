@@ -2,8 +2,6 @@ package ae.skydoppler.dungeon.room_detection;
 
 import ae.skydoppler.SkydopplerClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 
 public class MapParser {
@@ -11,7 +9,7 @@ public class MapParser {
     MapReader.FloorType floorType;
 
     /**
-     * Retrieves the map from the player’s inventory slot 8 (9th/last Hotbar Slot), parses the pixel data into a 2D array.
+     * Retrieves the map from the player’s inventory slot index 8 (9th Hotbar Slot), parses the pixel data into a 2D array.
      */
     public static byte[][] parseMap(MapState mapState) {
         // Get the client instance and make sure the player is available.
