@@ -97,7 +97,7 @@ public class SkydopplerClient implements ClientModInitializer {
                     islandWarpTimerTicks--;
                 } else {
                     client.player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), SoundCategory.MASTER, 1.0f, 1.0f);
-                    client.player.sendMessage(Text.literal("§7PLAYER_TRANSFER_COOLDOWN_EXPIRED"), false);
+                    client.player.sendMessage(Text.literal(" §7(§aPLAYER_TRANSFER_COOLDOWN_EXPIRED§7)"), false);
                     islandWarpTimerActive = false;
                 }
             }
