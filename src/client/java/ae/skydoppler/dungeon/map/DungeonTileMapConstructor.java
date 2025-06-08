@@ -1,7 +1,5 @@
 package ae.skydoppler.dungeon.map;
 
-import java.awt.*;
-
 public class DungeonTileMapConstructor {
 
     /**
@@ -11,141 +9,360 @@ public class DungeonTileMapConstructor {
      * @return A modular grid of MapTiles.
      */
     public static MapTile[][] constructMap(byte[][] mapPixels) {
-
-        if (mapPixels == null || mapPixels.length == 0 || mapPixels[0].length == 0) {
-            return null; // Return an empty map if input is invalid
+        if (mapPixels == null || mapPixels.length == 0) {
+            return new MapTile[0][0];
         }
 
-        Point entranceRoomPosition = determineEntranceRoomPosition(mapPixels); // Store the entrance room position
-        if (entranceRoomPosition == null) {
-            return null; // Return an empty map if no entrance room is found
-        }
+        // First, identify room regions and calculate dimensions
+        RoomRegionInfo regionInfo = identifyRoomRegions(mapPixels);
 
-        int roomTileSideLength = determineEntranceRoomSize(mapPixels, entranceRoomPosition); // Store the room side length
-        int checkMarkOffset = roomTileSideLength / 2; // Store the check mark offset from the top-left corner of the room, which is the center of the room
-        int distanceFromEdge = getDistanceFromNearestEdge(mapPixels, entranceRoomPosition); // Store the distance from the edge
-        int DISTANCE_BETWEEN_ROOMS = 4; // Distance between rooms in pixels (always 4 pixels)
-        int doorOffset = roomTileSideLength / 2; // Store the horizontal distance from the top-left corner of the room to the same x coordinate of the top door
+        // Calculate the dimensions of the modular grid based on room regions
+        int gridHeight = regionInfo.getTileGridHeight();
+        int gridWidth = regionInfo.getTileGridWidth();
 
-        int gridSize = mapPixels.length / roomTileSideLength;
-        if (distanceFromEdge >= roomTileSideLength) {
-            gridSize += 2; // Increase grid size if distance from edge is greater than or equal to room side length. This is to ensure that the grid can accommodate puzzle rooms that are at the edge of the map on some floors.
-            distanceFromEdge -= roomTileSideLength; // Adjust distance from edge to account for the new grid size
-        }
+        // Create the modular tile grid
+        MapTile[][] tileGrid = new MapTile[gridHeight][gridWidth];
 
-        MapTile[][] dungeonMap = new MapTile[gridSize][gridSize]; // Initialize the dungeon map
-
-        for (int row = 0; row < gridSize; row++) {
-            for (int col = 0; col < gridSize; col++) {
-
-                int roomPosY = row * roomTileSideLength + distanceFromEdge + (row * DISTANCE_BETWEEN_ROOMS);
-                int roomPosX = col * roomTileSideLength + distanceFromEdge + (col * DISTANCE_BETWEEN_ROOMS);
-
-                RoomType roomType = getRoomType(mapPixels[roomPosY][roomPosX]);
-                CheckMarkType checkMarkType = getCheckMarkType(mapPixels[roomPosY + checkMarkOffset][roomPosX + checkMarkOffset]);
-
-                DoorType topDoorType = getDoorType(mapPixels[roomPosY - 1][roomPosX + doorOffset]);
-                DoorType rightDoorType = getDoorType(mapPixels[roomPosY + doorOffset][roomPosX + roomTileSideLength]);
-                DoorType bottomDoorType = getDoorType(mapPixels[roomPosY + roomTileSideLength][roomPosX + doorOffset]);
-                DoorType leftDoorType = getDoorType(mapPixels[roomPosY + doorOffset][roomPosX - 1]);
-
-                dungeonMap[row][col] = new MapTile(roomType, topDoorType, rightDoorType, bottomDoorType, leftDoorType, checkMarkType);
-
+        // Initialize all grid cells with empty tiles
+        for (int y = 0; y < gridHeight; y++) {
+            for (int x = 0; x < gridWidth; x++) {
+                tileGrid[y][x] = new MapTile();
             }
         }
 
-        return dungeonMap;
+        // Fill the grid with room and door information
+        fillTileGrid(mapPixels, tileGrid, regionInfo);
+
+        return tileGrid;
     }
 
-    //region Helper Methods
-    private static Point determineEntranceRoomPosition(byte[][] mapPixels) {
+    /**
+     * Identifies all room regions in the map and calculates grid dimensions.
+     */
+    private static RoomRegionInfo identifyRoomRegions(byte[][] mapPixels) {
+        int height = mapPixels.length;
+        int width = mapPixels[0].length;
 
-        for (int y = 0; y < mapPixels.length; y++) {
-            for (int x = 0; x < mapPixels[y].length; x++) {
-                if (mapPixels[y][x] == RoomType.ENTRANCE.getValue()) {
-                    return new Point(x, y); // Return the position of the entrance room
+        // Find the room size (assuming square rooms) and spacing between rooms
+        int roomSize = findRoomSize(mapPixels);
+        int spacing = 4; // As specified, spacing between rooms is always 4 pixels
+
+        // Calculate how many tiles we need in each dimension
+        int pixelWidth = findWidthWithContent(mapPixels);
+        int pixelHeight = findHeightWithContent(mapPixels);
+
+        int tileGridWidth = calculateGridDimension(pixelWidth, roomSize, spacing);
+        int tileGridHeight = calculateGridDimension(pixelHeight, roomSize, spacing);
+
+        return new RoomRegionInfo(roomSize, spacing, tileGridWidth, tileGridHeight);
+    }
+
+    /**
+     * Calculates a grid dimension based on pixel dimension, room size, and spacing.
+     */
+    private static int calculateGridDimension(int pixelDimension, int roomSize, int spacing) {
+        // Each unit consists of a room followed by spacing
+        // The formula accounts for rooms and spaces between them
+        int units = 0;
+        int pixelsProcessed = 0;
+
+        while (pixelsProcessed < pixelDimension) {
+            // Add a room tile
+            units++;
+            pixelsProcessed += roomSize;
+
+            // If there's enough space for another room, add a space tile
+            if (pixelsProcessed + spacing < pixelDimension) {
+                units++;
+                pixelsProcessed += spacing;
+            }
+        }
+
+        return units;
+    }
+
+    /**
+     * Finds the width of the map that contains actual content (non-zero pixels).
+     */
+    private static int findWidthWithContent(byte[][] mapPixels) {
+        int maxX = 0;
+        for (byte[] row : mapPixels) {
+            for (int x = row.length - 1; x >= 0; x--) {
+                if (row[x] != 0) {
+                    maxX = Math.max(maxX, x);
+                    break;
+                }
+            }
+        }
+        return maxX + 1;
+    }
+
+    /**
+     * Finds the height of the map that contains actual content (non-zero pixels).
+     */
+    private static int findHeightWithContent(byte[][] mapPixels) {
+        int maxY = 0;
+        for (int y = mapPixels.length - 1; y >= 0; y--) {
+            for (byte pixelValue : mapPixels[y]) {
+                if (pixelValue != 0) {
+                    maxY = Math.max(maxY, y);
+                    break;
+                }
+            }
+        }
+        return maxY + 1;
+    }
+
+    /**
+     * Determines the size of rooms by finding the smallest continuous block of non-zero pixels.
+     */
+    private static int findRoomSize(byte[][] mapPixels) {
+        int height = mapPixels.length;
+        int width = mapPixels[0].length;
+
+        // Find first non-zero pixel
+        int startX = -1;
+        int startY = -1;
+        outerLoop:
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (mapPixels[y][x] != 0 && isRoomType(mapPixels[y][x])) {
+                    startX = x;
+                    startY = y;
+                    break outerLoop;
                 }
             }
         }
 
-        return null; // Return null if no entrance room is found
+        if (startX == -1 || startY == -1) {
+            return 7; // Default size if no rooms found
+        }
+
+        // Measure room width
+        int roomWidth = 0;
+        for (int x = startX; x < width; x++) {
+            if (x >= width || mapPixels[startY][x] == 0 || !isRoomType(mapPixels[startY][x])) {
+                break;
+            }
+            roomWidth++;
+        }
+
+        // Measure room height
+        int roomHeight = 0;
+        for (int y = startY; y < height; y++) {
+            if (y >= height || mapPixels[y][startX] == 0 || !isRoomType(mapPixels[y][startX])) {
+                break;
+            }
+            roomHeight++;
+        }
+
+        // Return the minimum of width and height to ensure we have a valid room size
+        return Math.min(roomWidth, roomHeight);
     }
 
-    private static int determineEntranceRoomSize(byte[][] mapPixels, Point entranceRoomPosition) {
-        int sideLength = 0;
+    /**
+     * Checks if a pixel value represents a room type.
+     */
+    private static boolean isRoomType(byte pixelValue) {
+        return getRoomType(pixelValue) != RoomType.NONE;
+    }
 
-        for (int y = entranceRoomPosition.y; y < mapPixels.length; y++) {
-            if (mapPixels[y][entranceRoomPosition.x] == RoomType.ENTRANCE.getValue()) {
-                sideLength++;
+    /**
+     * Fills the tile grid with room and door information based on pixel data.
+     */
+    private static void fillTileGrid(byte[][] mapPixels, MapTile[][] tileGrid, RoomRegionInfo regionInfo) {
+        int roomSize = regionInfo.getRoomSize();
+        int spacing = regionInfo.getSpacing();
+
+        int gridY = 0;
+        int pixelY = 0;
+
+        while (gridY < tileGrid.length) {
+            int gridX = 0;
+            int pixelX = 0;
+
+            while (gridX < tileGrid[0].length) {
+                if (isValidPixelCoordinate(pixelY, pixelX, mapPixels)) {
+                    // Check if this is a room position
+                    if (isRoomPosition(gridX, gridY)) {
+                        processRoomTile(mapPixels, tileGrid, pixelX, pixelY, gridX, gridY, roomSize);
+                        pixelX += roomSize;
+                    }
+                    // Check if this is a horizontal corridor position
+                    else if (isHorizontalCorridorPosition(gridX, gridY)) {
+                        processHorizontalCorridor(mapPixels, tileGrid, pixelX, pixelY, gridX, gridY, spacing, roomSize);
+                        pixelX += spacing;
+                    }
+                    // Check if this is a vertical corridor position
+                    else if (isVerticalCorridorPosition(gridX, gridY)) {
+                        processVerticalCorridor(mapPixels, tileGrid, pixelX, pixelY, gridX, gridY, spacing, roomSize);
+                        pixelX += roomSize;
+                    }
+                    // This is an intersection position
+                    else {
+                        pixelX += spacing;
+                    }
+                }
+
+                gridX++;
+            }
+
+            // Move to the next row in the grid
+            if (isRoomPosition(0, gridY)) {
+                pixelY += roomSize;
             } else {
-                break; // Stop when we hit a non-entrance room
+                pixelY += spacing;
+            }
+
+            gridY++;
+        }
+    }
+
+    /**
+     * Processes a room tile in the map and fills in the corresponding grid cell.
+     */
+    private static void processRoomTile(byte[][] mapPixels, MapTile[][] tileGrid, int pixelX, int pixelY,
+                                        int gridX, int gridY, int roomSize) {
+        if (!isValidPixelCoordinate(pixelY, pixelX, mapPixels)) {
+            return;
+        }
+
+        // Get room type from the center of the room
+        int centerX = pixelX + roomSize / 2;
+        int centerY = pixelY + roomSize / 2;
+
+        if (isValidPixelCoordinate(centerY, centerX, mapPixels)) {
+            RoomType roomType = getRoomType(mapPixels[centerY][centerX]);
+            tileGrid[gridY][gridX].setRoomType(roomType);
+
+            // Check for checkmark in the top-left of the room
+            if (isValidPixelCoordinate(pixelY, pixelX, mapPixels)) {
+                CheckMarkType checkMarkType = getCheckMarkType(mapPixels[pixelY][pixelX]);
+                tileGrid[gridY][gridX].setCheckMarkType(checkMarkType);
             }
         }
-
-        return sideLength;
     }
 
-    private static int getDistanceFromNearestEdge(byte[][] mapPixels, Point entranceRoomPosition) {
+    /**
+     * Processes a horizontal corridor between rooms.
+     */
+    private static void processHorizontalCorridor(byte[][] mapPixels, MapTile[][] tileGrid, int pixelX, int pixelY,
+                                                  int gridX, int gridY, int spacing, int roomSize) {
+        // Check the middle of the corridor for a door
+        int middleX = pixelX + spacing / 2;
+        int middleY = pixelY + roomSize / 2;
 
-        int distance = 0;
-        int quadrant = determineEntranceRoomQuadrant(mapPixels, entranceRoomPosition);
+        if (isValidPixelCoordinate(middleY, middleX, mapPixels)) {
+            // Check if there's a horizontal door
+            DoorType leftDoorType = getDoorType(mapPixels[middleY][middleX]);
+            DoorType rightDoorType = getDoorType(mapPixels[middleY][middleX]);
 
-        distance = switch (quadrant) {
-            case 1 -> // Top-left
-                    Math.min(entranceRoomPosition.x, entranceRoomPosition.y);
-            case 2 -> // Top-right
-                    Math.min(mapPixels[0].length - entranceRoomPosition.x - 1, entranceRoomPosition.y);
-            case 3 -> // Bottom-left
-                    Math.min(entranceRoomPosition.x, mapPixels.length - entranceRoomPosition.y - 1);
-            case 4 -> // Bottom-right
-                    Math.min(mapPixels[0].length - entranceRoomPosition.x - 1, mapPixels.length - entranceRoomPosition.y - 1);
-            default -> distance;
-        };
-
-        return distance;
-    }
-
-    private static int determineEntranceRoomQuadrant(byte[][] mapPixels, Point entranceRoomPosition) {
-        int quadrant = 0;
-
-        if (entranceRoomPosition.x < mapPixels[0].length / 2 && entranceRoomPosition.y < mapPixels.length / 2) {
-            quadrant = 1; // Top-left
-        } else if (entranceRoomPosition.x >= mapPixels[0].length / 2 && entranceRoomPosition.y < mapPixels.length / 2) {
-            quadrant = 2; // Top-right
-        } else if (entranceRoomPosition.x < mapPixels[0].length / 2 && entranceRoomPosition.y >= mapPixels.length / 2) {
-            quadrant = 3; // Bottom-left
-        } else if (entranceRoomPosition.x >= mapPixels[0].length / 2 && entranceRoomPosition.y >= mapPixels.length / 2) {
-            quadrant = 4; // Bottom-right
+            // Set door types for adjacent cells
+            if (gridX > 0) {
+                tileGrid[gridY][gridX - 1].setRightDoorType(leftDoorType);
+            }
+            if (gridX < tileGrid[0].length - 1) {
+                tileGrid[gridY][gridX + 1].setLeftDoorType(rightDoorType);
+            }
         }
-
-        return quadrant;
     }
-    //endregion
+
+    /**
+     * Processes a vertical corridor between rooms.
+     */
+    private static void processVerticalCorridor(byte[][] mapPixels, MapTile[][] tileGrid, int pixelX, int pixelY,
+                                                int gridX, int gridY, int spacing, int roomSize) {
+        // Check the middle of the corridor for a door
+        int middleX = pixelX + roomSize / 2;
+        int middleY = pixelY + spacing / 2;
+
+        if (isValidPixelCoordinate(middleY, middleX, mapPixels)) {
+            // Check if there's a vertical door
+            DoorType topDoorType = getDoorType(mapPixels[middleY][middleX]);
+            DoorType bottomDoorType = getDoorType(mapPixels[middleY][middleX]);
+
+            // Set door types for adjacent cells
+            if (gridY > 0) {
+                tileGrid[gridY - 1][gridX].setBottomDoorType(topDoorType);
+            }
+            if (gridY < tileGrid.length - 1) {
+                tileGrid[gridY + 1][gridX].setTopDoorType(bottomDoorType);
+            }
+        }
+    }
+
+    /**
+     * Checks if a grid position corresponds to a room position.
+     */
+    private static boolean isRoomPosition(int gridX, int gridY) {
+        return gridX % 2 == 0 && gridY % 2 == 0;
+    }
+
+    /**
+     * Checks if a grid position corresponds to a horizontal corridor.
+     */
+    private static boolean isHorizontalCorridorPosition(int gridX, int gridY) {
+        return gridX % 2 == 1 && gridY % 2 == 0;
+    }
+
+    /**
+     * Checks if a grid position corresponds to a vertical corridor.
+     */
+    private static boolean isVerticalCorridorPosition(int gridX, int gridY) {
+        return gridX % 2 == 0 && gridY % 2 == 1;
+    }
+
+    /**
+     * Checks if the pixel coordinates are valid within the map.
+     */
+    private static boolean isValidPixelCoordinate(int y, int x, byte[][] mapPixels) {
+        return y >= 0 && y < mapPixels.length && x >= 0 && x < mapPixels[0].length;
+    }
 
     //region Type Conversion Methods
     private static RoomType getRoomType(byte pixelValue) {
-        if (RoomType.fromValue(pixelValue) == null) {
-            return RoomType.NONE; // Default to NONE if no match found
-        }
         return RoomType.fromValue(pixelValue);
     }
 
     private static DoorType getDoorType(byte pixelValue) {
-        if (DoorType.fromValue(pixelValue) == null) {
-            return DoorType.NONE; // Default to NONE if no match found
-        }
         return DoorType.fromValue(pixelValue);
     }
 
     private static CheckMarkType getCheckMarkType(byte pixelValue) {
-        if (pixelValue == CheckMarkType.WHITE.getValue()) {
-            return CheckMarkType.WHITE;
-        } else if (pixelValue == CheckMarkType.GREEN.getValue()) {
-            return CheckMarkType.GREEN;
-        } else {
-            return CheckMarkType.NONE; // Default to NONE if no match found
-        }
+        return CheckMarkType.fromValue(pixelValue);
     }
     //endregion
 
+    /**
+     * Helper class to store information about room regions.
+     */
+    private static class RoomRegionInfo {
+        private final int roomSize;
+        private final int spacing;
+        private final int tileGridWidth;
+        private final int tileGridHeight;
+
+        public RoomRegionInfo(int roomSize, int spacing, int tileGridWidth, int tileGridHeight) {
+            this.roomSize = roomSize;
+            this.spacing = spacing;
+            this.tileGridWidth = tileGridWidth;
+            this.tileGridHeight = tileGridHeight;
+        }
+
+        public int getRoomSize() {
+            return roomSize;
+        }
+
+        public int getSpacing() {
+            return spacing;
+        }
+
+        public int getTileGridWidth() {
+            return tileGridWidth;
+        }
+
+        public int getTileGridHeight() {
+            return tileGridHeight;
+        }
+    }
 }
