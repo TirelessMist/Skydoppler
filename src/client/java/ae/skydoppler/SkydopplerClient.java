@@ -3,8 +3,8 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
-import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import ae.skydoppler.dungeon.DungeonClientHandler;
+import ae.skydoppler.dungeon.map.MapParser;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.item.FilledMapItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -72,7 +74,8 @@ public class SkydopplerClient implements ClientModInitializer {
             if (client.player == null || client.world == null) return;
 
             while (debugKey.wasPressed()) {
-                client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
+                //client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
+                drawDungeonMap();
             }
 
             if (islandWarpTimerActive && client.player != null) {
@@ -85,5 +88,20 @@ public class SkydopplerClient implements ClientModInitializer {
                 }
             }
         });
+    }
+
+    private void drawDungeonMap() {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        ItemStack itemStack = client.player.getInventory().getStack(8); // 9th Hotbar Slot
+
+        if (!(itemStack.getItem() instanceof FilledMapItem)) return; // Ensure the item is a filled map
+
+        MapParser.saveMapToDesktop(FilledMapItem.getMapState(itemStack, client.world));
+
+        /*MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world)));
+
+        HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;*/
+
     }
 }

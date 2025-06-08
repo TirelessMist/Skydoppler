@@ -1,52 +1,53 @@
 {
-	"schemaVersion": 1,
-	"id": "skydoppler",
-	"version": "v0.0.1-alpha",
-	"name": "Skydoppler",
-	"description": "A Hypixel Skyblock mod with a vast array of features for all areas of Skyblock!",
-	"authors": [
-		"TirelessMist"
-	],
-	"contact": {
-		"homepage": "https://github.com/TirelessMist",
-		"sources": "https://github.com/TirelessMist/Skydoppler"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/skydoppler/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"ae.skydoppler.Skydoppler"
-		],
-		"client": [
-			"ae.skydoppler.SkydopplerClient"
-		],
-		"modmenu": [
-			"ae.skydoppler.config.ModMenuIntegration"
-		]
-	},
-	"mixins": [
-		"skydoppler.mixins.json",
-		{
-			"config": "skydoppler.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.16.13",
-		"minecraft": "~1.21.5",
-		"java": ">=21",
-		"fabric-api": "*",
-		"cloth-config": ">=16.0.0"
-	},
-	"custom": {
-		"modmenu": {
-			"links": {
-				"modmenu.discord": "https://discord.com/",
-				"modmenu.curseforge": "https://www.curseforge.com/",
-				"modmenu.modrinth": "https://modrinth.com/"
-			},
-			"update_checker": true
-		}
-	}
+  "schemaVersion": 1,
+  "id": "skydoppler",
+  "version": "v0.0.1-alpha",
+  "name": "Skydoppler",
+  "description": "A Hypixel Skyblock mod with a vast array of features for all areas of Skyblock!",
+  "authors": [
+    "TirelessMist"
+  ],
+  "contact": {
+    "homepage": "https://github.com/TirelessMist",
+    "sources": "https://github.com/TirelessMist/Skydoppler"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/skydoppler/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ae.skydoppler.Skydoppler"
+    ],
+    "client": [
+      "ae.skydoppler.SkydopplerClient",
+      "ae.skydoppler.HudRenderingEntrypoint"
+    ],
+    "modmenu": [
+      "ae.skydoppler.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "skydoppler.mixins.json",
+    {
+      "config": "skydoppler.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.13",
+    "minecraft": "~1.21.5",
+    "java": ">=21",
+    "fabric-api": "*",
+    "cloth-config": ">=16.0.0"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.com/",
+        "modmenu.curseforge": "https://www.curseforge.com/",
+        "modmenu.modrinth": "https://modrinth.com/"
+      },
+      "update_checker": true
+    }
+  }
 }

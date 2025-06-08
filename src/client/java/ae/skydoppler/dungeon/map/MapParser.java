@@ -1,12 +1,10 @@
-package ae.skydoppler.dungeon.room_detection;
+package ae.skydoppler.dungeon.map;
 
 import ae.skydoppler.SkydopplerClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.map.MapState;
 
 public class MapParser {
-
-    MapReader.FloorType floorType;
 
     /**
      * Retrieves the map from the player’s inventory slot index 8 (9th Hotbar Slot), parses the pixel data into a 2D array.
@@ -49,6 +47,34 @@ public class MapParser {
         }
 
         return mapPixels;
+    }
+
+    /**
+     * Parses the map and saves the 2D byte array to the user's desktop in a text file named "dungeon_map.txt".
+     */
+    public static void saveMapToDesktop(MapState mapState) {
+        byte[][] mapPixels = parseMap(mapState);
+        if (mapPixels == null) {
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("Failed to parse map.");
+            return;
+        }
+        String userHome = System.getProperty("user.home");
+        java.nio.file.Path filePath = java.nio.file.Paths.get(userHome, "Desktop", "dungeon_map.txt");
+        try (java.io.BufferedWriter writer = java.nio.file.Files.newBufferedWriter(filePath)) {
+            for (byte[] row : mapPixels) {
+                for (int i = 0; i < row.length; i++) {
+                    writer.write(Byte.toString(row[i]));
+                    if (i < row.length - 1) writer.write(",");
+                }
+                writer.newLine();
+            }
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("Map saved to: " + filePath);
+        } catch (java.io.IOException e) {
+            if (SkydopplerClient.debugModeEnabled)
+                System.out.println("Failed to save map: " + e.getMessage());
+        }
     }
 
 }

@@ -5,40 +5,26 @@
 
 package ae.skydoppler.dungeon;
 
-import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.dungeon.map.DungeonMapHandler;
-
 /**
- *
  * @author VGRADN
  */
 public class DungeonClientHandler {
 
-    private DungeonMapHandler dungeonMapHandler;
     private int currentDungeonFloor;
 
     public DungeonClientHandler() {
-        }
+    }
 
-        public DungeonClientHandler(DungeonMapHandler dungeonMapHandler, int currentDungeonFloor) {
-            this.dungeonMapHandler = dungeonMapHandler;
-            this.currentDungeonFloor = currentDungeonFloor;
-        }
+    public DungeonClientHandler(int currentDungeonFloor) {
+        this.currentDungeonFloor = currentDungeonFloor;
+    }
 
-        public DungeonMapHandler getDungeonMapHandler() {
-            return dungeonMapHandler;
-        }
+    public int getCurrentDungeonFloor() {
+        return currentDungeonFloor;
+    }
 
-        public void setDungeonMapHandler(DungeonMapHandler dungeonMapHandler) {
-            this.dungeonMapHandler = dungeonMapHandler;
-        }
-
-        public int getCurrentDungeonFloor() {
-            return currentDungeonFloor;
-        }
-
-        public void setCurrentDungeonFloor(int currentDungeonFloor) {
-            this.currentDungeonFloor = currentDungeonFloor;
-        }
+    public void setCurrentDungeonFloor(int currentDungeonFloor) {
+        this.currentDungeonFloor = currentDungeonFloor;
+    }
 
 }
