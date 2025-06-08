@@ -4,7 +4,10 @@ import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.DungeonClientHandler;
+import ae.skydoppler.dungeon.map.DungeonTileMapConstructor;
+import ae.skydoppler.dungeon.map.DungeonTileMapConstructorTest;
 import ae.skydoppler.dungeon.map.MapParser;
+import ae.skydoppler.dungeon.map.MapTile;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import net.fabricmc.api.ClientModInitializer;
@@ -97,11 +100,17 @@ public class SkydopplerClient implements ClientModInitializer {
 
         if (!(itemStack.getItem() instanceof FilledMapItem)) return; // Ensure the item is a filled map
 
-        MapParser.saveMapToDesktop(FilledMapItem.getMapState(itemStack, client.world));
+        //MapParser.saveMapToDesktop(FilledMapItem.getMapState(itemStack, client.world));
 
-        /*MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world)));
+        byte[][] mapPixels = MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world));
 
-        HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;*/
+        byte[][] testMapPixels = DungeonTileMapConstructorTest.readMapPixelsFromFile("src/client/java/ae/skydoppler/dungeon/map/testmaps/floor7.txt");
+
+        MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
+
+        System.out.println("Modular tile grid size: " + dungeonMap.length + " x " + dungeonMap[0].length);
+        DungeonTileMapConstructorTest.printTileGridSummary(dungeonMap);
+        HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;
 
     }
 }

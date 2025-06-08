@@ -17,7 +17,7 @@ public class DungeonTileMapConstructorTest {
         printTileGridSummary(tileGrid);
     }
 
-    private static byte[][] readMapPixelsFromFile(String filePath) {
+    public static byte[][] readMapPixelsFromFile(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             java.util.List<byte[]> rows = new java.util.ArrayList<>();
             String line;
@@ -36,7 +36,7 @@ public class DungeonTileMapConstructorTest {
         }
     }
 
-    private static void printTileGridSummary(MapTile[][] tileGrid) {
+    public static void printTileGridSummary(MapTile[][] tileGrid) {
         for (int y = 0; y < tileGrid.length; y++) {
             for (int x = 0; x < tileGrid[0].length; x++) {
                 MapTile tile = tileGrid[y][x];

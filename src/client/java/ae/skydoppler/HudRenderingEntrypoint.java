@@ -25,8 +25,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
                         y * 10, // y position
                         (x + 1) * 10, // x2 position
                         (y + 1) * 10, // y2 position
-                        0, // z position
-                        dungeonMapTiles[y][x].getRoomType().getValue() // color from the MapTile's room type
+                        0xFF000000 | (dungeonMapTiles[y][x].getRoomType().getValue() & 0xFF) // convert byte to ARGB color (opaque)
                 );
             }
         }

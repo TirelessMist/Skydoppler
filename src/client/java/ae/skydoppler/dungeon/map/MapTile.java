@@ -4,6 +4,8 @@ public class MapTile {
 
     private RoomType roomType;
 
+    private int uuid; // Unique identifier for the tile, if needed
+
     private DoorType topDoorType;
     private DoorType rightDoorType;
     private DoorType bottomDoorType;
@@ -13,6 +15,7 @@ public class MapTile {
 
     public MapTile() {
         this.roomType = RoomType.NONE;
+        this.uuid = 0; // Default UUID, can be set later if needed
         this.topDoorType = DoorType.NONE;
         this.rightDoorType = DoorType.NONE;
         this.bottomDoorType = DoorType.NONE;
@@ -20,8 +23,9 @@ public class MapTile {
         this.checkMarkType = CheckMarkType.NONE;
     }
 
-    public MapTile(RoomType roomType, DoorType topDoorType, DoorType rightDoorType, DoorType bottomDoorType, DoorType leftDoorType, CheckMarkType checkMarkType) {
+    public MapTile(RoomType roomType, int uuid, DoorType topDoorType, DoorType rightDoorType, DoorType bottomDoorType, DoorType leftDoorType, CheckMarkType checkMarkType) {
         this.roomType = roomType;
+        this.uuid = uuid;
         this.topDoorType = topDoorType;
         this.rightDoorType = rightDoorType;
         this.bottomDoorType = bottomDoorType;
@@ -35,6 +39,14 @@ public class MapTile {
 
     public void setRoomType(RoomType roomType) {
         this.roomType = roomType;
+    }
+
+    public int getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
     }
 
     public DoorType getTopDoorType() {
