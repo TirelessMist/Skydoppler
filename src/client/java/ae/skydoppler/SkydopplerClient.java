@@ -104,7 +104,7 @@ public class SkydopplerClient implements ClientModInitializer {
 
         byte[][] mapPixels = MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world));
 
-        byte[][] testMapPixels = DungeonTileMapConstructorTest.readMapPixelsFromFile("src/client/java/ae/skydoppler/dungeon/map/testmaps/floor7.txt");
+        //byte[][] testMapPixels = DungeonTileMapConstructorTest.readMapPixelsFromFile("src/client/java/ae/skydoppler/dungeon/map/testmaps/floor7.txt");
 
         MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
 
