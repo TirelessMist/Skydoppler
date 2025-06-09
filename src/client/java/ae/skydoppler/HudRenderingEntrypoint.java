@@ -8,6 +8,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
 
+import java.awt.*;
+
 public class HudRenderingEntrypoint implements ClientModInitializer {
     private static final Identifier MAP_LAYER = Identifier.of(Skydoppler.MOD_ID, "dungeon_map_layer");
 
@@ -20,12 +22,24 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         }
         for (int y = 0; y < dungeonMapTiles.length; y++) {
             for (int x = 0; x < dungeonMapTiles[y].length; x++) {
+                Color color = switch (dungeonMapTiles[y][x].getRoomType()) {
+                    case NONE -> new Color(0, 0, 0);
+                    case NORMAL -> new Color(127, 90, 19);
+                    case ENTRANCE -> new Color(0, 255, 0);
+                    case UNKNOWN -> new Color(71, 71, 71);
+                    case PUZZLE -> new Color(182, 36, 205);
+                    case TRAP -> new Color(216, 113, 31);
+                    case MINIBOSS -> new Color(244, 212, 25);
+                    case BLOOD -> new Color(214, 20, 20);
+                    case FAIRY -> new Color(228, 90, 209);
+                    default -> new Color(0, 0, 255);
+                };
                 context.fill(
-                        x * 10, // x position
-                        y * 10, // y position
-                        (x + 1) * 10, // x2 position
-                        (y + 1) * 10, // y2 position
-                        0xFF000000 | (dungeonMapTiles[y][x].getRoomType().getValue() & 0xFF) // convert byte to ARGB color (opaque)
+                        x * 15 + 30,
+                        y * 15 + 30,
+                        (x + 1) * 15 + 30,
+                        (y + 1) * 15 + 30,
+                        color.getRGB()
                 );
             }
         }

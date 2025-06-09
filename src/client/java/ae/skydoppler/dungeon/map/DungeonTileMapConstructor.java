@@ -29,8 +29,9 @@ public class DungeonTileMapConstructor {
         }
 
         // Calculate the dimensions of our tile grid
-        int gridRows = (endRow - startRow) / (unitSize + 4) + 1;
-        int gridCols = (endCol - startCol) / (unitSize + 4) + 1;
+        // Add 1 to ensure we include a complete grid (fixing the cutoff issue)
+        int gridRows = ((endRow - startRow) / (unitSize + 4)) + 1;
+        int gridCols = ((endCol - startCol) / (unitSize + 4)) + 1;
 
         // Initialize the tile grid
         MapTile[][] tileGrid = new MapTile[gridRows][gridCols];
@@ -47,6 +48,7 @@ public class DungeonTileMapConstructor {
         // Now populate the grid with room information
         for (int gridY = 0; gridY < gridRows; gridY++) {
             for (int gridX = 0; gridX < gridCols; gridX++) {
+                // Calculate pixel coordinates for this tile position
                 int pixelX = startCol + gridX * (unitSize + 4);
                 int pixelY = startRow + gridY * (unitSize + 4);
 
@@ -107,15 +109,28 @@ public class DungeonTileMapConstructor {
         // Find the first non-zero pixel (start of a room)
         int firstNonZeroRow = -1;
         int firstNonZeroCol = -1;
+
+        // Find first and last non-zero pixels for accurate grid boundaries
+        int minRow = Integer.MAX_VALUE;
+        int minCol = Integer.MAX_VALUE;
+        int maxRow = Integer.MIN_VALUE;
+        int maxCol = Integer.MIN_VALUE;
+
+        // First pass - find ALL non-zero pixels to get the true boundaries
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
                 if (mapPixels[y][x] != 0) {
-                    firstNonZeroRow = y;
-                    firstNonZeroCol = x;
-                    break;
+                    if (firstNonZeroRow == -1) {
+                        firstNonZeroRow = y;
+                        firstNonZeroCol = x;
+                    }
+
+                    minRow = Math.min(minRow, y);
+                    minCol = Math.min(minCol, x);
+                    maxRow = Math.max(maxRow, y);
+                    maxCol = Math.max(maxCol, x);
                 }
             }
-            if (firstNonZeroRow != -1) break;
         }
 
         // If no room found
@@ -127,36 +142,37 @@ public class DungeonTileMapConstructor {
         int unitSize = 0;
         byte firstRoomValue = mapPixels[firstNonZeroRow][firstNonZeroCol];
         for (int x = firstNonZeroCol; x < cols; x++) {
-            if (mapPixels[firstNonZeroRow][x] != firstRoomValue) {
+            if (x == cols - 1 || mapPixels[firstNonZeroRow][x] != firstRoomValue) {
                 unitSize = x - firstNonZeroCol;
+                if (unitSize == 0) unitSize = 1; // Failsafe for single-pixel units
                 break;
             }
         }
 
-        // If couldn't determine unit size, use a default size (shouldn't happen)
-        if (unitSize == 0) {
-            return new int[]{0, 0, 0, 0, 0};
-        }
-
-        // Find grid boundaries
-        int startRow = firstNonZeroRow;
-        int startCol = firstNonZeroCol;
-        int endRow = firstNonZeroRow;
-        int endCol = firstNonZeroCol;
-
-        // Find the last non-zero row and column
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-                if (mapPixels[y][x] != 0) {
-                    endRow = Math.max(endRow, y);
-                    endCol = Math.max(endCol, x);
+        // If couldn't determine unit size, try vertical scanning instead
+        if (unitSize <= 0) {
+            for (int y = firstNonZeroRow; y < rows; y++) {
+                if (y == rows - 1 || mapPixels[y][firstNonZeroCol] != firstRoomValue) {
+                    unitSize = y - firstNonZeroRow;
+                    if (unitSize == 0) unitSize = 1; // Failsafe for single-pixel units
+                    break;
                 }
             }
         }
 
-        // Adjust to include the full last room
-        endRow += unitSize;
-        endCol += unitSize;
+        // If still couldn't determine unit size, use a default size
+        if (unitSize <= 0) {
+            unitSize = 16; // Default unit size as fallback
+        }
+
+        // Calculate grid boundaries, aligning to the unit+gap structure
+        // This fixes the cutoff issue by ensuring we start at a proper grid boundary
+        int startRow = (minRow / (unitSize + 4)) * (unitSize + 4);
+        int startCol = (minCol / (unitSize + 4)) * (unitSize + 4);
+
+        // Make sure we include the entire map area
+        int endRow = maxRow + unitSize;
+        int endCol = maxCol + unitSize;
 
         return new int[]{unitSize, startRow, startCol, endRow, endCol};
     }
