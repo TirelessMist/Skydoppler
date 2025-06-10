@@ -20,13 +20,13 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
 
     public static MapTile[][] dungeonMapTiles = new MapTile[0][0];
 
+    public static boolean isMapVisible = true; // Toggle for map visibility
     public static float posX = 0; // X-position of the map in pixels
     public static float posY = 0; // Y-position of the map in pixels
     public static float scale = 1; // Scale of the map rendering
     public static float roomSize = 15; // Size of each room tile in pixels
     public static float doorWidth = 2; // Width of the door lines in pixels
     public static float roomGap = 2; // Gap between rooms in pixels
-    public static boolean isMapVisible = true;
 
     private static void render(DrawContext context, RenderTickCounter tickCounter) {
         // If map is not visible or there are no tiles, don't render
@@ -45,10 +45,16 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
             }
 
             // Calculate room dimensions in screen space
+            // For multi-unit rooms, only apply external gaps, not between units
             int roomScreenX = (int) (room.minX * (roomSize + roomGap) * scale + posX);
             int roomScreenY = (int) (room.minY * (roomSize + roomGap) * scale + posY);
-            int roomScreenWidth = (int) ((room.maxX - room.minX + 1) * roomSize * scale);
-            int roomScreenHeight = (int) ((room.maxY - room.minY + 1) * roomSize * scale);
+
+            // For a multi-unit room, we need to adjust the width and height to account for the full size without internal gaps
+            int roomWidth = room.maxX - room.minX + 1;
+            int roomHeight = room.maxY - room.minY + 1;
+
+            int roomScreenWidth = (int) (roomWidth * roomSize * scale + (roomWidth - 1) * roomGap * scale);
+            int roomScreenHeight = (int) (roomHeight * roomSize * scale + (roomHeight - 1) * roomGap * scale);
 
             // Draw room background
             Color roomColor = getRoomColor(room.roomType);
@@ -89,8 +95,13 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
                 }
 
                 // Calculate tile position in screen space
-                float tileScreenX = x * (roomSize + roomGap) * scale + posX;
-                float tileScreenY = y * (roomSize + roomGap) * scale + posY;
+                // We need to account for the multi-unit room rendering
+                Room room = roomMap.get(tile.getUuid());
+                if (room == null) continue;
+
+                // For multi-unit rooms, calculate position based on the room's bounds
+                float tileScreenX = (x - room.minX) * (roomSize + roomGap) * scale + room.minX * (roomSize + roomGap) * scale + posX;
+                float tileScreenY = (y - room.minY) * (roomSize + roomGap) * scale + room.minY * (roomSize + roomGap) * scale + posY;
 
                 // Draw doors for this tile
                 drawDoors(context, tile, tileScreenX, tileScreenY);
@@ -157,7 +168,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         // Draw top door
         if (tile.getTopDoorType() != DoorType.NONE) {
             Color doorColor = getDoorColor(tile.getTopDoorType());
-            float doorX = tileX + roomSize * scale / 2 - doorWidth * scale / 2;
+            float doorX = tileX + (roomSize * scale / 2) - (doorWidth * scale / 2);
             float doorY = tileY - roomGap * scale;
 
             context.fill(
@@ -173,7 +184,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         if (tile.getRightDoorType() != DoorType.NONE) {
             Color doorColor = getDoorColor(tile.getRightDoorType());
             float doorX = tileX + roomSize * scale;
-            float doorY = tileY + roomSize * scale / 2 - doorWidth * scale / 2;
+            float doorY = tileY + (roomSize * scale / 2) - (doorWidth * scale / 2);
 
             context.fill(
                     (int) doorX,
@@ -187,7 +198,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         // Draw bottom door
         if (tile.getBottomDoorType() != DoorType.NONE) {
             Color doorColor = getDoorColor(tile.getBottomDoorType());
-            float doorX = tileX + roomSize * scale / 2 - doorWidth * scale / 2;
+            float doorX = tileX + (roomSize * scale / 2) - (doorWidth * scale / 2);
             float doorY = tileY + roomSize * scale;
 
             context.fill(
@@ -203,7 +214,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         if (tile.getLeftDoorType() != DoorType.NONE) {
             Color doorColor = getDoorColor(tile.getLeftDoorType());
             float doorX = tileX - roomGap * scale;
-            float doorY = tileY + roomSize * scale / 2 - doorWidth * scale / 2;
+            float doorY = tileY + (roomSize * scale / 2) - (doorWidth * scale / 2);
 
             context.fill(
                     (int) doorX,

@@ -52,8 +52,9 @@ public class DungeonTileMapConstructor {
         }
 
         // Calculate the dimensions of our tile grid based on the maximum number of tiles
-        int gridRows = 128 / (unitSize + 4);
-        int gridCols = 128 / (unitSize + 4);
+        // +1 to ensure we cover the entire map
+        int gridRows = 128 / (unitSize + 4) + 1;
+        int gridCols = 128 / (unitSize + 4) + 2;
 
         // Initialize the tile grid
         MapTile[][] tileGrid = new MapTile[gridRows][gridCols];
@@ -83,11 +84,14 @@ public class DungeonTileMapConstructor {
                 MapTile tile = tileGrid[gridY][gridX];
                 tile.setRoomType(roomType);
 
-                // Check for checkmark at the center of the room
-                int centerX = pixelX + unitSize / 2;
-                int centerY = pixelY + unitSize / 2;
-                CheckMarkType checkMarkType = getCheckMarkType(mapPixels, centerX, centerY);
-                tile.setCheckMarkType(checkMarkType);
+                // Check for checkmark in the middle 4 pixels of the room
+                // We'll check these during processing of multi-unit rooms in the second pass
+                if (isSingleUnitRoom(roomType)) {
+                    int centerX = pixelX + unitSize / 2;
+                    int centerY = pixelY + unitSize / 2;
+                    CheckMarkType checkMarkType = getCheckMarkType(mapPixels, centerX, centerY, unitSize);
+                    tile.setCheckMarkType(checkMarkType);
+                }
             }
         }
 
@@ -119,7 +123,22 @@ public class DungeonTileMapConstructor {
                 if (matchedShape != null && matchedShape.length > 1) {
                     // Found a multi-unit room shape
                     int shapeUuid = nextUuid++;
-                    for (int[] pos : matchedShape) {
+
+                    // The top-left-most unit is the current gridY, gridX
+                    // Check for checkmark in the top-left unit of the multi-unit room
+                    int pixelX = gridX * (unitSize + 4);
+                    int pixelY = gridY * (unitSize + 4);
+                    int centerX = pixelX + unitSize / 2;
+                    int centerY = pixelY + unitSize / 2;
+                    CheckMarkType checkMarkType = getCheckMarkType(mapPixels, centerX, centerY, unitSize);
+                    tile.setCheckMarkType(checkMarkType);
+
+                    // Set UUID and mark all tiles in this shape as processed
+                    tile.setUuid(shapeUuid);
+                    processedPositions.add(posKey);
+
+                    for (int i = 1; i < matchedShape.length; i++) {
+                        int[] pos = matchedShape[i];
                         int y = gridY + pos[0];
                         int x = gridX + pos[1];
                         String key = y + "," + x;
@@ -253,56 +272,124 @@ public class DungeonTileMapConstructor {
                                     int gridRows, int gridCols, int pixelX, int pixelY, int unitSize) {
         MapTile tile = tileGrid[gridY][gridX];
 
-        // Only check for doors on the edge of a room
-        // For multi-unit rooms, only check on the actual edges of the room, not internal tile edges
+        // Skip if this is not a room
+        if (tile.getRoomType() == RoomType.NONE) {
+            return;
+        }
+
+        // Debug info for this tile
+        System.out.println("Checking doors for tile at [" + gridX + "," + gridY + "] - Room type: " + tile.getRoomType());
 
         // Check top door
         if (gridY > 0) {
-            // Check if this is the top edge of the room by checking if the tile above has a different UUID
             MapTile aboveTile = tileGrid[gridY - 1][gridX];
-            if (aboveTile.getUuid() != tile.getUuid()) {
+            // Only check for a door if the tile above has a different UUID (not part of the same room)
+            // or if it's not a room at all (RoomType.NONE)
+            if (aboveTile.getRoomType() == RoomType.NONE || aboveTile.getUuid() != tile.getUuid()) {
+                // Check the middle pixel of the top edge
                 int doorX = pixelX + unitSize / 2;
-                int doorY = pixelY - 2; // Middle of the gap
+                int doorY = pixelY - 1; // Middle of the gap between rooms
+
+                // Debug pixel value at door location
+                byte pixelValue = isValidCoordinate(mapPixels, doorX, doorY) ? mapPixels[doorY][doorX] : 0;
+                System.out.println("  Top door pixel [" + doorX + "," + doorY + "] value: " + pixelValue);
+
                 DoorType topDoor = getDoorType(mapPixels, doorX, doorY);
                 tile.setTopDoorType(topDoor);
+
+                if (topDoor != DoorType.NONE) {
+                    System.out.println("  ✓ Top door detected: " + topDoor);
+                }
+            } else {
+                System.out.println("  ✗ No top door check: Same room or empty");
+                // Ensure no door is set between units of the same room
+                tile.setTopDoorType(DoorType.NONE);
             }
         }
 
         // Check right door
         if (gridX < gridCols - 1) {
-            // Check if this is the right edge of the room
             MapTile rightTile = tileGrid[gridY][gridX + 1];
-            if (rightTile.getUuid() != tile.getUuid()) {
-                int doorX = pixelX + unitSize + 2; // Middle of the gap
+            // Only check for a door if the tile to the right has a different UUID or is not a room
+            if (rightTile.getRoomType() == RoomType.NONE || rightTile.getUuid() != tile.getUuid()) {
+                // Check the middle pixel of the right edge
+                int doorX = pixelX + unitSize + 1; // Middle of the gap between rooms
                 int doorY = pixelY + unitSize / 2;
+
+                // Debug pixel value at door location
+                byte pixelValue = isValidCoordinate(mapPixels, doorX, doorY) ? mapPixels[doorY][doorX] : 0;
+                System.out.println("  Right door pixel [" + doorX + "," + doorY + "] value: " + pixelValue);
+
                 DoorType rightDoor = getDoorType(mapPixels, doorX, doorY);
                 tile.setRightDoorType(rightDoor);
+
+                if (rightDoor != DoorType.NONE) {
+                    System.out.println("  ✓ Right door detected: " + rightDoor);
+                }
+            } else {
+                System.out.println("  ✗ No right door check: Same room or empty");
+                // Ensure no door is set between units of the same room
+                tile.setRightDoorType(DoorType.NONE);
             }
         }
 
         // Check bottom door
         if (gridY < gridRows - 1) {
-            // Check if this is the bottom edge of the room
             MapTile belowTile = tileGrid[gridY + 1][gridX];
-            if (belowTile.getUuid() != tile.getUuid()) {
+            // Only check for a door if the tile below has a different UUID or is not a room
+            if (belowTile.getRoomType() == RoomType.NONE || belowTile.getUuid() != tile.getUuid()) {
+                // Check the middle pixel of the bottom edge
                 int doorX = pixelX + unitSize / 2;
-                int doorY = pixelY + unitSize + 2; // Middle of the gap
+                int doorY = pixelY + unitSize + 1; // Middle of the gap between rooms
+
+                // Debug pixel value at door location
+                byte pixelValue = isValidCoordinate(mapPixels, doorX, doorY) ? mapPixels[doorY][doorX] : 0;
+                System.out.println("  Bottom door pixel [" + doorX + "," + doorY + "] value: " + pixelValue);
+
                 DoorType bottomDoor = getDoorType(mapPixels, doorX, doorY);
                 tile.setBottomDoorType(bottomDoor);
+
+                if (bottomDoor != DoorType.NONE) {
+                    System.out.println("  ✓ Bottom door detected: " + bottomDoor);
+                }
+            } else {
+                System.out.println("  ✗ No bottom door check: Same room or empty");
+                // Ensure no door is set between units of the same room
+                tile.setBottomDoorType(DoorType.NONE);
             }
         }
 
         // Check left door
         if (gridX > 0) {
-            // Check if this is the left edge of the room
             MapTile leftTile = tileGrid[gridY][gridX - 1];
-            if (leftTile.getUuid() != tile.getUuid()) {
-                int doorX = pixelX - 2; // Middle of the gap
+            // Only check for a door if the tile to the left has a different UUID or is not a room
+            if (leftTile.getRoomType() == RoomType.NONE || leftTile.getUuid() != tile.getUuid()) {
+                // Check the middle pixel of the left edge
+                int doorX = pixelX - 1; // Middle of the gap between rooms
                 int doorY = pixelY + unitSize / 2;
+
+                // Debug pixel value at door location
+                byte pixelValue = isValidCoordinate(mapPixels, doorX, doorY) ? mapPixels[doorY][doorX] : 0;
+                System.out.println("  Left door pixel [" + doorX + "," + doorY + "] value: " + pixelValue);
+
                 DoorType leftDoor = getDoorType(mapPixels, doorX, doorY);
                 tile.setLeftDoorType(leftDoor);
+
+                if (leftDoor != DoorType.NONE) {
+                    System.out.println("  ✓ Left door detected: " + leftDoor);
+                }
+            } else {
+                System.out.println("  ✗ No left door check: Same room or empty");
+                // Ensure no door is set between units of the same room
+                tile.setLeftDoorType(DoorType.NONE);
             }
         }
+
+        // Print summary of detected doors
+        System.out.println("  Door summary: Top=" + tile.getTopDoorType() +
+                ", Right=" + tile.getRightDoorType() +
+                ", Bottom=" + tile.getBottomDoorType() +
+                ", Left=" + tile.getLeftDoorType());
     }
 
     /**
@@ -343,20 +430,38 @@ public class DungeonTileMapConstructor {
     }
 
     /**
-     * Gets the check mark type at the specified coordinates.
+     * Gets the check mark type at the specified coordinates by checking the middle 4 pixels.
+     * Checks a 2x2 area in the center of the room unit.
      */
-    private static CheckMarkType getCheckMarkType(byte[][] mapPixels, int x, int y) {
-        if (!isValidCoordinate(mapPixels, x, y)) {
-            return CheckMarkType.NONE;
-        }
+    private static CheckMarkType getCheckMarkType(byte[][] mapPixels, int centerX, int centerY, int unitSize) {
+        // Check a 2x2 area in the middle of the room
+        // Calculate the top-left corner of our 2x2 checking area
+        int x1 = centerX - 1;
+        int y1 = centerY - 1;
 
-        byte value = mapPixels[y][x];
+        // If any of the 4 pixels has a checkmark, return that type
+        // Priority: GREEN > WHITE
+        boolean foundWhite = false;
 
-        // Check if it's WHITE or GREEN checkmark value
-        if (value == CheckMarkType.WHITE.getValue()) {
-            return CheckMarkType.WHITE;
-        } else if (value == CheckMarkType.GREEN.getValue()) {
-            return CheckMarkType.GREEN;
+        // Check the 4 center pixels (2x2 area)
+        for (int y = y1; y <= y1 + 1; y++) {
+            for (int x = x1; x <= x1 + 1; x++) {
+                if (!isValidCoordinate(mapPixels, x, y)) {
+                    continue;
+                }
+
+                byte value = mapPixels[y][x];
+
+                // Check if it's a GREEN checkmark (higher priority)
+                if (value == CheckMarkType.GREEN.getValue()) {
+                    return CheckMarkType.GREEN;
+                }
+
+                // Check if it's a WHITE checkmark
+                if (value == CheckMarkType.WHITE.getValue()) {
+                    return CheckMarkType.WHITE;
+                }
+            }
         }
 
         return CheckMarkType.NONE;

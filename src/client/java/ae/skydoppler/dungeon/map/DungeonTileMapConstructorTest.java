@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class DungeonTileMapConstructorTest {
     public static void main(String[] args) {
-        String filePath = "src/client/java/ae/skydoppler/dungeon/map/testmaps/floor7.txt";
+        String filePath = "src/client/java/ae/skydoppler/dungeon/map/testmaps/floor1.txt";
         byte[][] mapPixels = readMapPixelsFromFile(filePath);
         if (mapPixels == null) {
             System.out.println("Failed to read map pixels from file.");
@@ -41,7 +41,7 @@ public class DungeonTileMapConstructorTest {
             for (int x = 0; x < tileGrid[0].length; x++) {
                 MapTile tile = tileGrid[y][x];
                 if (tile.getRoomType() != RoomType.NONE) {
-                    System.out.print("R");
+                    System.out.print(tile.getRoomType());
                 } else {
                     System.out.print(".");
                 }
