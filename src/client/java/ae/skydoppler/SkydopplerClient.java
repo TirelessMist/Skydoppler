@@ -5,7 +5,6 @@ import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.DungeonClientHandler;
 import ae.skydoppler.dungeon.map.DungeonTileMapConstructor;
-import ae.skydoppler.dungeon.map.DungeonTileMapConstructorTest;
 import ae.skydoppler.dungeon.map.MapParser;
 import ae.skydoppler.dungeon.map.MapTile;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
@@ -25,6 +24,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 
 public class SkydopplerClient implements ClientModInitializer {
 
@@ -108,8 +108,36 @@ public class SkydopplerClient implements ClientModInitializer {
 
         MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
 
+        for (int y = 0; y < dungeonMap.length; y++) {
+            for (int x = 0; x < dungeonMap[0].length; x++) {
+                MapTile tile = dungeonMap[y][x];
+                Random r = new Random();
+                tile.setUuid(r.nextInt());
+            }
+        }
+
+        System.out.println("---=== DUNGEON MAP ===---");
+
+        for (int y = 0; y < dungeonMap.length; y++) {
+            for (int x = 0; x < dungeonMap[0].length; x++) {
+                MapTile mapTile = dungeonMap[y][x];
+                System.out.println("---START TILE---");
+                System.out.println("Position: (" + x + ", " + y + ")");
+                System.out.println("Room Type: " + mapTile.getRoomType());
+                System.out.println("CheckMark Type: " + mapTile.getRoomMarkType());
+                System.out.println("UUID: " + mapTile.getUuid());
+                System.out.println("Top Door Type: " + mapTile.getTopDoorType());
+                System.out.println("Right Door Type: " + mapTile.getRightDoorType());
+                System.out.println("Bottom Door Type: " + mapTile.getBottomDoorType());
+                System.out.println("Left Door Type: " + mapTile.getLeftDoorType());
+                System.out.println("---END TILE---");
+            }
+        }
+
+        System.out.println("---=== END DUNGEON MAP ===---");
+
         System.out.println("Modular tile grid size: " + dungeonMap.length + " x " + dungeonMap[0].length);
-        DungeonTileMapConstructorTest.printTileGridSummary(dungeonMap);
+        //DungeonTileMapConstructorTest.printTileGridSummary(dungeonMap);
         HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;
 
     }

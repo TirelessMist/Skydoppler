@@ -1,6 +1,6 @@
 package ae.skydoppler;
 
-import ae.skydoppler.dungeon.map.CheckMarkType;
+import ae.skydoppler.dungeon.map.RoomMarkType;
 import ae.skydoppler.dungeon.map.DoorType;
 import ae.skydoppler.dungeon.map.MapTile;
 import ae.skydoppler.dungeon.map.RoomType;
@@ -67,12 +67,12 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
             );
 
             // Draw checkmark if present
-            if (room.checkMarkType != CheckMarkType.NONE) {
+            if (room.roomMarkType != RoomMarkType.NONE) {
                 // Calculate center of the actual room (not just top-left tile)
                 int checkMarkX = (int) (roomScreenX + roomScreenWidth / 2);
                 int checkMarkY = (int) (roomScreenY + roomScreenHeight / 2);
 
-                Color checkMarkColor = getCheckMarkColor(room.checkMarkType);
+                Color checkMarkColor = getCheckMarkColor(room.roomMarkType);
                 int checkMarkSize = (int) (4 * scale); // Reasonable size for checkmark
 
                 // Draw checkmark
@@ -132,8 +132,8 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
                     room.maxY = y;
 
                     // Determine the most significant checkmark for this room
-                    if (tile.getCheckMarkType() != CheckMarkType.NONE) {
-                        room.checkMarkType = tile.getCheckMarkType();
+                    if (tile.getRoomMarkType() != RoomMarkType.NONE) {
+                        room.roomMarkType = tile.getRoomMarkType();
                     }
 
                     roomMap.put(uuid, room);
@@ -146,12 +146,12 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
                     room.maxY = Math.max(room.maxY, y);
 
                     // Update checkmark if this tile has one and the current one doesn't
-                    if (room.checkMarkType == CheckMarkType.NONE && tile.getCheckMarkType() != CheckMarkType.NONE) {
-                        room.checkMarkType = tile.getCheckMarkType();
-                    } else if (room.checkMarkType != CheckMarkType.NONE && tile.getCheckMarkType() != CheckMarkType.NONE) {
-                        // If both have checkmarks, prefer GREEN over WHITE
-                        if (tile.getCheckMarkType() == CheckMarkType.GREEN) {
-                            room.checkMarkType = CheckMarkType.GREEN;
+                    if (room.roomMarkType == RoomMarkType.NONE && tile.getRoomMarkType() != RoomMarkType.NONE) {
+                        room.roomMarkType = tile.getRoomMarkType();
+                    } else if (room.roomMarkType != RoomMarkType.NONE && tile.getRoomMarkType() != RoomMarkType.NONE) {
+                        // If both have checkmarks, prefer GREEN_CHECKMARK over WHITE_CHECKMARK
+                        if (tile.getRoomMarkType() == RoomMarkType.GREEN_CHECKMARK) {
+                            room.roomMarkType = RoomMarkType.GREEN_CHECKMARK;
                         }
                     }
                 }
@@ -258,10 +258,10 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
     /**
      * Gets the color for a checkmark type
      */
-    private static Color getCheckMarkColor(CheckMarkType checkMarkType) {
-        return switch (checkMarkType) {
-            case WHITE -> new Color(255, 255, 255);
-            case GREEN -> new Color(0, 255, 0);
+    private static Color getCheckMarkColor(RoomMarkType roomMarkType) {
+        return switch (roomMarkType) {
+            case WHITE_CHECKMARK -> new Color(255, 255, 255);
+            case GREEN_CHECKMARK -> new Color(0, 255, 0);
             default -> new Color(0, 0, 0);
         };
     }
@@ -279,7 +279,7 @@ public class HudRenderingEntrypoint implements ClientModInitializer {
         int uuid;
         RoomType roomType;
         int minX, minY, maxX, maxY;
-        CheckMarkType checkMarkType = CheckMarkType.NONE;
+        RoomMarkType roomMarkType = RoomMarkType.NONE;
 
         public Room(int uuid, RoomType roomType) {
             this.uuid = uuid;

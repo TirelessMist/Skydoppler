@@ -4,33 +4,33 @@ public class MapTile {
 
     private RoomType roomType;
 
-    private int uuid; // Unique identifier for the tile, if needed
+    private int id; // Unique identifier for the tile, if needed
 
     private DoorType topDoorType;
     private DoorType rightDoorType;
     private DoorType bottomDoorType;
     private DoorType leftDoorType;
 
-    private CheckMarkType checkMarkType;
+    private RoomMarkType roomMarkType;
 
     public MapTile() {
         this.roomType = RoomType.NONE;
-        this.uuid = 0; // Default UUID, can be set later if needed
+        this.id = 0; // Default UUID, can be set later if needed
         this.topDoorType = DoorType.NONE;
         this.rightDoorType = DoorType.NONE;
         this.bottomDoorType = DoorType.NONE;
         this.leftDoorType = DoorType.NONE;
-        this.checkMarkType = CheckMarkType.NONE;
+        this.roomMarkType = RoomMarkType.NONE;
     }
 
-    public MapTile(RoomType roomType, int uuid, DoorType topDoorType, DoorType rightDoorType, DoorType bottomDoorType, DoorType leftDoorType, CheckMarkType checkMarkType) {
+    public MapTile(RoomType roomType, int id, DoorType topDoorType, DoorType rightDoorType, DoorType bottomDoorType, DoorType leftDoorType, RoomMarkType roomMarkType) {
         this.roomType = roomType;
-        this.uuid = uuid;
+        this.id = id;
         this.topDoorType = topDoorType;
         this.rightDoorType = rightDoorType;
         this.bottomDoorType = bottomDoorType;
         this.leftDoorType = leftDoorType;
-        this.checkMarkType = checkMarkType;
+        this.roomMarkType = roomMarkType;
     }
 
     public RoomType getRoomType() {
@@ -42,11 +42,11 @@ public class MapTile {
     }
 
     public int getUuid() {
-        return uuid;
+        return id;
     }
 
     public void setUuid(int uuid) {
-        this.uuid = uuid;
+        this.id = uuid;
     }
 
     public DoorType getTopDoorType() {
@@ -81,12 +81,12 @@ public class MapTile {
         this.leftDoorType = leftDoorType;
     }
 
-    public CheckMarkType getCheckMarkType() {
-        return checkMarkType;
+    public RoomMarkType getRoomMarkType() {
+        return roomMarkType;
     }
 
-    public void setCheckMarkType(CheckMarkType checkMarkType) {
-        this.checkMarkType = checkMarkType;
+    public void setRoomMarkType(RoomMarkType roomMarkType) {
+        this.roomMarkType = roomMarkType;
     }
 
 }

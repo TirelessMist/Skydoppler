@@ -1,22 +1,27 @@
 package ae.skydoppler.dungeon.map;
 
-public enum CheckMarkType {
+/**
+ * Enum representing different types of room marks in a dungeon map.
+ * For example, checkmarks or 'x's.
+ */
+public enum RoomMarkType {
     NONE,
-    WHITE(34),
-    GREEN(30);
+    WHITE_CHECKMARK(34),
+    GREEN_CHECKMARK(30),
+    RED_X(18);
 
     private final int value;
 
-    CheckMarkType() {
+    RoomMarkType() {
         this.value = 0; // Default value for NONE
     }
 
-    CheckMarkType(int value) {
+    RoomMarkType(int value) {
         this.value = value;
     }
 
-    public static CheckMarkType fromValue(int value) {
-        for (CheckMarkType type : values()) {
+    public static RoomMarkType fromValue(int value) {
+        for (RoomMarkType type : values()) {
             if (type.getValue() == value) {
                 return type;
             }
