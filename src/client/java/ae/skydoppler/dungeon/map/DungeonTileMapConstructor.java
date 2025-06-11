@@ -21,8 +21,14 @@ public class DungeonTileMapConstructor {
             DungeonMapHandler.mapTileSize = determineTileSize(mapPixels);
         }
 
+        // For rows and columns, separately:
+        // If the gap between the room and the left/right edge is greater than the mapTileSize, add 2 columns to the MapTile grid.
+        // This is to ensure that the left and right edges of the map are not off the map.
+        // If the gap is less than the mapTileSize, set the border size to the gap.
+
+
         // Calculate the amount of pixels used when the maximum amount of mapTileSize with ROOM_GAP_SIZE between each mapTileSize can fit in the square map size of 128 pixels.
-        int tilesInRowCount = (DungeonMapHandler.SQUARE_MAP_SIZE / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)) - 1; // -1 because the last tile does not have a gap after it
+        int tilesInRowCount = ((DungeonMapHandler.SQUARE_MAP_SIZE - 2) / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)); // -1 because the last tile does not have a gap after it
         int tilesInColCount = 0; // for calculations for rows and cols, add 1 pixel to the left and right to make sure door checks are not off the map.
 
         int usedMapPixels = tilesInRowCount * DungeonMapHandler.mapTileSize + (tilesInRowCount - 1) * DungeonMapHandler.ROOM_GAP_SIZE;
@@ -31,7 +37,7 @@ public class DungeonTileMapConstructor {
         int tileGridRowsCols = tilesInRowCount;
         int tileGridRows = 0;
         int tileGridCols = 0;
-        tileGrid = new MapTile[tileGridRows][tileGridCols];
+        tileGrid = new MapTile[tileGridRowsCols][tileGridRowsCols];
 
         if (DungeonMapHandler.mapBorderSize == 0) {
             // Calculate the border size based on the square map size and the number of tiles and gaps between those tiles that can fit in the square map size.
