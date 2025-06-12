@@ -17,39 +17,34 @@ public class DungeonTileMapConstructor {
 
         MapTile[][] tileGrid;
 
+        if (DungeonMapHandler.entranceRoomPosition == new Point(0, 0)) {
+            DungeonMapHandler.entranceRoomPosition = locateRoom(mapPixels, RoomType.ENTRANCE);
+        }
+
         if (DungeonMapHandler.mapTileSize == 0) {
             DungeonMapHandler.mapTileSize = determineTileSize(mapPixels);
         }
 
-        // For rows and columns, separately:
-        // If the gap between the room and the left/right edge is greater than the mapTileSize, add 2 columns to the MapTile grid.
-        // This is to ensure that the left and right edges of the map are not off the map.
-        // If the gap is less than the mapTileSize, set the border size to the gap.
+        int topBorder = determineEdgeGapSize(mapPixels, new Point(0, -1));
+        int rightBorder = determineEdgeGapSize(mapPixels, new Point(1, 0));
+        int bottomBorder = determineEdgeGapSize(mapPixels, new Point(0, 1));
+        int leftBorder = determineEdgeGapSize(mapPixels, new Point(-1, 0));
 
+        topBorder = canFitTile(topBorder) ? topBorder : 0;
 
         // Calculate the amount of pixels used when the maximum amount of mapTileSize with ROOM_GAP_SIZE between each mapTileSize can fit in the square map size of 128 pixels.
-        int tilesInRowCount = ((DungeonMapHandler.SQUARE_MAP_SIZE - 2) / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)); // -1 because the last tile does not have a gap after it
-        int tilesInColCount = 0; // for calculations for rows and cols, add 1 pixel to the left and right to make sure door checks are not off the map.
-
-        int usedMapPixels = tilesInRowCount * DungeonMapHandler.mapTileSize + (tilesInRowCount - 1) * DungeonMapHandler.ROOM_GAP_SIZE;
+        int gridRows = (mapPixels.length / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)); // -1 because the last tile does not have a gap after it
+        int gridCols = (mapPixels[0].length / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)); // for calculations for rows and cols, add 1 pixel to the left and right to make sure door checks are not off the map.
 
         // Calculate the number of rows and columns in the square map based on the amount of tiles and gaps between those tiles that can fit in the square map size.
-        int tileGridRowsCols = tilesInRowCount;
-        int tileGridRows = 0;
-        int tileGridCols = 0;
-        tileGrid = new MapTile[tileGridRowsCols][tileGridRowsCols];
+        tileGrid = new MapTile[gridRows][gridCols];
 
-        if (DungeonMapHandler.mapBorderSize == 0) {
-            // Calculate the border size based on the square map size and the number of tiles and gaps between those tiles that can fit in the square map size.
-            DungeonMapHandler.mapBorderSize = (128 - usedMapPixels) / 2;
-        }
-
-        for (int y = 0; y < tileGridRowsCols; y++) {
-            for (int x = 0; x < tileGridRowsCols; x++) {
+        for (int y = 0; y < gridRows; y++) {
+            for (int x = 0; x < gridCols; x++) {
 
                 // Top-left pixel of the room
-                int roomPosX = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * x + (DungeonMapHandler.mapBorderSize / 2);
-                int roomPosY = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * y + (DungeonMapHandler.mapBorderSize / 2);
+                int roomPosX = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * x;
+                int roomPosY = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * y;
 
                 int tileSize = DungeonMapHandler.mapTileSize;
 
@@ -61,10 +56,26 @@ public class DungeonTileMapConstructor {
 
                 tile.setRoomType(getRoomTypeFromPixel(mapPixels[roomPosY][roomPosX]));
 
-                tile.setTopDoorType(getDoorTypeFromPixel(mapPixels[roomPosY - 1][roomPosX + halfTile]));
-                tile.setRightDoorType(getDoorTypeFromPixel(mapPixels[roomPosY + halfTile][roomPosX + tileSize]));
-                tile.setBottomDoorType(getDoorTypeFromPixel(mapPixels[roomPosY + tileSize][roomPosX + halfTile]));
-                tile.setLeftDoorType(getDoorTypeFromPixel(mapPixels[roomPosY + halfTile][roomPosX - 1]));
+                tile.setTopDoorType(
+                        (roomPosY - 1 >= 0 && roomPosX + halfTile < mapPixels[0].length)
+                                ? getDoorTypeFromPixel(mapPixels[roomPosY - 1][roomPosX + halfTile])
+                                : DoorType.NONE
+                );
+                tile.setRightDoorType(
+                        (roomPosY + halfTile < mapPixels.length && roomPosX + tileSize < mapPixels[0].length)
+                                ? getDoorTypeFromPixel(mapPixels[roomPosY + halfTile][roomPosX + tileSize])
+                                : DoorType.NONE
+                );
+                tile.setBottomDoorType(
+                        (roomPosY + tileSize < mapPixels.length && roomPosX + halfTile < mapPixels[0].length)
+                                ? getDoorTypeFromPixel(mapPixels[roomPosY + tileSize][roomPosX + halfTile])
+                                : DoorType.NONE
+                );
+                tile.setLeftDoorType(
+                        (roomPosY + halfTile < mapPixels.length && roomPosX - 1 >= 0)
+                                ? getDoorTypeFromPixel(mapPixels[roomPosY + halfTile][roomPosX - 1])
+                                : DoorType.NONE
+                );
 
                 tile.setRoomMarkType(determineRoomMarkType(mapPixels, roomPosX, roomPosY, pixelValue));
 
@@ -77,13 +88,78 @@ public class DungeonTileMapConstructor {
 
     }
 
+    private static boolean canFitTile(int inSize) {
+        return inSize <= DungeonMapHandler.mapTileSize;
+    }
+
     private static int determineTileSize(byte[][] mapPixels) {
-        Point entrancePos = locateRoom(mapPixels, RoomType.ENTRANCE);
-        if (entrancePos != null) {
-            return determineRoomLength(mapPixels, entrancePos);
+        return determineRoomLength(mapPixels, DungeonMapHandler.entranceRoomPosition);
+    }
+
+    private static int determineEdgeGapSize(byte[][] mapPixels, Point direction) {
+        if (direction.equals(new Point(0, -1))) {
+            // Count whitespace rows from the top
+            int topCount = 0;
+            for (int y = 0; y < mapPixels.length; y++) {
+                if (isRowWhitespace(mapPixels, y)) {
+                    topCount++;
+                } else {
+                    break;
+                }
+            }
+            return topCount;
+        } else if (direction.equals(new Point(1, 0))) {
+            // Count whitespace columns from the right
+            int rightCount = 0;
+            for (int x = mapPixels[0].length - 1; x >= 0; x--) {
+                if (isColWhitespace(mapPixels, x)) {
+                    rightCount++;
+                } else {
+                    break;
+                }
+            }
+            return rightCount;
+        } else if (direction.equals(new Point(0, 1))) {
+            // Count whitespace rows from the bottom
+            int bottomCount = 0;
+            for (int y = mapPixels.length - 1; y >= 0; y--) {
+                if (isRowWhitespace(mapPixels, y)) {
+                    bottomCount++;
+                } else {
+                    break;
+                }
+            }
+            return bottomCount;
+        } else if (direction.equals(new Point(-1, 0))) {
+            // Count whitespace columns from the left
+            int leftCount = 0;
+            for (int x = 0; x < mapPixels[0].length; x++) {
+                if (isColWhitespace(mapPixels, x)) {
+                    leftCount++;
+                } else {
+                    break;
+                }
+            }
+            return leftCount;
         } else {
-            throw new IllegalArgumentException("Entrance room not found in the map pixels.");
+            return 0;
         }
+    }
+
+    // Helper: checks if a row is all whitespace (0)
+    private static boolean isRowWhitespace(byte[][] arr, int row) {
+        for (int x = 0; x < arr[row].length; x++) {
+            if (arr[row][x] != 0) return false;
+        }
+        return true;
+    }
+
+    // Helper: checks if a column is all whitespace (0)
+    private static boolean isColWhitespace(byte[][] arr, int col) {
+        for (int y = 0; y < arr.length; y++) {
+            if (arr[y][col] != 0) return false;
+        }
+        return true;
     }
 
     private static Point locateRoom(byte[][] mapPixels, RoomType roomType) {
