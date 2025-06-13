@@ -1,5 +1,7 @@
 package ae.skydoppler.dungeon.map;
 
+import ae.skydoppler.SkydopplerClient;
+
 import java.awt.*;
 
 public class DungeonTileMapConstructor {
@@ -11,6 +13,11 @@ public class DungeonTileMapConstructor {
      * @return A modular grid of MapTiles.
      */
     public static MapTile[][] constructMap(byte[][] mapPixels) {
+
+        if (SkydopplerClient.dungeonClientHandler.getCurrentDungeonFloor() == -1) {
+            throw new IllegalStateException("Dungeon floor is not set. Please set the current dungeon floor before constructing the map.");
+        }
+
         if (mapPixels.length == 0 || mapPixels[0].length == 0) {
             throw new IllegalArgumentException("Map pixels cannot be null or empty.");
         }
@@ -25,16 +32,59 @@ public class DungeonTileMapConstructor {
             DungeonMapHandler.mapTileSize = determineTileSize(mapPixels);
         }
 
-        int topBorder = determineEdgeGapSize(mapPixels, new Point(0, -1));
-        int rightBorder = determineEdgeGapSize(mapPixels, new Point(1, 0));
-        int bottomBorder = determineEdgeGapSize(mapPixels, new Point(0, 1));
-        int leftBorder = determineEdgeGapSize(mapPixels, new Point(-1, 0));
-
-        topBorder = canFitTile(topBorder) ? topBorder : 0;
-
         // Calculate the amount of pixels used when the maximum amount of mapTileSize with ROOM_GAP_SIZE between each mapTileSize can fit in the square map size of 128 pixels.
         int gridRows = (mapPixels.length / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)); // -1 because the last tile does not have a gap after it
         int gridCols = (mapPixels[0].length / (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE)); // for calculations for rows and cols, add 1 pixel to the left and right to make sure door checks are not off the map.
+
+        int leftBorderPixels = 0;
+        int topBorderPixels = 0;
+
+        switch (SkydopplerClient.dungeonClientHandler.getCurrentDungeonFloor()) {
+            case 0: // entrance floor
+                DungeonMapHandler.mapTileSize = 18;
+                gridRows = 4;
+                gridCols = 4;
+                leftBorderPixels = 22;
+                topBorderPixels = 22;
+                break;
+            case 1:
+                DungeonMapHandler.mapTileSize = 18;
+                gridRows = 5;
+                gridCols = 4;
+                leftBorderPixels = 22;
+                topBorderPixels = 11;
+                break;
+            case 2, 3:
+                DungeonMapHandler.mapTileSize = 18;
+                gridRows = 5;
+                gridCols = 5;
+                leftBorderPixels = 11;
+                topBorderPixels = 11;
+                break;
+            case 4:
+                DungeonMapHandler.mapTileSize = 16;
+                gridRows = 5;
+                gridCols = 6;
+                leftBorderPixels = 5;
+                topBorderPixels = 16;
+                break;
+            case 5:
+                DungeonMapHandler.mapTileSize = 16;
+                gridRows = 6;
+                gridCols = 6;
+                leftBorderPixels = 5;
+                topBorderPixels = 5;
+                break;
+            case 6, 7:
+                DungeonMapHandler.mapTileSize = 16;
+                gridRows = 6;
+                gridCols = 6;
+                leftBorderPixels = 5;
+                topBorderPixels = 5;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid map tile size: " + DungeonMapHandler.mapTileSize);
+        }
 
         // Calculate the number of rows and columns in the square map based on the amount of tiles and gaps between those tiles that can fit in the square map size.
         tileGrid = new MapTile[gridRows][gridCols];
@@ -43,8 +93,8 @@ public class DungeonTileMapConstructor {
             for (int x = 0; x < gridCols; x++) {
 
                 // Top-left pixel of the room
-                int roomPosX = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * x;
-                int roomPosY = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * y;
+                int roomPosX = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * x + leftBorderPixels;
+                int roomPosY = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * y + topBorderPixels;
 
                 int tileSize = DungeonMapHandler.mapTileSize;
 
@@ -89,7 +139,7 @@ public class DungeonTileMapConstructor {
     }
 
     private static boolean canFitTile(int inSize) {
-        return inSize <= DungeonMapHandler.mapTileSize;
+        return inSize < DungeonMapHandler.mapTileSize;
     }
 
     private static int determineTileSize(byte[][] mapPixels) {

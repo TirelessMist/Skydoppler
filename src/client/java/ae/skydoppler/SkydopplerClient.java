@@ -104,6 +104,16 @@ public class SkydopplerClient implements ClientModInitializer {
 
         byte[][] mapPixels = MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world));
 
+        // Print map pixels
+        /*System.out.println("Map Pixels:");
+        for (int y = 0; y < mapPixels.length; y++) {
+            StringBuilder row = new StringBuilder();
+            for (int x = 0; x < mapPixels[y].length; x++) {
+                row.append(mapPixels[y][x]).append(" ");
+            }
+            System.out.println(row.toString());
+        }*/
+
         //byte[][] testMapPixels = DungeonTileMapConstructorTest.readMapPixelsFromFile("src/client/java/ae/skydoppler/dungeon/map/testmaps/floor7.txt");
 
         MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
@@ -115,7 +125,7 @@ public class SkydopplerClient implements ClientModInitializer {
                 tile.setUuid(r.nextInt());
             }
         }
-
+/*
         System.out.println("---=== DUNGEON MAP ===---");
 
         for (int y = 0; y < dungeonMap.length; y++) {
@@ -137,7 +147,7 @@ public class SkydopplerClient implements ClientModInitializer {
         System.out.println("---=== END DUNGEON MAP ===---");
 
         System.out.println("Modular tile grid size: " + dungeonMap.length + " x " + dungeonMap[0].length);
-        //DungeonTileMapConstructorTest.printTileGridSummary(dungeonMap);
+        //DungeonTileMapConstructorTest.printTileGridSummary(dungeonMap);*/
         HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;
 
     }
