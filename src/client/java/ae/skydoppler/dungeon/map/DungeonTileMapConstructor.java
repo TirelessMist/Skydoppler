@@ -89,6 +89,8 @@ public class DungeonTileMapConstructor {
         // Calculate the number of rows and columns in the square map based on the amount of tiles and gaps between those tiles that can fit in the square map size.
         tileGrid = new MapTile[gridRows][gridCols];
 
+        int tileSize = DungeonMapHandler.mapTileSize;
+
         for (int y = 0; y < gridRows; y++) {
             for (int x = 0; x < gridCols; x++) {
 
@@ -96,7 +98,6 @@ public class DungeonTileMapConstructor {
                 int roomPosX = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * x + leftBorderPixels;
                 int roomPosY = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * y + topBorderPixels;
 
-                int tileSize = DungeonMapHandler.mapTileSize;
 
                 byte pixelValue = mapPixels[roomPosY][roomPosX];
 
@@ -132,7 +133,30 @@ public class DungeonTileMapConstructor {
                 tileGrid[y][x] = tile;
 
             }
-        }
+        }/*
+
+        int currentUuid = 0;
+
+        // Second pass - find connected rooms
+        for (int y = 0; y < gridRows; y++) {
+            for (int x = 0; x < gridCols; x++) {
+
+                // Top-left pixel of the room
+                int roomPosX = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * x + leftBorderPixels;
+                int roomPosY = (DungeonMapHandler.mapTileSize + DungeonMapHandler.ROOM_GAP_SIZE) * y + topBorderPixels;
+
+                byte pixelValue = mapPixels[roomPosY][roomPosX];
+
+                // Only NORMAL RoomType can be larger than one tile in size
+                if (getRoomTypeFromPixel(pixelValue) != RoomType.NORMAL) {
+                    tileGrid[y][x].setUuid(currentUuid);
+                    currentUuid++;
+                    continue;
+                }
+
+
+            }
+        }*/
 
         return tileGrid;
 
@@ -264,6 +288,50 @@ public class DungeonTileMapConstructor {
 
     private static RoomMarkType getRoomMarkTypeFromPixel(byte pixelValue) {
         return RoomMarkType.fromValue(pixelValue);
+    }
+
+    private Point[] findConnectedTiles(byte[][] mapPixels, int startX, int startY) {
+        // Check if the starting position is valid and has a normal room
+        if (startX < 0 || startY < 0 || startX >= mapPixels[0].length || startY >= mapPixels.length
+                || getRoomTypeFromPixel(mapPixels[startY][startX]) != RoomType.NORMAL) {
+            return new Point[0];
+        }
+
+        int tileSize = DungeonMapHandler.mapTileSize;
+        boolean[][] visited = new boolean[mapPixels.length][mapPixels[0].length];
+        java.util.List<Point> connectedTiles = new java.util.ArrayList<>();
+
+        findConnectedTilesRecursive(mapPixels, startX, startY, tileSize, visited, connectedTiles);
+
+        return connectedTiles.toArray(new Point[0]);
+    }
+
+    private void findConnectedTilesRecursive(byte[][] mapPixels, int x, int y, int tileSize,
+                                             boolean[][] visited, java.util.List<Point> connectedTiles) {
+        // Check boundaries
+        if (x < 0 || y < 0 || x >= mapPixels[0].length || y >= mapPixels.length) {
+            return;
+        }
+
+        // Check if already visited
+        if (visited[y][x]) {
+            return;
+        }
+
+        // Check if it's a normal room
+        if (getRoomTypeFromPixel(mapPixels[y][x]) != RoomType.NORMAL) {
+            return;
+        }
+
+        // Mark as visited and add to the list
+        visited[y][x] = true;
+        connectedTiles.add(new Point(x, y));
+
+        // Check in all four directions: up, right, down, left
+        findConnectedTilesRecursive(mapPixels, x, y - tileSize - DungeonMapHandler.ROOM_GAP_SIZE, tileSize, visited, connectedTiles);
+        findConnectedTilesRecursive(mapPixels, x + tileSize + DungeonMapHandler.ROOM_GAP_SIZE, y, tileSize, visited, connectedTiles);
+        findConnectedTilesRecursive(mapPixels, x, y + tileSize + DungeonMapHandler.ROOM_GAP_SIZE, tileSize, visited, connectedTiles);
+        findConnectedTilesRecursive(mapPixels, x - tileSize - DungeonMapHandler.ROOM_GAP_SIZE, y, tileSize, visited, connectedTiles);
     }
     //endregion
 }

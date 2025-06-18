@@ -5,7 +5,7 @@ import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.DungeonClientHandler;
 import ae.skydoppler.dungeon.map.DungeonTileMapConstructor;
-import ae.skydoppler.dungeon.map.MapParser;
+import ae.skydoppler.dungeon.map.DungeonTileMapConstructorTest;
 import ae.skydoppler.dungeon.map.MapTile;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
@@ -102,19 +102,7 @@ public class SkydopplerClient implements ClientModInitializer {
 
         //MapParser.saveMapToDesktop(FilledMapItem.getMapState(itemStack, client.world));
 
-        byte[][] mapPixels = MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world));
-
-        // Print map pixels
-        /*System.out.println("Map Pixels:");
-        for (int y = 0; y < mapPixels.length; y++) {
-            StringBuilder row = new StringBuilder();
-            for (int x = 0; x < mapPixels[y].length; x++) {
-                row.append(mapPixels[y][x]).append(" ");
-            }
-            System.out.println(row.toString());
-        }*/
-
-        //byte[][] testMapPixels = DungeonTileMapConstructorTest.readMapPixelsFromFile("src/client/java/ae/skydoppler/dungeon/map/testmaps/floor7.txt");
+        byte[][] mapPixels = DungeonTileMapConstructorTest.floorOneMapPixels.get();
 
         MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
 
@@ -125,29 +113,7 @@ public class SkydopplerClient implements ClientModInitializer {
                 tile.setUuid(r.nextInt());
             }
         }
-/*
-        System.out.println("---=== DUNGEON MAP ===---");
 
-        for (int y = 0; y < dungeonMap.length; y++) {
-            for (int x = 0; x < dungeonMap[0].length; x++) {
-                MapTile mapTile = dungeonMap[y][x];
-                System.out.println("---START TILE---");
-                System.out.println("Position: (" + x + ", " + y + ")");
-                System.out.println("Room Type: " + mapTile.getRoomType());
-                System.out.println("CheckMark Type: " + mapTile.getRoomMarkType());
-                System.out.println("UUID: " + mapTile.getUuid());
-                System.out.println("Top Door Type: " + mapTile.getTopDoorType());
-                System.out.println("Right Door Type: " + mapTile.getRightDoorType());
-                System.out.println("Bottom Door Type: " + mapTile.getBottomDoorType());
-                System.out.println("Left Door Type: " + mapTile.getLeftDoorType());
-                System.out.println("---END TILE---");
-            }
-        }
-
-        System.out.println("---=== END DUNGEON MAP ===---");
-
-        System.out.println("Modular tile grid size: " + dungeonMap.length + " x " + dungeonMap[0].length);
-        //DungeonTileMapConstructorTest.printTileGridSummary(dungeonMap);*/
         HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;
 
     }
