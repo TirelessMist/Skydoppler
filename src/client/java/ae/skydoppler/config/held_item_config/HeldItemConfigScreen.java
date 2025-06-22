@@ -49,21 +49,21 @@ public class HeldItemConfigScreen extends Screen {
 
         // Float sliders
         sliders.clear();
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_x", config.heldItemRendererConfig.posX, -2.0f, 2.0f, v -> config.heldItemRendererConfig.posX = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_x", config.heldItemRendererConfig.posX, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posX = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_y", config.heldItemRendererConfig.posY, -2.0f, 2.0f, v -> config.heldItemRendererConfig.posY = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_y", config.heldItemRendererConfig.posY, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posY = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_z", config.heldItemRendererConfig.posZ, -2.0f, 2.0f, v -> config.heldItemRendererConfig.posZ = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_z", config.heldItemRendererConfig.posZ, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posZ = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_x", config.heldItemRendererConfig.rotX, -180.0f, 180.0f, v -> config.heldItemRendererConfig.rotX = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_x", config.heldItemRendererConfig.rotX, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotX = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_y", config.heldItemRendererConfig.rotY, -180.0f, 180.0f, v -> config.heldItemRendererConfig.rotY = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_y", config.heldItemRendererConfig.rotY, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotY = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_z", config.heldItemRendererConfig.rotZ, -180.0f, 180.0f, v -> config.heldItemRendererConfig.rotZ = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_z", config.heldItemRendererConfig.rotZ, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotZ = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.scale", config.heldItemRendererConfig.scale, 0.1f, 3.0f, v -> config.heldItemRendererConfig.scale = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.scale", config.heldItemRendererConfig.scale, 0.1f, 3.0f, 1.0f, v -> config.heldItemRendererConfig.scale = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.swing_speed_multiplier", config.heldItemRendererConfig.swingSpeedMultiplier, 0.1f, 3.0f, v -> config.heldItemRendererConfig.swingSpeedMultiplier = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.swing_speed_multiplier", config.heldItemRendererConfig.swingSpeedMultiplier, 0.1f, 3.0f, 1.0f, v -> config.heldItemRendererConfig.swingSpeedMultiplier = v);
         y += spacing;
 
         // Boolean toggles
@@ -139,11 +139,23 @@ public class HeldItemConfigScreen extends Screen {
         return false;
     }
 
-    private void addSlider(int x, int y, int width, int height, String key, float value, float min, float max, java.util.function.Consumer<Float> onChange) {
-        sliders.add(new FloatSlider(x + 10, y, width, height, Text.translatable(key).getString(), value, min, max, v -> {
-            onChange.accept(v);
-            config.save(SkydopplerClient.CONFIG_PATH);
-        }));
+    private void addSlider(int x, int y, int width, int height, String key, float value, float min, float max, float defaultValue, java.util.function.Consumer<Float> onChange) {
+        FloatSlider slider = new FloatSlider(x + 10, y, width - 25, height, Text.translatable(key).getString(), value, min, max, defaultValue, onChange);
+        sliders.add(slider);
+
+        // Add reset button beside the slider
+        ButtonWidget resetButton = ButtonWidget.builder(
+                        Text.literal("↺"), // Reset icon
+                        btn -> {
+                            slider.setValue((defaultValue - min) / (max - min));
+                            onChange.accept(defaultValue);
+                            config.save(SkydopplerClient.CONFIG_PATH);
+                        })
+                .position(x + width - 10, y)
+                .size(20, height)
+                .tooltip(Tooltip.of(Text.literal("Reset to default")))
+                .build();
+        this.addDrawableChild(resetButton);
     }
 
     private void addToggle(int x, int y, int width, int height, String key, boolean initialValue, java.util.function.Consumer<Boolean> onChange) {
@@ -173,13 +185,15 @@ public class HeldItemConfigScreen extends Screen {
         private final String label;
         private final float min;
         private final float max;
+        private final float defaultValue;
         private final java.util.function.Consumer<Float> onChange;
 
-        public FloatSlider(int x, int y, int width, int height, String label, float value, float min, float max, java.util.function.Consumer<Float> onChange) {
-            super(x, y, width, height, Text.literal(label + ": " + value), (value - min) / (max - min));
+        public FloatSlider(int x, int y, int width, int height, String label, float value, float min, float max, float defaultValue, java.util.function.Consumer<Float> onChange) {
+            super(x, y, width, height, Text.literal(label), (value - min) / (max - min));
             this.label = label;
             this.min = min;
             this.max = max;
+            this.defaultValue = defaultValue;
             this.onChange = onChange;
             this.updateMessage();
         }
@@ -196,6 +210,11 @@ public class HeldItemConfigScreen extends Screen {
 
         private float getValue() {
             return (float) (min + (max - min) * this.value);
+        }
+
+        public void setValue(double value) {
+            this.value = value;
+            this.updateMessage();
         }
     }
 }

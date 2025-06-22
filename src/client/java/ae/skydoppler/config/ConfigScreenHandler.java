@@ -158,11 +158,6 @@ public class ConfigScreenHandler {
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doSwordBlocking.tooltip"))
                         .setSaveConsumer(v -> config.oldVersionParityConfig.doSwordBlocking = v)
                         .build(),
-                entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.do1_7Animations"), config.oldVersionParityConfig.do1_7Animations)
-                        .setDefaultValue(false)
-                        .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.do1_7Animations.tooltip"))
-                        .setSaveConsumer(v -> config.oldVersionParityConfig.do1_7Animations = v)
-                        .build(),
                 entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldCrouchHeight"), config.oldVersionParityConfig.doOldCrouchHeight)
                         .setDefaultValue(false)
                         .setTooltip(Text.translatable("config.ae.skydoppler.general.option.oldVersionParityConfig.doOldCrouchHeight.tooltip"))

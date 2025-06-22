@@ -94,7 +94,7 @@
   "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.showTitle.tooltip": "Show a title on screen when a legendary sea creature is caught.",
   "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound": "Play Sound",
   "config.ae.skydoppler.fishing.option.seacreatureMessageConfig.shouldPlaySound.tooltip": "Play a ding sound when a legendary sea creature is caught.",
-  "config.ae.skydoppler.helditem.title": "Hand Renderer Config",
+  "config.ae.skydoppler.helditem.title": "Held Item Renderer Config",
   "config.ae.skydoppler.helditem.pos_x": "Pos X",
   "config.ae.skydoppler.helditem.pos_y": "Pos Y",
   "config.ae.skydoppler.helditem.pos_z": "Pos Z",
