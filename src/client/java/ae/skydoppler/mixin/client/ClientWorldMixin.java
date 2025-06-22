@@ -3,6 +3,7 @@ package ae.skydoppler.mixin.client;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.player_hiding.PlayerHidingHelper;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
+import ae.skydoppler.timers.PlayerTransferCooldown;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
@@ -24,7 +25,6 @@ public class ClientWorldMixin {
         SkydopplerClient.currentIsland = SkyblockLocationEnum.NONE;
         SkydopplerClient.currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
         SkydopplerClient.currentRegion = null;
-        SkydopplerClient.isRodCast = false;
         PlayerHidingHelper.npcPositions = new java.util.ArrayList<>();
     }
 
@@ -34,12 +34,11 @@ public class ClientWorldMixin {
             System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Initializing world ----OOOOOOOOOOOOOOOO");
 
         if (SkydopplerClient.isPlayingSkyblock && SkydopplerClient.CONFIG.doTransferCooldownFinishedAlert) {
-            SkydopplerClient.startIslandWarpTimer();
+            PlayerTransferCooldown.startCooldown();
 
             SkydopplerClient.currentIsland = SkyblockLocationEnum.NONE;
             SkydopplerClient.currentZone = SkyblockLocationEnum.NONE.getZonesForIsland()[0];
             SkydopplerClient.currentRegion = null;
-            SkydopplerClient.isRodCast = false;
             PlayerHidingHelper.npcPositions = new java.util.ArrayList<>();
         }
 
