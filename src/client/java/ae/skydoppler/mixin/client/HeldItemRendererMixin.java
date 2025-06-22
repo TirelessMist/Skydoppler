@@ -11,11 +11,9 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemDisplayContext;
+import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RotationAxis;
@@ -39,7 +37,8 @@ public abstract class HeldItemRendererMixin {
     @Inject(method = "renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/" + "minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/" + "MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemDisplayContext;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
     public void onRenderHeldItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         SkydopplerConfig config = SkydopplerClient.CONFIG;
-        if (hand == Hand.MAIN_HAND) {
+
+        if (hand == Hand.MAIN_HAND && !(item.getItem() instanceof FilledMapItem)) {
             float rotX = config.heldItemRendererConfig.rotX;
             float rotY = config.heldItemRendererConfig.rotY;
             float rotZ = config.heldItemRendererConfig.rotZ;
@@ -59,28 +58,6 @@ public abstract class HeldItemRendererMixin {
         }
     }
 
-    @Inject(method = "renderArm", at = @At("HEAD"))
-    private void onRenderArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Arm arm, CallbackInfo ci) {
-        SkydopplerConfig config = SkydopplerClient.CONFIG;
-
-        float rotX = config.heldItemRendererConfig.rotX;
-        float rotY = config.heldItemRendererConfig.rotY;
-        float rotZ = config.heldItemRendererConfig.rotZ;
-        float posX = config.heldItemRendererConfig.posX;
-        float posY = config.heldItemRendererConfig.posY;
-        float posZ = config.heldItemRendererConfig.posZ;
-
-        float scale = config.heldItemRendererConfig.scale;
-        matrices.translate(posX, posY, posZ);
-
-        boolean blocking = isPlayerBlocking();
-        matrices.multiply(blocking ? RotationAxis.POSITIVE_X.rotationDegrees(rotX + OneEightModeHelper.BLOCKING_ROT_X) : RotationAxis.POSITIVE_X.rotationDegrees(rotX));
-        matrices.multiply(blocking ? RotationAxis.POSITIVE_Y.rotationDegrees(rotY + OneEightModeHelper.BLOCKING_ROT_Y) : RotationAxis.POSITIVE_Y.rotationDegrees(rotY));
-        matrices.multiply(blocking ? RotationAxis.POSITIVE_Z.rotationDegrees(rotZ + OneEightModeHelper.BLOCKING_ROT_Z) : RotationAxis.POSITIVE_Z.rotationDegrees(rotZ));
-        matrices.scale(scale, scale, scale);
-
-    }
-
     // TODO: Add third-person blocking animation.
 
     @ModifyExpressionValue(method = "updateHeldItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getAttackCooldownProgress(F)F"))
@@ -95,9 +72,7 @@ public abstract class HeldItemRendererMixin {
 
     @Inject(method = "shouldSkipHandAnimationOnSwap", at = @At("HEAD"), cancellable = true)
     private void onShouldSkipHandAnimationOnSwap(ItemStack from, ItemStack _to, CallbackInfoReturnable<Boolean> cir) {
-        if (SkydopplerClient.CONFIG.heldItemRendererConfig.disableSwapAnimation) {
-            cir.setReturnValue(!(from.isOf(Items.AIR) || _to.isOf(Items.AIR)));
-        }
+        cir.setReturnValue(SkydopplerClient.CONFIG.heldItemRendererConfig.disableSwapAnimation);
     }
 
     @Inject(method = "applyEatOrDrinkTransformation", at = @At("HEAD"), cancellable = true)

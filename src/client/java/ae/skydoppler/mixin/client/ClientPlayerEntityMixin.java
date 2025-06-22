@@ -1,12 +1,9 @@
 package ae.skydoppler.mixin.client;
 
-import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.api.BlockingAccessor;
 import ae.skydoppler.behavior.AlwaysSprintState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,18 +41,7 @@ public abstract class ClientPlayerEntityMixin implements BlockingAccessor {
     @Inject(method = "canSprint",
             at = @At("HEAD"), cancellable = true)
     private void onCanSprint(CallbackInfoReturnable<Boolean> cir) {
-        if (isBlocking)
-            cir.setReturnValue(false);
-    }
 
-    @Inject(method = "swingHand",
-            at = @At("HEAD"), cancellable = true)
-    private void onSwingHand(Hand hand, CallbackInfo ci) {
-        if (isBlocking) {
-            if (!SkydopplerClient.CONFIG.oldVersionParityConfig.do1_7Animations) {
-                ci.cancel();
-            }
-        }
     }
 
     @Override
@@ -66,25 +52,5 @@ public abstract class ClientPlayerEntityMixin implements BlockingAccessor {
     @Override
     public void skydoppler$setBlocking(boolean blocking) {
         this.isBlocking = blocking;
-        if (blocking) {
-            if (client.player != null) {
-                // Stop sprinting if the player is blocking
-                client.player.setSprinting(false);
-
-                ClientPlayerInteractionManager interactionManager = client.interactionManager;
-                if (interactionManager != null) {
-                    // Force reset current breaking
-                    interactionManager.cancelBlockBreaking();
-
-                    // Reset attack cooldown
-                    client.player.resetLastAttackedTicks();
-
-                    // Cancel the current attack sequence
-                    if (client.options.attackKey.isPressed()) {
-                        interactionManager.cancelBlockBreaking();
-                    }
-                }
-            }
-        }
     }
 }

@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
 
-    @Shadow public abstract void setPressed(boolean pressed);
+    @Shadow
+    public abstract void setPressed(boolean pressed);
 
     @Inject(method = "setPressed", at = @At("HEAD"), cancellable = true)
     private void onSetPressed(boolean pressed, CallbackInfo ci) {
@@ -22,7 +23,7 @@ public abstract class KeyBindingMixin {
         if (client == null || client.player == null) return;
 
         KeyBinding thisBinding = (KeyBinding) (Object) this;
-        BlockingAccessor playerAccessor = (BlockingAccessor)client.player;
+        BlockingAccessor playerAccessor = (BlockingAccessor) client.player;
         boolean isBlocking = playerAccessor.skydoppler$isBlocking();
 
         // Handle sword blocking
@@ -31,12 +32,6 @@ public abstract class KeyBindingMixin {
                 client.player.getMainHandStack().getItem().getTranslationKey().contains("sword")) {
             // If the player is using a sword and the use key is pressed/released, toggle blocking state
             playerAccessor.skydoppler$setBlocking(pressed);
-        }
-
-        // Prevent sprinting while blocking
-        if (thisBinding == client.options.sprintKey && isBlocking) {
-            ci.cancel();
-            return;
         }
 
         // Handle always sprint

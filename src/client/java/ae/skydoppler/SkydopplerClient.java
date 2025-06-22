@@ -3,9 +3,10 @@ package ae.skydoppler;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
+import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import ae.skydoppler.dungeon.DungeonClientHandler;
 import ae.skydoppler.dungeon.map.DungeonTileMapConstructor;
-import ae.skydoppler.dungeon.map.DungeonTileMapConstructorTest;
+import ae.skydoppler.dungeon.map.MapParser;
 import ae.skydoppler.dungeon.map.MapTile;
 import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
@@ -77,8 +78,7 @@ public class SkydopplerClient implements ClientModInitializer {
             if (client.player == null || client.world == null) return;
 
             while (debugKey.wasPressed()) {
-                //client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
-                drawDungeonMap();
+                client.setScreen(HeldItemConfigScreen.buildConfigScreen(CONFIG, null));
             }
 
             if (islandWarpTimerActive && client.player != null) {
@@ -102,7 +102,7 @@ public class SkydopplerClient implements ClientModInitializer {
 
         //MapParser.saveMapToDesktop(FilledMapItem.getMapState(itemStack, client.world));
 
-        byte[][] mapPixels = DungeonTileMapConstructorTest.floorOneMapPixels.get();
+        byte[][] mapPixels = MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world));
 
         MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
 
