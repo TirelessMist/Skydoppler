@@ -53,6 +53,10 @@ public class SkydopplerConfig {
 
     public HeldItemRendererConfig heldItemRendererConfig = new HeldItemRendererConfig();
 
+    public boolean doSlotLocking = true;
+    public boolean doSlotLockingInStorageUi = false;
+    public float slotLockingToggleVolume = 1.0f; // Volume for the slot locking toggle sound
+
     // Load config from file
     public static SkydopplerConfig load(Path path) {
         if (Files.exists(path)) {

@@ -325,6 +325,31 @@ public class ConfigScreenHandler {
 
         //endregion
 
+        //region INVENTORY_CATEGORY
+        var inventoryCategory = builder.getOrCreateCategory(Text.translatable("config.ae.skydoppler.category.inventory"));
+        inventoryCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.inventory.option.doSlotLocking"), config.doSlotLocking)
+                .setDefaultValue(true)
+                .setTooltip(Text.translatable("config.ae.skydoppler.inventory.option.doSlotLocking.tooltip"))
+                .setSaveConsumer(v -> config.doSlotLocking = v)
+                .build()
+        );
+        inventoryCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config.ae.skydoppler.inventory.option.doSlotLockingInStorageUi"), config.doSlotLockingInStorageUi)
+                .setDefaultValue(false)
+                .setTooltip(Text.translatable("config.ae.skydoppler.inventory.option.doSlotLockingInStorageUi.tooltip"))
+                .setSaveConsumer(v -> config.doSlotLockingInStorageUi = v)
+                .build()
+        );
+        inventoryCategory.addEntry(entryBuilder.startIntSlider(
+                        Text.translatable("config.ae.skydoppler.inventory.option.slotLockingToggleVolume"),
+                        (int) (config.slotLockingToggleVolume * 100), // stored as float, converted to int (b/c of no float support), visually converted to float, returned as float
+                        0, // 0.50f * 100
+                        200 // 5.00f * 100
+                )
+                .setDefaultValue(100)
+                .setTextGetter(val -> Text.literal(String.format("%.2f", val / 100.0f)))
+                .setTooltip(Text.translatable("config.ae.skydoppler.inventory.option.slotLockingToggleVolume.tooltip"))
+                .setSaveConsumer(newValue -> config.slotLockingToggleVolume = newValue / 100.0f)
+                .build());
 
         builder.setSavingRunnable(() -> config.save(SkydopplerClient.CONFIG_PATH));
 

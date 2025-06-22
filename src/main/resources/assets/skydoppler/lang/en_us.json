@@ -3,6 +3,7 @@
   "config.ae.skydoppler.category.general": "General",
   "config.ae.skydoppler.category.dungeon": "Dungeons",
   "config.ae.skydoppler.category.fishing": "Fishing",
+  "config.ae.skydoppler.category.inventory": "Inventory",
   "config.ae.skydoppler.general.option.hideFarPlayersMode": "Hide Far Players Mode",
   "config.ae.skydoppler.general.option.hideFarPlayersMode.tooltip": "This option allows you to hide players that are far away from you in hubs. This is useful for improving performance and visibility.",
   "config.ae.skydoppler.general.option.doFarPlayerHiding": "Hide Far Players in Hub",
@@ -112,5 +113,11 @@
   "left": "Left",
   "right": "Right",
   "on": "ON",
-  "off": "OFF"
+  "off": "OFF",
+  "config.ae.skydoppler.inventory.option.doSlotLocking": "Enable Slot Locking",
+  "config.ae.skydoppler.inventory.option.doSlotLocking.tooltip": "Prevents moving or dropping locked slots in your inventory.",
+  "config.ae.skydoppler.inventory.option.doSlotLockingInStorageUi": "Enable Slot Locking in Storage UI",
+  "config.ae.skydoppler.inventory.option.doSlotLockingInStorageUi.tooltip": "When enabled, allows moving or dropping locked slots in the storage GUI (Ender Chest, Backpacks), even though Slot Locking is still enabled.",
+  "config.ae.skydoppler.inventory.option.slotLockingToggleVolume": "Slot Locking Toggle Volume",
+  "config.ae.skydoppler.inventory.option.slotLockingToggleVolume.tooltip": "Adjusts the volume of the sound played when toggling slot locking."
 }

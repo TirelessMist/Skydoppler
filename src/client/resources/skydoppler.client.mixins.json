@@ -10,6 +10,7 @@
     "ClientWorldMixin",
     "EntityRenderDispatcherMixin",
     "GameRendererMixin",
+    "HandledScreenMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "InGameOverlayRendererMixin",
