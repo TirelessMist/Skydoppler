@@ -12,6 +12,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -66,6 +67,18 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     public void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         MinecraftClient client = MinecraftClient.getInstance();
+
+        // If we're in a storage UI, completely bypass all slot locking functionality
+        if (SlotLockingHelper.isStorageScreen(this)) {
+            return;
+        }
+
+        // Always allow ESC key (GLFW_KEY_ESCAPE) and inventory key to work
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE ||
+                (client.options.inventoryKey != null && client.options.inventoryKey.matchesKey(keyCode, scanCode))) {
+            return;
+        }
+
         double mouseX = client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth();
         double mouseY = client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight();
         Slot hoveredSlot = this.getSlotAt(mouseX, mouseY);
@@ -79,11 +92,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                 cir.setReturnValue(true);
                 return;
             }
-        }
-
-        // If we're in a storage UI and the config says to disable locking, don't block interactions
-        if (SlotLockingHelper.isStorageScreen(this)) {
-            return;
         }
 
         // Check if hovered slot is locked (and not toggling lock)
@@ -114,7 +122,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        // If we're in a storage UI and the config says to disable locking, don't block interactions
+        // If we're in a storage UI, bypass all slot locking functionality
         if (SlotLockingHelper.isStorageScreen(this)) {
             return;
         }

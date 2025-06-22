@@ -32,7 +32,8 @@ public class SlotLockingHelper {
         String title = screen.getTitle().getString().toLowerCase();
         return title.contains("ender chest") ||
                 title.contains("backpack") ||
-                title.equals("storage");
+                title.equals("storage") ||
+                title.equals("chest");
     }
 
     public static boolean isSlotLocked(int slot) {
