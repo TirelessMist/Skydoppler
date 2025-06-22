@@ -33,7 +33,7 @@ public class SlotLockingHelper {
         return title.contains("ender chest") ||
                 title.contains("backpack") ||
                 title.equals("storage") ||
-                title.equals("chest");
+                title.contains("chest");
     }
 
     public static boolean isSlotLocked(int slot) {
