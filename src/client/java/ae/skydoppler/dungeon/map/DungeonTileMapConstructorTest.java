@@ -1,5 +1,7 @@
 package ae.skydoppler.dungeon.map;
 
+import ae.skydoppler.SkydopplerClient;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,35 +9,16 @@ import java.io.IOException;
 public class DungeonTileMapConstructorTest {
 
     public static void main(String[] args) {
-        String filePath = "src/client/java/ae/skydoppler/dungeon/map/testmaps/floor1.txt";
+        String filePath = "src/main/resources/assets/skydoppler/testmaps/floor1.txt";
         byte[][] mapPixels = readMapPixelsFromFile(filePath);
         if (mapPixels == null) {
             System.out.println("Failed to read map pixels from file.");
             return;
         }
+        SkydopplerClient.dungeonClientHandler.setCurrentDungeonFloor(1);
         MapTile[][] tileGrid = DungeonTileMapConstructor.constructMap(mapPixels);
         System.out.println("Modular tile grid size: " + tileGrid.length + " x " + tileGrid[0].length);
         printTileGridSummary(tileGrid);
-    }
-
-    public static byte[][] readMapPixelsFromResources(String resourcePath) {
-        try (BufferedReader br = new BufferedReader(new java.io.InputStreamReader(
-                DungeonTileMapConstructorTest.class.getResourceAsStream(resourcePath)))) {
-            java.util.List<byte[]> rows = new java.util.ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] tokens = line.split(",");
-                byte[] row = new byte[tokens.length];
-                for (int i = 0; i < tokens.length; i++) {
-                    row[i] = Byte.parseByte(tokens[i]);
-                }
-                rows.add(row);
-            }
-            return rows.toArray(new byte[rows.size()][]);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public static byte[][] readMapPixelsFromFile(String filePath) {
