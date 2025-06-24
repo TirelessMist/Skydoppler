@@ -5,6 +5,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,8 @@ public class SlotLockingHelper {
             lockedSlots = new ArrayList<>();
         }
 
+        if (SkydopplerClient.isPlayingSkyblock && slot == 8) return; // Prevent locking the Skyblock Menu slot in Skyblock
+
         if (lockedSlotsArray[slot]) {
             lockedSlots.remove(Integer.valueOf(slot));
             lockedSlotsArray[slot] = false;
@@ -58,7 +63,7 @@ public class SlotLockingHelper {
 
         // Play sound effect if the config allows it
         if (SkydopplerClient.CONFIG.doSlotLocking && SkydopplerClient.CONFIG.slotLockingToggleVolume > 0) {
-            MinecraftClient.getInstance().player.playSoundToPlayer(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.MASTER, SkydopplerClient.CONFIG.slotLockingToggleVolume, 1.2f);
+            MinecraftClient.getInstance().player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, SkydopplerClient.CONFIG.slotLockingToggleVolume, lockedSlotsArray[slot] ? 0.4f : 1.0f);
         }
     }
 
@@ -109,5 +114,27 @@ public class SlotLockingHelper {
                 lockedSlots.add(i);
             }
         }
+    }
+
+    /**
+     * Plays a sound and shows a chat message when trying to interact with a locked slot.
+     */
+    public static void playLockedSlotSound(boolean showMessage) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null) return;
+        if (SkydopplerClient.CONFIG.slotLockingToggleVolume > 0) {
+            client.player.playSoundToPlayer(
+                    SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(),
+                    SoundCategory.MASTER,
+                    SkydopplerClient.CONFIG.slotLockingToggleVolume,
+                    0.5f
+            );
+        }
+        if (!showMessage) return;
+        // Show a message to the player
+        client.player.sendMessage(
+                Text.literal("This slot is locked!").formatted(Formatting.RED),
+                false
+        );
     }
 }

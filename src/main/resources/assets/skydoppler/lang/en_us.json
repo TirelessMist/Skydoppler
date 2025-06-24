@@ -119,5 +119,6 @@
   "config.ae.skydoppler.inventory.option.doSlotLockingInStorageUi": "Disable Slot Locking in Storage UI",
   "config.ae.skydoppler.inventory.option.doSlotLockingInStorageUi.tooltip": "When enabled, allows moving or dropping locked slots in the storage GUI (Ender Chest, Backpacks), even though Slot Locking is still enabled.",
   "config.ae.skydoppler.inventory.option.slotLockingToggleVolume": "Slot Locking Toggle Volume",
-  "config.ae.skydoppler.inventory.option.slotLockingToggleVolume.tooltip": "Adjusts the volume of the sound played when toggling slot locking. Set to 0 to disable the sound."
+  "config.ae.skydoppler.inventory.option.slotLockingToggleVolume.tooltip": "Adjusts the volume of the sound played when toggling slot locking. Set to 0 to disable the sound.",
+  "skydoppler.locked_slot.attempt_drop": "You cannot drop a locked slot!"
 }

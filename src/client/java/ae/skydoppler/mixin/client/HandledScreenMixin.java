@@ -10,9 +10,6 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -102,6 +99,8 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
             int slotIndex = hoveredSlot.getIndex();
             if (slotIndex >= 0 && slotIndex < 36) {
                 if (SlotLockingHelper.isSlotLocked(slotIndex) && keyCode != SkydopplerClient.lockSlotKey) {
+                    // Play error sound if trying to interact with locked slot
+                    SlotLockingHelper.playLockedSlotSound(false);
                     cir.setReturnValue(true); // Cancel any key press on locked slots
                     return;
                 }
@@ -114,6 +113,8 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
             if (hotbarBinding.matchesKey(keyCode, scanCode)) {
                 // Check if the corresponding hotbar slot is locked
                 if (SlotLockingHelper.isSlotLocked(i)) {
+                    // Play error sound if trying to swap with a locked hotbar slot
+                    SlotLockingHelper.playLockedSlotSound(false);
                     // Cancel the key press to prevent swapping with a locked hotbar slot
                     cir.setReturnValue(true);
                     return;
@@ -123,18 +124,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         }
     }
 
-    @Unique
-    private void playLockedSlotSound() {
-        if (SkydopplerClient.CONFIG.slotLockingToggleVolume > 0) {
-            MinecraftClient.getInstance().player.playSoundToPlayer(
-                    SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(),
-                    SoundCategory.MASTER,
-                    SkydopplerClient.CONFIG.slotLockingToggleVolume,
-                    0.8f
-            );
-        }
-    }
-
+    // Prevent item pickup from locked slots
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         // If we're in a storage UI, bypass all slot locking functionality
@@ -149,7 +139,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
             int slotIndex = hoveredSlot.getIndex();
             if (slotIndex >= 0 && slotIndex < 36 && SlotLockingHelper.isSlotLocked(slotIndex)) {
                 // Play error sound if trying to interact with locked slot
-                playLockedSlotSound();
+                SlotLockingHelper.playLockedSlotSound(false);
                 // Prevent interaction with locked slots
                 cir.setReturnValue(true);
                 return;
@@ -157,23 +147,23 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         }
     }
 
-    // Prevent item pickup from locked slots
-    @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/screen/slot/SlotActionType;)V", at = @At("HEAD"), cancellable = true)
-    private void onSlotClick(Slot slot, SlotActionType actionType, CallbackInfo ci) {
+    @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
+    private void onSlotClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         // If we're in a storage UI, bypass all slot locking functionality
         if (SlotLockingHelper.isStorageScreen(this)) {
             return;
         }
 
         MinecraftClient client = MinecraftClient.getInstance();
+        Slot slot = this.getSlotAt(mouseX, mouseY);
 
         if (slot != null && slot.inventory == client.player.getInventory()) {
             int slotIndex = slot.getIndex();
             if (slotIndex >= 0 && slotIndex < 36 && SlotLockingHelper.isSlotLocked(slotIndex)) {
                 // Play error sound if trying to interact with locked slot
-                playLockedSlotSound();
+                SlotLockingHelper.playLockedSlotSound(false);
                 // Prevent interaction with locked slots
-                ci.cancel();
+                cir.setReturnValue(false);
             }
         }
     }

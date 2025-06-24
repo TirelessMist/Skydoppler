@@ -3,6 +3,8 @@ package ae.skydoppler.mixin.client;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.api.BlockingAccessor;
 import ae.skydoppler.behavior.AlwaysSprintState;
+import ae.skydoppler.skyblock.SlotLockingHelper;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,10 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
 
-    @Shadow
-    public abstract void setPressed(boolean pressed);
-
-    @Inject(method = "setPressed", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setPressed", at = @At("HEAD"))
     private void onSetPressed(boolean pressed, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
@@ -32,15 +31,36 @@ public abstract class KeyBindingMixin {
                 client.player.getMainHandStack().getItem().getTranslationKey().contains("sword")) {
             // If the player is using a sword and the use key is pressed/released, toggle blocking state
             playerAccessor.skydoppler$setBlocking(pressed);
+            return;
         }
 
         // Handle always sprint
         if (thisBinding == client.options.forwardKey && pressed &&
-                !isBlocking &&
                 !AlwaysSprintState.shouldNotDoAlwaysSprint() &&
                 AlwaysSprintState.canSprint(client.player) &&
                 !client.player.isSprinting()) {
             client.player.setSprinting(true);
+            return;
         }
+    }
+
+    @ModifyReturnValue(method = "wasPressed", at = @At("RETURN"))
+    private boolean onWasPressed(boolean original) {
+        // If the original result is false, no need to check anything else
+        if (!original) return false;
+
+        KeyBinding thisBinding = (KeyBinding) (Object) this;
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.player == null) return original;
+
+        // Check if we need to prevent drops due to locked slots
+        if (thisBinding == client.options.dropKey &&
+                SkydopplerClient.CONFIG.doSlotLocking &&
+                SlotLockingHelper.isSlotLocked(client.player.getInventory().getSelectedSlot())) {
+            SlotLockingHelper.playLockedSlotSound(true);
+            return false;
+        }
+
+        return original;
     }
 }
