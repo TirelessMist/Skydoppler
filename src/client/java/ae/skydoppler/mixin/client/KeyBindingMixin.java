@@ -3,6 +3,8 @@ package ae.skydoppler.mixin.client;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.api.BlockingAccessor;
 import ae.skydoppler.behavior.AlwaysSprintState;
+import ae.skydoppler.config.SkydopplerConfig;
+import ae.skydoppler.config.chat_matcher_config.ChatMatchConfigScreen;
 import ae.skydoppler.skyblock.SlotLockingHelper;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.MinecraftClient;
@@ -47,6 +49,7 @@ public abstract class KeyBindingMixin {
         if (thisBinding == SkydopplerClient.debugKey && SkydopplerClient.debugModeEnabled && pressed) {
             // Add debug functionality here if needed
             System.out.println("Debug key pressed!");
+            client.setScreen(ChatMatchConfigScreen.buildConfigScreen(SkydopplerClient.CONFIG, null));
             return;
         }
     }

@@ -1,5 +1,5 @@
 package ae.skydoppler.chat;
 
 public enum ChatMatchCaseSensitivityType {
-    case_sensitive,not_case_sensitive
+    CASE_SENSITIVE, NOT_CASE_SENSITIVE
 }

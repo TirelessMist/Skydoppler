@@ -1,183 +1,104 @@
 package ae.skydoppler.chat;
 
 import ae.skydoppler.SkydopplerClient;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import ae.skydoppler.config.chat_matcher_config.ChatMatchConfigEntryData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ChatMatchHandler {
 
-    private static final MinecraftClient client = MinecraftClient.getInstance();
-    private static JsonObject chat_matches_json;
-    private static JsonArray chat_matches_entries;
-    private static JsonObject sea_creature_matches_json;
-    private static JsonArray sea_creature_matches_entries;
-
-    public static String checkForMatches(String chatMessage) {
-        // can return a "replace" string, where it replaces the original chat message with the String returned from this function
-
-        String returnString = "";
-
-        for (JsonElement element : chat_matches_entries) { // for each message "block"
-
-            JsonObject obj = element.getAsJsonObject(); // gets the current message "block" as a JsonObject
-
-            String currentChatMatchType = obj.get("ChatMatchType").getAsString();
-            String currentChatMatchCaseSensitivityType = obj.get("ChatMatchCaseSensitivityType").getAsString();
-            JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
-            List<String> matchStrings = new ArrayList<>();
-            for (JsonElement jsonElement : matchesJsonArray)
-                matchStrings.add(jsonElement.getAsString());
-
-            if (CheckMatch(chatMessage, matchStrings, ChatMatchType.valueOf(currentChatMatchType), ChatMatchCaseSensitivityType.valueOf(currentChatMatchCaseSensitivityType))) {
-
-                String displayText = obj.get("displayText").getAsString();
-
-                if (obj.get("playSound").getAsBoolean()) {
-                    MinecraftClient client = MinecraftClient.getInstance();
-                    if (client.player != null) {
-
-                        client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
-
-                    }
-                }
-
-                if (obj.get("hideOriginalMessage").getAsBoolean()) {
-
-                    returnString = "\\hide" + displayText;
-
-                } else returnString = displayText;
-
-                client.inGameHud.setTitle(Text.literal(displayText));
-                client.inGameHud.setSubtitle(Text.empty());
-                client.inGameHud.setTitleTicks(0, 90, 0);
-                //System.out.println("Chat Match Display Text: " + obj.get("displayText"));
-            }
-
+    /**
+     * Handles chat message matching against configured patterns.
+     *
+     * @return true if the original message should be hidden, false otherwise.
+     */
+    public static boolean matchChatMessage(String message) {
+        if (SkydopplerClient.CONFIG == null || SkydopplerClient.CONFIG.userChatMatchConfig == null ||
+                SkydopplerClient.CONFIG.userChatMatchConfig.functions == null ||
+                SkydopplerClient.CONFIG.userChatMatchConfig.functions.length == 0) {
+            return false;
         }
 
-        for (JsonElement element : sea_creature_matches_entries) {
+        boolean shouldHideOriginalMessage = false;
+        MinecraftClient client = MinecraftClient.getInstance();
 
-            JsonObject obj = element.getAsJsonObject();
-
-            JsonArray matchesJsonArray = obj.getAsJsonArray("matches");
-            List<String> matchStrings = new ArrayList<>();
-            for (JsonElement jsonElement : matchesJsonArray) {
-                matchStrings.add(jsonElement.getAsString());
+        // Check each configured chat match function
+        for (ChatMatchConfigEntryData function : SkydopplerClient.CONFIG.userChatMatchConfig.functions) {
+            if (!function.enabled || function.matches == null || function.matches.isEmpty()) {
+                continue;
             }
 
-            if (CheckMatch(chatMessage, matchStrings, ChatMatchType.match_exactly, ChatMatchCaseSensitivityType.case_sensitive)) {
-                String displayText = obj.get("displayText").getAsString();
-
-                if (SkydopplerClient.CONFIG.seacreatureMessageConfig.showTitle) {
-                    client.inGameHud.setTitle(Text.literal(displayText));
-                    client.inGameHud.setSubtitle(Text.empty());
-                    client.inGameHud.setTitleTicks(0, 90, 0);
-                }
-
-                if (client.player != null && SkydopplerClient.CONFIG.seacreatureMessageConfig.shouldPlaySound) {
-                    client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
-                }
-
-                if (SkydopplerClient.CONFIG.seacreatureMessageConfig.showCustomChatMessage) {
-                    returnString = "§eYou fished up a " + displayText + "§e.";
-                }
-
-                if (SkydopplerClient.CONFIG.seacreatureMessageConfig.shouldHideOriginalMessage) {
-                    returnString = "\\hide" + returnString;
-                }
-
-                //System.out.println("Legendary Sea Creature: " + obj.get("displayText"));
-
-            }
-        }
-
-        return returnString;
-    }
-
-    private static boolean CheckMatch(String chatMessage, List<String> matchStrings, ChatMatchType matchType, ChatMatchCaseSensitivityType caseSensitivityType) {
-
-        if (caseSensitivityType == ChatMatchCaseSensitivityType.not_case_sensitive) {
-            chatMessage = chatMessage.toLowerCase(); // sets all the strings to lower case for a faster way to do no case sensitivity
-            matchStrings.replaceAll(String::toLowerCase);
-        }
-
-        if (matchType == ChatMatchType.match_exactly) {
-            boolean isMatch = false;
-            for (String s : matchStrings) {
-                if (chatMessage.equals(s)) {
-                    isMatch = true; // checking quick case before all computation work
+            // Check if the message matches any of the patterns for this function
+            boolean functionMatched = false;
+            for (ChatMatchConfigEntryData.ChatMatchEntryData matchEntry : function.matches) {
+                if (matchesPattern(message, matchEntry)) {
+                    functionMatched = true;
                     break;
                 }
             }
-            return isMatch;
-        }
 
+            if (functionMatched) {
+                // Handle the matched function
+                // Play sound if configured
+                if (function.playSound && client != null && client.player != null) {
+                    client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
+                }
 
-        switch (matchType) {
-            case ChatMatchType.contains -> {
-                for (String s : matchStrings) {
-                    if (chatMessage.contains(s)) {
-                        return true;
+                // Display title if configured
+                if (function.displayTitle != null && !function.displayTitle.isEmpty() && client != null) {
+                    client.inGameHud.setTitle(Text.literal(function.displayTitle));
+                }
+
+                // Display chat message if configured
+                if (function.displayCustomChatMessage != null && !function.displayCustomChatMessage.isEmpty() && client != null && client.player != null) {
+                    client.player.sendMessage(Text.literal(function.displayCustomChatMessage), false);
+                }
+
+                // Execute commands if configured
+                if (function.executeCommands != null && !function.executeCommands.isEmpty() && client != null && client.player != null) {
+                    for (String command : function.executeCommands) {
+                        client.player.networkHandler.sendChatCommand(command);
                     }
                 }
-            }
-            case ChatMatchType.starts_with -> {
-                for (String s : matchStrings) {
-                    if (chatMessage.startsWith(s)) {
-                        return true;
-                    }
-                }
+
+                // If any function wants to hide the original message, mark it as such
+                // The actual hiding will depend on the caller's behavior
+                shouldHideOriginalMessage = true;
             }
         }
 
-        return false; // if it cannot find a match, returns false
+        return shouldHideOriginalMessage;
     }
 
-    public static void loadJsonData() {
-        try (InputStream stream = SkydopplerClient.class.getResourceAsStream("/chat_matches.json")) {
-            if (stream == null) {
-                System.err.println("Could not find chat_matches.json in resources!");
-                return;
-            }
-            // Use InputStreamReader with an appropriate charset.
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-            // Parse the JSON file using Gson
-            Gson gson = new Gson();
-            chat_matches_json = gson.fromJson(reader, JsonObject.class);
-            reader.close();
-            chat_matches_entries = chat_matches_json.getAsJsonArray("messages");
-        } catch (Exception e) {
-            System.err.println("Error reading JSON file: " + e.getMessage());
-            e.printStackTrace();
+    /**
+     * Checks if a message matches the given pattern according to the match type and case sensitivity.
+     *
+     * @param message    The message to check.
+     * @param matchEntry The pattern and matching configuration.
+     * @return true if the message matches the pattern, false otherwise.
+     */
+    private static boolean matchesPattern(String message, ChatMatchConfigEntryData.ChatMatchEntryData matchEntry) {
+        if (matchEntry.matchString == null || matchEntry.matchString.isEmpty()) {
+            return false;
         }
 
-        try (InputStream stream = SkydopplerClient.class.getResourceAsStream("/sea_creature_messages.json")) {
-            if (stream == null) {
-                System.err.println("Could not find sea_creature_messages.json in resources!");
-                return;
-            }
-            // Use InputStreamReader with an appropriate charset.
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-            // Parse the JSON file using Gson
-            Gson gson = new Gson();
-            sea_creature_matches_json = gson.fromJson(reader, JsonObject.class);
-            reader.close();
-            sea_creature_matches_entries = sea_creature_matches_json.getAsJsonArray("messages");
-        } catch (Exception e) {
-            System.err.println("Error reading JSON file: " + e.getMessage());
-            e.printStackTrace();
+        String messageToCheck = message;
+        String patternToMatch = matchEntry.matchString;
+
+        // Handle case sensitivity
+        if (matchEntry.matchCaseSensitivityType == ChatMatchCaseSensitivityType.NOT_CASE_SENSITIVE) {
+            messageToCheck = messageToCheck.toLowerCase();
+            patternToMatch = patternToMatch.toLowerCase();
         }
+
+        // Check based on the match type
+        return switch (matchEntry.matchType) {
+            case MATCH_EXACTLY -> messageToCheck.equals(patternToMatch);
+            case STARTS_WITH -> messageToCheck.startsWith(patternToMatch);
+            case CONTAINS -> messageToCheck.contains(patternToMatch);
+            default -> false;
+        };
     }
 }

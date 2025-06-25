@@ -46,14 +46,14 @@ public class SkydopplerClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
+        // TODO: Revamp chat notifications to use translation keys and be more organized with a more structured system.
+
         SkydopplerCommand.registerCommands();
 
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("Skydoppler (Client) is initializing!");
 
         CONFIG = SkydopplerConfig.load(CONFIG_PATH);
-
-        ChatMatchHandler.loadJsonData();
 
         if (SkydopplerClient.debugModeEnabled)
             debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));

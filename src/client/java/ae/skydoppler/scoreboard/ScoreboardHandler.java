@@ -1,6 +1,7 @@
 package ae.skydoppler.scoreboard;
 
 import ae.skydoppler.skyblock.skyblock_locations.SkyblockLocationHandler;
+import net.minecraft.text.Text;
 
 import java.text.Normalizer;
 import java.util.regex.Matcher;
@@ -21,8 +22,8 @@ public class ScoreboardHandler {
         String converted = convertIconsToUnicode(line);
         System.out.println("Converted scoreboard: " + converted);*/
 
-        if (line.contains("⏣")) { // if it contains the location icon
-            line = line.substring(line.indexOf("⏣") + 1);
+        if (line.contains("(⏣|ф)")) { // if it contains the location icon (or the rift location icon)
+            line = line.substring(line.indexOf("(⏣|ф)") + 1);
             line = line.trim();
 
             SkyblockLocationHandler.setLocationFromString(line);
@@ -31,7 +32,7 @@ public class ScoreboardHandler {
         }
 
         // Regex pattern to match "purse" or "piggy" followed by a number
-        Pattern pattern = Pattern.compile("(purse|piggy): ([\\d,]+\\.?\\d*)");
+        Pattern pattern = Pattern.compile("(" + Text.translatable("hypixel.skyblock.scoreboard.purse.purse").getString() + "|" + Text.translatable("hypixel.skyblock.scoreboard.purse.piggy").getString() + "): ([\\d,]+\\.?\\d*)");
         Matcher matcher = pattern.matcher(line);
 
         if (matcher.find()) {

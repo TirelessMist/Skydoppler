@@ -17,10 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
 
-    @Unique
-    MinecraftClient client = MinecraftClient.getInstance();
-
-    @Inject(at = @At("HEAD"), method = "addMessage*", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "addMessage(Lnet/minecraft/text/Text;)V", cancellable = true)
     private void onAddMessage(Text chatMessage, CallbackInfo ci) {
 
         String messageString = StyleConverter.ConvertToFormattedString(chatMessage);
@@ -28,34 +25,9 @@ public class ChatHudMixin {
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("[ChatHudMixin] -> onAddMessage -> chatMessage = \"" + chatMessage + "\"");
 
-        String returnValue = ChatMatchHandler.checkForMatches(messageString);
+        boolean returnValue = ChatMatchHandler.matchChatMessage(messageString);
 
-        if (returnValue.startsWith("\\hide")) {
-
-            if (returnValue.length() > 5) {
-
-                returnValue = returnValue.substring(5);
-
-            } else {
-
-                returnValue = "";
-
-            }
-
-            ci.cancel();
-
-        }
-
-        if (!returnValue.isEmpty()) {
-
-            if (client.player != null) {
-
-                client.player.sendMessage(Text.literal(returnValue), false);
-                return;
-
-            }
-
-        }
+        if (returnValue) ci.cancel(); // Cancel the message from being added to the chat
 
     }
 

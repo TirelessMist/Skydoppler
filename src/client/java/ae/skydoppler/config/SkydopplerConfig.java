@@ -1,5 +1,6 @@
 package ae.skydoppler.config;
 
+import ae.skydoppler.config.chat_matcher_config.ChatMatchConfigEntryData;
 import ae.skydoppler.player_hiding.PlayerHidingHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,6 +57,8 @@ public class SkydopplerConfig {
     public boolean doSlotLocking = true;
     public boolean doSlotLockingInStorageUi = false;
     public float slotLockingToggleVolume = 1.0f; // Volume for the slot locking toggle sound
+
+    public UserChatMatchConfig userChatMatchConfig = new UserChatMatchConfig();
 
     // Load config from file
     public static SkydopplerConfig load(Path path) {
@@ -118,5 +121,9 @@ public class SkydopplerConfig {
         public boolean doSwordBlocking = false;
         public boolean doOldCrouchHeight = false;
         public boolean doOldGlassPaneHitbox = false;
+    }
+
+    public static class UserChatMatchConfig {
+        public ChatMatchConfigEntryData[] functions = new ChatMatchConfigEntryData[0];
     }
 }

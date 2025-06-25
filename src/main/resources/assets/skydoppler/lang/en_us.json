@@ -398,7 +398,7 @@
   "hypixel.skyblock.location.the_rift.locations.trial_grounds": "trial grounds",
   "hypixel.skyblock.location.backwater_bayou.locations.backwater_bayou": "backwater bayou",
   "skydoppler.chat.skydoppler_prefix": "§eSkydoppler §f-> §8",
-  "skydoppler.player_transfer_cooldown": "§eSkydoppler §f-> §8(PLAYER_TRANSFER_COOLDOWN_EXPIRED)",
+  "skydoppler.player_transfer_cooldown": "(PLAYER_TRANSFER_COOLDOWN_EXPIRED)",
   "hypixel.skyblock.rarity.common": "§fCommon",
   "hypixel.skyblock.rarity.uncommon": "§aUncommon",
   "hypixel.skyblock.rarity.rare": "§9Rare",
@@ -406,6 +406,8 @@
   "hypixel.skyblock.rarity.legendary": "§6Legendary",
   "hypixel.skyblock.rarity.mythic": "§dMythic",
   "hypixel.skyblock.rarity.divine": "§bDivine",
-  "hypixel.skyblock.rarity.special": "§cSpecial"
+  "hypixel.skyblock.rarity.special": "§cSpecial",
+  "hypixel.skyblock.scoreboard.purse.purse": "purse",
+  "hypixel.skyblock.scoreboard.purse.piggy": "piggy"
 }
 
