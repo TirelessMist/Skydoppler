@@ -1,6 +1,7 @@
-package ae.skydoppler.skyblock_locations;
+package ae.skydoppler.skyblock.skyblock_locations;
 
 import ae.skydoppler.SkydopplerClient;
+import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +23,7 @@ public class SkyblockLocationHandler {
                 Enum<?>[] zones = island.getZonesForIsland();
 
                 for (Enum<?> zone : zones) {
-                    if (zone instanceof SkyblockLocationEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
+                    if (zone instanceof SkyblockLocationEnum.EnumKey enumName && Text.translatable(enumName.getKey()).getString().equalsIgnoreCase(location)) {
                         if (SkydopplerClient.debugModeEnabled)
                             System.out.println("Found location: " + zone);
 
@@ -31,7 +32,7 @@ public class SkyblockLocationHandler {
 
                         if (SkydopplerClient.debugModeEnabled) {
                             System.out.println("Current island set to: " + island);
-                            System.out.println("Current zone set to: " + zone.name());
+                            System.out.println("Current zone set to: " + zone);
                         }
 
                         setRegionForZone(zone);
@@ -48,14 +49,14 @@ public class SkyblockLocationHandler {
             boolean zoneFound = false;
 
             for (Enum<?> zone : zones) {
-                if (zone instanceof SkyblockLocationEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
+                if (zone instanceof SkyblockLocationEnum.EnumKey enumName && Text.translatable(enumName.getKey()).getString().equalsIgnoreCase(location)) {
                     if (SkydopplerClient.debugModeEnabled)
                         System.out.println("Found location in current island: " + zone);
 
                     SkydopplerClient.currentZone = zone;
 
                     if (SkydopplerClient.debugModeEnabled)
-                        System.out.println("Current zone set to: " + zone.name());
+                        System.out.println("Current zone set to: " + zone);
 
                     setRegionForZone(zone);
                     if (SkydopplerClient.currentIsland == SkyblockLocationEnum.DUNGEON) {
@@ -72,7 +73,7 @@ public class SkyblockLocationHandler {
                     zones = island.getZonesForIsland();
 
                     for (Enum<?> zone : zones) {
-                        if (zone instanceof SkyblockLocationEnum.EnumName enumName && enumName.getName().equalsIgnoreCase(location)) {
+                        if (zone instanceof SkyblockLocationEnum.EnumKey enumName && Text.translatable(enumName.getKey()).getString().equalsIgnoreCase(location)) {
                             if (SkydopplerClient.debugModeEnabled)
                                 System.out.println("Found location in another island: " + zone);
 
@@ -81,7 +82,7 @@ public class SkyblockLocationHandler {
 
                             if (SkydopplerClient.debugModeEnabled) {
                                 System.out.println("Current island set to: " + island);
-                                System.out.println("Current zone set to: " + zone.name());
+                                System.out.println("Current zone set to: " + zone);
                             }
 
                             setRegionForZone(zone);

@@ -7,8 +7,7 @@ import ae.skydoppler.dungeon.DungeonClientHandler;
 import ae.skydoppler.dungeon.map.DungeonTileMapConstructor;
 import ae.skydoppler.dungeon.map.MapParser;
 import ae.skydoppler.dungeon.map.MapTile;
-import ae.skydoppler.skyblock.SlotLockingHelper;
-import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.structs.SkyblockPlayerDataStruct;
 import ae.skydoppler.timers.SkydopplerTimerEventHandler;
 import net.fabricmc.api.ClientModInitializer;
@@ -63,16 +62,7 @@ public class SkydopplerClient implements ClientModInitializer {
 
         lockSlotKey = GLFW.GLFW_KEY_L;
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-
-            if (client.player == null || client.world == null) return;
-
-            while (debugKey.wasPressed()) {
-                SlotLockingHelper.toggleSlotLock(4);
-            }
-
-            SkydopplerTimerEventHandler.timerTick(client);
-        });
+        ClientTickEvents.END_CLIENT_TICK.register(SkydopplerTimerEventHandler::timerTick);
     }
 
     private void drawDungeonMap() {

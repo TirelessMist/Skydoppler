@@ -1,8 +1,8 @@
 package ae.skydoppler.player_hiding;
 
 import ae.skydoppler.SkydopplerClient;
-import ae.skydoppler.skyblock_locations.SkyblockIslandCategoryEnum;
-import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockIslandCategoryEnum;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockLocationEnum;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 

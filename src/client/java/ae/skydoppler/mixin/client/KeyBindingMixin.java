@@ -42,6 +42,13 @@ public abstract class KeyBindingMixin {
             client.player.setSprinting(true);
             return;
         }
+
+        // Handle debug key
+        if (thisBinding == SkydopplerClient.debugKey && SkydopplerClient.debugModeEnabled && pressed) {
+            // Add debug functionality here if needed
+            System.out.println("Debug key pressed!");
+            return;
+        }
     }
 
     @ModifyReturnValue(method = "wasPressed", at = @At("RETURN"))
@@ -53,7 +60,7 @@ public abstract class KeyBindingMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return original;
 
-        // Check if we need to prevent drops due to locked slots
+        // Handle dropping items with locked slots
         if (thisBinding == client.options.dropKey &&
                 SkydopplerClient.CONFIG.doSlotLocking &&
                 SlotLockingHelper.isSlotLocked(client.player.getInventory().getSelectedSlot())) {

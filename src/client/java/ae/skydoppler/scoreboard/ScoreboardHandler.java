@@ -1,6 +1,6 @@
 package ae.skydoppler.scoreboard;
 
-import ae.skydoppler.skyblock_locations.SkyblockLocationHandler;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockLocationHandler;
 
 import java.text.Normalizer;
 import java.util.regex.Matcher;

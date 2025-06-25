@@ -1,7 +1,7 @@
 package ae.skydoppler.structs;
 
-import ae.skydoppler.skyblock_locations.SkyblockIslandCategoryEnum;
-import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockIslandCategoryEnum;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockLocationEnum;
 
 public class SkyblockPlayerDataStruct {
 

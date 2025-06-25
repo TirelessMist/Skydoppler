@@ -1,28 +1,22 @@
 package ae.skydoppler.skyblock;
 
+import net.minecraft.text.Text;
+
 public enum SkyblockRarity {
-    COMMON("§f", "§fCommon"),
-    UNCOMMON("§a", "§aUncommon"),
-    RARE("§9", "§9Rare"),
-    EPIC("§5", "§5Epic"),
-    LEGENDARY("§6", "§6Legendary"),
-    MYTHIC("§d", "§dMythic"),
-    DIVINE("§b", "§bDivine"),
-    SPECIAL("§c", "§cSpecial");
-
-    private final String colorCode;
-    private final String displayName;
-
-    SkyblockRarity(String colorCode, String displayName) {
-        this.colorCode = colorCode;
-        this.displayName = displayName;
-    }
+    COMMON,
+    UNCOMMON,
+    RARE,
+    EPIC,
+    LEGENDARY,
+    MYTHIC,
+    DIVINE,
+    SPECIAL;
 
     public String getColorCode() {
-        return colorCode;
+        return "§" + Text.translatable(getDisplayNameTranslationKey()).getString().charAt(1);
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getDisplayNameTranslationKey() {
+        return "hypixel.skyblock.rarity." + name().toLowerCase();
     }
 }

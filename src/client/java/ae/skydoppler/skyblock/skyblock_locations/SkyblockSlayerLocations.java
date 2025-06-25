@@ -1,4 +1,4 @@
-package ae.skydoppler.skyblock_locations;
+package ae.skydoppler.skyblock.skyblock_locations;
 
 public enum SkyblockSlayerLocations {
     ZOMBIE(new Enum[]{SkyblockLocationEnum.HubZones.CATACOMBS_ENTRANCE, SkyblockLocationEnum.HubZones.COAL_MINE, SkyblockLocationEnum.HubZones.GRAVEYARD}),

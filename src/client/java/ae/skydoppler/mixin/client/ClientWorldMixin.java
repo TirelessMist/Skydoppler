@@ -2,7 +2,7 @@ package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.player_hiding.PlayerHidingHelper;
-import ae.skydoppler.skyblock_locations.SkyblockLocationEnum;
+import ae.skydoppler.skyblock.skyblock_locations.SkyblockLocationEnum;
 import ae.skydoppler.timers.PlayerTransferCooldown;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.WorldRenderer;
