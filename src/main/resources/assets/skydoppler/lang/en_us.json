@@ -408,6 +408,11 @@
   "hypixel.skyblock.rarity.divine": "§bDivine",
   "hypixel.skyblock.rarity.special": "§cSpecial",
   "hypixel.skyblock.scoreboard.purse.purse": "purse",
-  "hypixel.skyblock.scoreboard.purse.piggy": "piggy"
+  "hypixel.skyblock.scoreboard.purse.piggy": "piggy",
+  "config.ae.skydoppler.chatnotification.title": "Chat Notification Config",
+  "skydoppler.save_and_exit": "Save and Exit",
+  "skydoppler.save_and_exit.tooltip": "Saves all changes and returns to the module list.",
+  "skydoppler.undo_all_changes": "Undo All Changes",
+    "skydoppler.undo_all_changes.tooltip": "Reverts all changes made just now back to what they were before you just opened this config screen."
 }
 

@@ -3,6 +3,7 @@ package ae.skydoppler.chat;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.config.chat_matcher_config.ChatMatchConfigEntryData;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -48,7 +49,9 @@ public class ChatMatchHandler {
 
                 // Display title if configured
                 if (function.displayTitle != null && !function.displayTitle.isEmpty() && client != null) {
-                    client.inGameHud.setTitle(Text.literal(function.displayTitle));
+                    InGameHud hud = client.inGameHud;
+                    hud.setTitleTicks(0, 38, 0); // Show title instantly without fade animations
+                    hud.setTitle(Text.literal(function.displayTitle));
                 }
 
                 // Display chat message if configured

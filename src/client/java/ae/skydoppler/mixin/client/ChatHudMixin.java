@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
 
-    @Inject(at = @At("HEAD"), method = "addMessage(Lnet/minecraft/text/Text;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "addMessage*", cancellable = true)
     private void onAddMessage(Text chatMessage, CallbackInfo ci) {
 
         String messageString = StyleConverter.ConvertToFormattedString(chatMessage);

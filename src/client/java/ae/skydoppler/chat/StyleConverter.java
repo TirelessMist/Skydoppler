@@ -1,6 +1,5 @@
 package ae.skydoppler.chat;
 
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -52,50 +51,53 @@ public class StyleConverter {
     }
 
     public static String ConvertToFormattedString(Text formattedText) {
-            // Convert a Minecraft Text object to a String with the formatting character '§'
-            StringBuilder formattedString = new StringBuilder();
-
-            for (Text sibling : formattedText.getSiblings()) {
-                Style style = sibling.getStyle();
-                if (style.getColor() != null) {
-                    formattedString.append("§").append(getFormattingCodeFromColor(style.getColor().getRgb()));
-                }
-                if (style.isBold()) {
-                    formattedString.append("§l");
-                }
-                if (style.isItalic()) {
-                    formattedString.append("§o");
-                }
-                if (style.isUnderlined()) {
-                    formattedString.append("§n");
-                }
-                if (style.isStrikethrough()) {
-                    formattedString.append("§m");
-                }
-                formattedString.append(sibling.getString());
-            }
-
-            return formattedString.toString();
+        StringBuilder builder = new StringBuilder();
+        appendText(formattedText, builder); // Process the main text
+        // Process siblings
+        for (Text sibling : formattedText.getSiblings()) {
+            appendText(sibling, builder);
         }
+        return builder.toString();
+    }
 
-        private static String getFormattingCodeFromColor(int color) {
-            return switch (color) {
-                case 0x000000 -> "0"; // Black
-                case 0x0000AA -> "1"; // Dark blue
-                case 0x00AA00 -> "2"; // Dark green
-                case 0x00AAAA -> "3"; // Dark aqua
-                case 0xAA0000 -> "4"; // Dark red
-                case 0xAA00AA -> "5"; // Dark purple
-                case 0xFFAA00 -> "6"; // Gold
-                case 0xAAAAAA -> "7"; // Gray
-                case 0x555555 -> "8"; // Dark gray
-                case 0x5555FF -> "9"; // Blue
-                case 0x55FF55 -> "a"; // Green
-                case 0x55FFFF -> "b"; // Aqua
-                case 0xFF5555 -> "c"; // Red
-                case 0xFF55FF -> "d"; // Light purple
-                case 0xFFFF55 -> "e"; // Yellow
-                default -> ""; // No matching color
-            };
+    private static void appendText(Text text, StringBuilder builder) {
+        Style style = text.getStyle();
+        if (style.getColor() != null) {
+            builder.append("§").append(getFormattingCodeFromColor(style.getColor().getRgb()));
         }
+        if (style.isBold()) {
+            builder.append("§l");
+        }
+        if (style.isItalic()) {
+            builder.append("§o");
+        }
+        if (style.isUnderlined()) {
+            builder.append("§n");
+        }
+        if (style.isStrikethrough()) {
+            builder.append("§m");
+        }
+        builder.append(text.getString());
+    }
+
+    private static String getFormattingCodeFromColor(int color) {
+        return switch (color) {
+            case 0x000000 -> "0"; // Black
+            case 0x0000AA -> "1"; // Dark blue
+            case 0x00AA00 -> "2"; // Dark green
+            case 0x00AAAA -> "3"; // Dark aqua
+            case 0xAA0000 -> "4"; // Dark red
+            case 0xAA00AA -> "5"; // Dark purple
+            case 0xFFAA00 -> "6"; // Gold
+            case 0xAAAAAA -> "7"; // Gray
+            case 0x555555 -> "8"; // Dark gray
+            case 0x5555FF -> "9"; // Blue
+            case 0x55FF55 -> "a"; // Green
+            case 0x55FFFF -> "b"; // Aqua
+            case 0xFF5555 -> "c"; // Red
+            case 0xFF55FF -> "d"; // Light purple
+            case 0xFFFF55 -> "e"; // Yellow
+            default -> ""; // No matching color
+        };
+    }
 }
