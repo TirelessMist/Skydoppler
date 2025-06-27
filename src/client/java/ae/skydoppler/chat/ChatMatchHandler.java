@@ -18,7 +18,7 @@ public class ChatMatchHandler {
     public static boolean matchChatMessage(String message) {
         if (SkydopplerClient.CONFIG == null || SkydopplerClient.CONFIG.userChatMatchConfig == null ||
                 SkydopplerClient.CONFIG.userChatMatchConfig.functions == null ||
-                SkydopplerClient.CONFIG.userChatMatchConfig.functions.length == 0) {
+                SkydopplerClient.CONFIG.userChatMatchConfig.functions.isEmpty()) {
             return false;
         }
 

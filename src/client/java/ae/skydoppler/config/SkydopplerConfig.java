@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SkydopplerConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -124,6 +126,6 @@ public class SkydopplerConfig {
     }
 
     public static class UserChatMatchConfig {
-        public ChatMatchConfigEntryData[] functions = new ChatMatchConfigEntryData[0];
+        public List<ChatMatchConfigEntryData> functions = new ArrayList<>();
     }
 }

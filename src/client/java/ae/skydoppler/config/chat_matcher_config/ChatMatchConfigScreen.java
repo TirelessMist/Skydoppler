@@ -1,14 +1,17 @@
 package ae.skydoppler.config.chat_matcher_config;
 
+import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.config.SkydopplerConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.awt.*;
 import java.util.List;
@@ -72,9 +75,26 @@ public class ChatMatchConfigScreen extends Screen {
         }
 
         // Add an exit button
-        addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.helditem.exit"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.chatnotification.exit"), button -> {
             client.setScreen(parent);
         }).dimensions(width / 2 - 100, height - 30, 200, 20).build());
+
+        // Add a button to create a new function
+        addDrawableChild(ButtonWidget.builder(Text.literal("+"), button -> {
+            // Create a new function with default values
+            ChatMatchConfigEntryData newFunction = new ChatMatchConfigEntryData();
+            newFunction.name = "New Function"; // Default name
+            newFunction.enabled = true; // Default enabled state
+            newFunction.playSound = false; // Default play sound state
+            newFunction.displayTitle = ""; // Default display title
+            newFunction.displayCustomChatMessage = ""; // Default custom chat message
+            newFunction.hideOriginalChatMessage = false; // Default hide original chat message state
+            newFunction.executeCommands = List.of(); // Default empty command list
+            newFunction.matches = List.of(); // Default empty matches list
+
+            // Open the child menu for the new function
+            client.setScreen(ChatMatchFunctionConfigScreen.buildConfigScreen(newFunction, this));
+        }).dimensions(panelX + 5, height - 30, 20, 20).build());
     }
 
     @Override
@@ -108,9 +128,10 @@ public class ChatMatchConfigScreen extends Screen {
         private final float panelScreenWidthPercent = 0.65f; // Width of the panel
         private ChatMatchConfigEntryData functionData;
         private boolean hasMadeAnyChanges = false;
+        private ButtonWidget undoAllButton;
 
         public ChatMatchFunctionConfigScreen(ChatMatchConfigEntryData functionData, Screen parent) {
-            super(Text.literal("Settings for Chat Function <" + functionData.name + ">"));
+            super(Text.translatable("config.ae.skydoppler.chatnotification.function_config.title", functionData.name)); // Settings for Chat Function <function name>
             this.functionData = functionData;
             this.parent = parent;
             savedFunctionDataForUndo = functionData;
@@ -140,8 +161,9 @@ public class ChatMatchConfigScreen extends Screen {
             //region Bottom Buttons
             final int bottomButtonHeight = 20;
             final int buttonWidth = (panelRight - panelX - 29) / 2; // 29 = 12px left margin + 5px between buttons + 12px right margin
+
             // Add Undo All Changes button
-            var undoAllButton = addDrawableChild(ButtonWidget.builder(Text.translatable("skydoppler.undo_all_changes"), button -> {
+            undoAllButton = addDrawableChild(ButtonWidget.builder(Text.translatable("skydoppler.undo_all_changes"), button -> {
                         functionData = savedFunctionDataForUndo;
                         hasMadeAnyChanges = false;
                         client.setScreen(this);
@@ -158,19 +180,81 @@ public class ChatMatchConfigScreen extends Screen {
                     .build());
             //endregion
 
+            //region Function Settings
             int buttonHeight = 20;
             int currentY = contentTop + 5; // Start position for the first widget
-            var nameTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.literal("Function Name")));
+            var nameTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.translatable("config.ae.skydoppler.chatnotification.name")));
             nameTextBox.setText(functionData.name);
             nameTextBox.setPosition(panelX + 10, currentY);
-            nameTextBox.setChangedListener(text -> {;
+            nameTextBox.setChangedListener(text -> {
+
                 functionData.name = text;
-                hasMadeAnyChanges = true;
-                undoAllButton.active = true; // Enable the undo button if changes are made
+                makeChange();
             });
             currentY += buttonHeight + 5; // Move down for the next widget
 
+            // Add Enabled toggle
+            var enabledCheckbox = addDrawableChild(CheckboxWidget.builder(Text.translatable("config.ae.skydoppler.chatnotification.enabled"), this.textRenderer)
+                    .pos(panelX + 10, currentY)
+                    .checked(functionData.enabled)
+                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chatnotification.enabled.tooltip")))
+                    .callback((checkbox, checked) -> {
+                        functionData.enabled = checked;
+                        makeChange();
+                    })
+                    .build()
+            );
+            currentY += buttonHeight + 5; // Move down for the next widget
 
+            // Add Play Sound toggle
+            var playSoundCheckbox = addDrawableChild(CheckboxWidget.builder(Text.translatable("config.ae.skydoppler.chatnotification.play_sound"), this.textRenderer)
+                    .pos(panelX + 10, currentY)
+                    .checked(functionData.playSound)
+                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chatnotification.play_sound.tooltip")))
+                    .callback((checkbox, checked) -> {
+                        functionData.playSound = checked;
+                        makeChange();
+                    })
+                    .build()
+            );
+            currentY += buttonHeight + 5; // Move down for the next widget
+
+            // Add Display Title text box
+            var displayTitleTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.translatable("config.ae.skydoppler.chatnotification.display_title")));
+            nameTextBox.setText(functionData.displayTitle);
+            nameTextBox.setPosition(panelX + 10, currentY);
+            nameTextBox.setChangedListener(text -> {
+
+                functionData.displayTitle = text;
+                makeChange();
+            });
+            currentY += buttonHeight + 5; // Move down for the next widget
+            //endregion
+
+        }
+
+        @Unique
+        private void undoAllChanges() {
+            functionData = savedFunctionDataForUndo;
+            hasMadeAnyChanges = false;
+            undoAllButton.active = false; // Disable the undo button after undoing changes
+        }
+
+        @Unique
+        private void makeChange() {
+            hasMadeAnyChanges = true;
+            undoAllButton.active = true; // Enable the undo button if changes are made
+        }
+
+        @Unique
+        private void saveChangesAndLeave() {
+            // Save the changes to the config
+            SkydopplerConfig config = SkydopplerConfig.load(SkydopplerClient.CONFIG_PATH);
+            config.userChatMatchConfig.functions.removeIf(f -> f.name.equals(functionData.name)); // Remove old function with the same name
+            config.userChatMatchConfig.functions.add(functionData); // Add the updated function
+            config.save(SkydopplerClient.CONFIG_PATH);
+
+            client.setScreen(parent); // Return to the parent screen
         }
 
         @Override

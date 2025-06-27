@@ -410,9 +410,21 @@
   "hypixel.skyblock.scoreboard.purse.purse": "purse",
   "hypixel.skyblock.scoreboard.purse.piggy": "piggy",
   "config.ae.skydoppler.chatnotification.title": "Chat Notification Config",
+  "config.ae.skydoppler.chatnotification.function_config.title": "Settings for Chat Function <%s>",
+  "config.ae.skydoppler.chatnotification.enabled": "Enabled",
+  "config.ae.skydoppler.chatnotification.enabled.tooltip": "Enable or disable this chat matching function",
+  "config.ae.skydoppler.chatnotification.play_sound": "Play Sound",
+  "config.ae.skydoppler.chatnotification.play_sound.tooltip": "Play a sound when this chat pattern is matched",
+  "config.ae.skydoppler.chatnotification.display_title": "Display Title",
+  "config.ae.skydoppler.chatnotification.hide_original_message": "Hide Original Message",
+  "config.ae.skydoppler.chatnotification.hide_original_message.tooltip": "Hide the original chat message when this pattern is matched",
+  "config.ae.skydoppler.chatnotification.display_custom_chat_message": "Custom Chat Message",
+  "config.ae.skydoppler.chatnotification.execute_commands": "Execute Commands",
+  "config.ae.skydoppler.chatnotification.match_patterns": "Match Patterns",
+  "config.ae.skydoppler.chatnotification.exit": "Exit",
   "skydoppler.save_and_exit": "Save and Exit",
   "skydoppler.save_and_exit.tooltip": "Saves all changes and returns to the module list.",
   "skydoppler.undo_all_changes": "Undo All Changes",
-    "skydoppler.undo_all_changes.tooltip": "Reverts all changes made just now back to what they were before you just opened this config screen."
+  "skydoppler.undo_all_changes.tooltip": "Reverts all changes made just now back to what they were before you just opened this config screen.",
+  "config.ae.skydoppler.chatnotification.name": "Name"
 }
-
