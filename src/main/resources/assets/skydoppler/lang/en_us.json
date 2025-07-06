@@ -523,5 +523,6 @@
   "config.ae.skydoppler.main_config.category.inventory.slotLocking.slotLockingToggleVolume.tooltip": "Volume of the sound played when toggling slot locking. Set to 0 to disable.",
   "config.ae.skydoppler.main_config.category.accessibility": "Accessibility",
   "config.ae.skydoppler.main_config.category.accessibility.textScrollingSpeed": "Text Scrolling Speed",
-  "config.ae.skydoppler.main_config.category.general.held_item_config": "Open Held Item Config..."
+  "config.ae.skydoppler.main_config.category.general.held_item_config": "Open Held Item Config...",
+  "config.ae.skydoppler.main_config.category.general.held_item_config.tooltip": "Opens a separate screen to configure the held item model's appearance and behavior."
 }

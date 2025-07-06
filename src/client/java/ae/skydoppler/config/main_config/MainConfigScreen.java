@@ -6,7 +6,10 @@ import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -512,27 +515,70 @@ public class MainConfigScreen extends Screen {
     }
 
     private ClickableWidget createWidget(ConfigEntry entry, int x, int y, int width) {
-        return switch (entry.type) {
-            case BOOLEAN -> CyclingButtonWidget.onOffBuilder(Text.literal("ON"), Text.literal("OFF"))
-                    .initially((Boolean) entry.currentValue)
-                    .build(x, y, width, 20, entry.displayName, (button, value) -> updateFieldValue(entry, value));
+        ClickableWidget widget = switch (entry.type) {
+            case BOOLEAN -> {
+                CyclingButtonWidget<Boolean> booleanWidget = CyclingButtonWidget.onOffBuilder(Text.literal("ON"), Text.literal("OFF"))
+                        .initially((Boolean) entry.currentValue)
+                        .build(x, y, width, 20, entry.displayName, (button, value) -> updateFieldValue(entry, value));
 
-            case INTEGER -> new IntSliderWidget(x, y, width, 20, entry.displayName, (Integer) entry.currentValue,
-                    0, 100, value -> updateFieldValue(entry, value));
+                // Add tooltip for boolean widget
+                String tooltipKey = entry.translationPath + ".tooltip";
+                booleanWidget.setTooltip(Tooltip.of(Text.translatable(tooltipKey)));
 
-            case FLOAT -> new FloatSliderWidget(x, y, width, 20, entry.displayName, (Float) entry.currentValue,
-                    0.0f, 10.0f, value -> updateFieldValue(entry, value));
+                yield booleanWidget;
+            }
 
-            case ENUM -> createEnumWidget(entry, x, y, width);
+            case INTEGER -> {
+                IntSliderWidget intWidget = new IntSliderWidget(x, y, width, 20, entry.displayName, (Integer) entry.currentValue,
+                        0, 100, value -> updateFieldValue(entry, value));
 
-            case BUTTON -> ButtonWidget.builder(entry.displayName, button -> {
-                if (entry.buttonAction != null) {
-                    entry.buttonAction.run();
+                // Add tooltip for integer widget
+                String tooltipKey = entry.translationPath + ".tooltip";
+                intWidget.setTooltip(Tooltip.of(Text.translatable(tooltipKey)));
+
+                yield intWidget;
+            }
+
+            case FLOAT -> {
+                FloatSliderWidget floatWidget = new FloatSliderWidget(x, y, width, 20, entry.displayName, (Float) entry.currentValue,
+                        0.0f, 10.0f, value -> updateFieldValue(entry, value));
+
+                // Add tooltip for float widget
+                String tooltipKey = entry.translationPath + ".tooltip";
+                floatWidget.setTooltip(Tooltip.of(Text.translatable(tooltipKey)));
+
+                yield floatWidget;
+            }
+
+            case ENUM -> {
+                ClickableWidget enumWidget = createEnumWidget(entry, x, y, width);
+                if (enumWidget != null) {
+                    // Add tooltip for enum widget
+                    String tooltipKey = entry.translationPath + ".tooltip";
+                    enumWidget.setTooltip(Tooltip.of(Text.translatable(tooltipKey)));
                 }
-            }).dimensions(x, y, width, 20).build();
+                yield enumWidget;
+            }
+
+            case BUTTON -> {
+                ButtonWidget buttonWidget = ButtonWidget.builder(entry.displayName, button -> {
+                    playClickSound(); // Add click sound for button
+                    if (entry.buttonAction != null) {
+                        entry.buttonAction.run();
+                    }
+                }).dimensions(x, y, width, 20).build();
+
+                // Add tooltip for button widget
+                String tooltipKey = entry.translationPath + ".tooltip";
+                buttonWidget.setTooltip(Tooltip.of(Text.translatable(tooltipKey)));
+
+                yield buttonWidget;
+            }
 
             default -> null;
         };
+
+        return widget;
     }
 
     private void drawScrollingText(DrawContext context, Text text, int x, int y, int maxWidth, int color, long currentTime) {
@@ -768,6 +814,7 @@ public class MainConfigScreen extends Screen {
                     // Updated click area to match new button positioning and padding
                     if (mouseX >= panelX + 4 && mouseX < panelX + categoryPanelWidth - 24 &&
                             mouseY >= buttonY && mouseY < buttonY + 20) {
+                        playClickSound(); // Play click sound for category button
                         selectCategory(categoryName);
                         return true;
                     }
@@ -790,6 +837,7 @@ public class MainConfigScreen extends Screen {
                             // Updated click area to match new larger button size
                             if (mouseX >= arrowX && mouseX < arrowX + 14 &&
                                     mouseY >= arrowY && mouseY < arrowY + 18) {
+                                playClickSound(); // Play click sound for subcategory toggle
                                 toggleSubcategory(entry.translationPath);
                                 return true;
                             }
@@ -951,6 +999,12 @@ public class MainConfigScreen extends Screen {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void playClickSound() {
+        if (this.client != null && this.client.player != null) {
+            this.client.player.playSoundToPlayer(SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.MASTER, 1.0f, 1.0f);
+        }
     }
 
     private enum ConfigEntryType {
