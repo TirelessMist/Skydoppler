@@ -1,11 +1,17 @@
 package ae.skydoppler.config.main_config.categories;
 
-public class Fishing {
+import ae.skydoppler.config.main_config.MainConfigCategory;
+import net.minecraft.text.Text;
+
+public class Fishing extends MainConfigCategory {
 
     public boolean hideOthersFishingRods = false;
-
     public HidePlayersWhileFishing hidePlayersWhileFishing = new HidePlayersWhileFishing();
     public LegendarySeaCreatureAlerts legendarySeaCreatureAlerts = new LegendarySeaCreatureAlerts();
+
+    public Fishing() {
+        super("fishing", Text.translatable("config.ae.skydoppler.main_config.category.fishing"), 1);
+    }
 
     public static class HidePlayersWhileFishing {
         public boolean enabled = false;

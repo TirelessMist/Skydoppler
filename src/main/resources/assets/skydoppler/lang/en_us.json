@@ -520,5 +520,8 @@
   "config.ae.skydoppler.main_config.category.inventory.slotLocking.doSlotLockingInStorageUi": "Disable Slot Locking in Storage",
   "config.ae.skydoppler.main_config.category.inventory.slotLocking.doSlotLockingInStorageUi.tooltip": "Allow moving locked slots in storage UIs (Ender Chest, Backpacks) even when slot locking is enabled.",
   "config.ae.skydoppler.main_config.category.inventory.slotLocking.slotLockingToggleVolume": "Slot Locking Toggle Volume",
-  "config.ae.skydoppler.main_config.category.inventory.slotLocking.slotLockingToggleVolume.tooltip": "Volume of the sound played when toggling slot locking. Set to 0 to disable."
+  "config.ae.skydoppler.main_config.category.inventory.slotLocking.slotLockingToggleVolume.tooltip": "Volume of the sound played when toggling slot locking. Set to 0 to disable.",
+  "config.ae.skydoppler.main_config.category.accessibility": "Accessibility",
+  "config.ae.skydoppler.main_config.category.accessibility.textScrollingSpeed": "Text Scrolling Speed",
+  "config.ae.skydoppler.main_config.category.general.held_item_config": "Open Held Item Config..."
 }

@@ -2,6 +2,7 @@ package ae.skydoppler.config.main_config;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.config.SkydopplerConfig;
+import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -21,8 +22,9 @@ public class MainConfigScreen extends Screen {
     private final List<ConfigEntry> allConfigEntries = new ArrayList<>();
     private final List<ConfigEntry> displayedConfigEntries = new ArrayList<>();
     private final List<ClickableWidget> widgets = new ArrayList<>();
-    private final Map<String, List<ConfigEntry>> categoryEntries = new HashMap<>();
+    private final List<MainConfigCategory> categories = new ArrayList<>();
     private final Set<String> collapsedSubcategories = new java.util.HashSet<>();
+    private final Map<String, Object> previousValues = new HashMap<>(); // Track previous values for widget updates
     private final int entryHeight = 25;
     private final int entrySpacing = 5;
     private final int leftMargin = 20;
@@ -54,10 +56,21 @@ public class MainConfigScreen extends Screen {
         super(Text.translatable("config.ae.skydoppler.main_config.title"));
         this.userConfig = userConfig;
         this.parent = parent;
+        // Load UI state from config
+        this.categoryPanelCollapsed = userConfig.mainConfig.categoryPanelCollapsed;
+        initializeCategories();
     }
 
     public static Screen buildConfigScreen(@NotNull SkydopplerConfig userConfig, Screen parent) {
         return new MainConfigScreen(userConfig, parent);
+    }
+
+    private void initializeCategories() {
+        categories.clear();
+        // Use the new category system from MainConfig
+        MainConfigCategory[] configCategories = userConfig.mainConfig.getCategories();
+        categories.addAll(java.util.Arrays.asList(configCategories));
+        // Categories are already sorted by priority in getCategories()
     }
 
     @Override
@@ -69,14 +82,13 @@ public class MainConfigScreen extends Screen {
         widgets.clear();
         allConfigEntries.clear();
         displayedConfigEntries.clear();
-        categoryEntries.clear();
 
         // Build all config entries
         buildConfigEntries();
 
         // Set default category if none selected
-        if (selectedCategory == null && !categoryEntries.isEmpty()) {
-            selectedCategory = categoryEntries.keySet().iterator().next();
+        if (selectedCategory == null && !categories.isEmpty()) {
+            selectedCategory = categories.get(0).getFieldName();
         }
 
         // Create UI components
@@ -133,38 +145,34 @@ public class MainConfigScreen extends Screen {
 
     private void buildConfigEntries() {
         try {
-            // Process categories in the order they appear in the source code
-            // This ensures consistent ordering that matches the MainConfig class definition
-            String[] categoryOrder = {"general", "fishing", "dungeons", "inventory", "miscellaneous"};
+            for (MainConfigCategory category : categories) {
+                String categoryName = category.getFieldName();
+                Object categoryInstance = category.getCategoryInstance();
 
-            for (String categoryName : categoryOrder) {
-                try {
-                    Field categoryField = userConfig.mainConfig.getClass().getDeclaredField(categoryName);
-                    if (Modifier.isPublic(categoryField.getModifiers()) && !Modifier.isStatic(categoryField.getModifiers())) {
-                        categoryField.setAccessible(true);
-                        Object categoryInstance = categoryField.get(userConfig.mainConfig);
+                // Add category header
+                ConfigEntry categoryHeader = new ConfigEntry(ConfigEntryType.CATEGORY_HEADER,
+                        category.getLabel(),
+                        null, null, null, null, null, categoryName, 0);
 
-                        List<ConfigEntry> categoryEntryList = new ArrayList<>();
+                allConfigEntries.add(categoryHeader);
 
-                        // Add category header
-                        ConfigEntry categoryHeader = new ConfigEntry(ConfigEntryType.CATEGORY_HEADER,
-                                Text.translatable("config.ae.skydoppler.main_config.category." + categoryName),
-                                null, null, null, null, null, categoryName, 0);
-
-                        allConfigEntries.add(categoryHeader);
-                        categoryEntryList.add(categoryHeader);
-
-                        // Process category fields recursively
-                        processClassFields(categoryInstance, categoryName,
-                                "config.ae.skydoppler.main_config.category." + categoryName,
-                                categoryEntryList, categoryName, 1);
-
-                        categoryEntries.put(categoryName, categoryEntryList);
-                    }
-                } catch (NoSuchFieldException e) {
-                    // Skip categories that don't exist - this allows for future flexibility
-                    System.err.println("Warning: Category '" + categoryName + "' not found in MainConfig");
+                // Add special button entries first
+                if (categoryName.equals("general")) {
+                    ConfigEntry buttonEntry = new ConfigEntry(ConfigEntryType.BUTTON,
+                            Text.translatable("config.ae.skydoppler.main_config.category.general.held_item_config"),
+                            null, null, null, null, "config.ae.skydoppler.main_config.category.general.held_item_config", categoryName, 1);
+                    buttonEntry.buttonAction = () -> {
+                        if (this.client != null) {
+                            this.client.setScreen(new HeldItemConfigScreen(userConfig, this));
+                        }
+                    };
+                    allConfigEntries.add(buttonEntry);
                 }
+
+                // Process category fields recursively
+                processClassFields(categoryInstance, categoryName,
+                        "config.ae.skydoppler.main_config.category." + categoryName,
+                        categoryName, 1);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,7 +180,7 @@ public class MainConfigScreen extends Screen {
     }
 
     private void processClassFields(Object instance, String path, String translationPath,
-                                    List<ConfigEntry> categoryEntryList, String categoryName, int indentLevel) {
+                                    String categoryName, int indentLevel) {
         try {
             Class<?> clazz = instance.getClass();
             Field[] fields = clazz.getDeclaredFields();
@@ -185,6 +193,11 @@ public class MainConfigScreen extends Screen {
                     String fullPath = path + "." + fieldName;
                     String fullTranslationPath = translationPath + "." + fieldName;
 
+                    // Skip UI state fields that are not actual config categories
+                    if (isUIStateField(fieldName)) {
+                        continue;
+                    }
+
                     // Check if this field is a nested config class
                     if (isConfigClass(field.getType())) {
                         // Add subcategory header
@@ -193,17 +206,15 @@ public class MainConfigScreen extends Screen {
                                 null, null, null, null, fullTranslationPath, categoryName, indentLevel);
 
                         allConfigEntries.add(subcategoryHeader);
-                        categoryEntryList.add(subcategoryHeader);
 
                         // Process nested fields recursively
                         processClassFields(value, fullPath, fullTranslationPath,
-                                categoryEntryList, categoryName, indentLevel + 1);
+                                categoryName, indentLevel + 1);
                     } else {
                         // Add config entry for this field
                         ConfigEntry configEntry = createConfigEntry(instance, field, fullTranslationPath, categoryName, indentLevel);
                         if (configEntry != null) {
                             allConfigEntries.add(configEntry);
-                            categoryEntryList.add(configEntry);
                         }
                     }
                 }
@@ -211,6 +222,11 @@ public class MainConfigScreen extends Screen {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isUIStateField(String fieldName) {
+        // List of field names that are UI state, not actual config categories or settings
+        return fieldName.equals("categoryPanelCollapsed");
     }
 
     private ConfigEntry createConfigEntry(Object instance, Field field, String translationPath, String categoryName, int indentLevel) {
@@ -260,12 +276,19 @@ public class MainConfigScreen extends Screen {
             displayedConfigEntries.addAll(performSearchInternal(searchQuery));
         } else if (selectedCategory != null) {
             // Show selected category with collapsed subcategories filtered out
-            List<ConfigEntry> categoryList = categoryEntries.getOrDefault(selectedCategory, new ArrayList<>());
+            List<ConfigEntry> categoryEntries = new ArrayList<>();
+
+            // Filter entries for the selected category
+            for (ConfigEntry entry : allConfigEntries) {
+                if (entry.categoryName.equals(selectedCategory)) {
+                    categoryEntries.add(entry);
+                }
+            }
 
             // Use a stack to track collapsed subcategories at different levels
             List<String> collapsedParentStack = new ArrayList<>();
 
-            for (ConfigEntry entry : categoryList) {
+            for (ConfigEntry entry : categoryEntries) {
                 if (entry.type == ConfigEntryType.CATEGORY_HEADER) {
                     // Always show category headers and clear the collapsed stack
                     displayedConfigEntries.add(entry);
@@ -274,7 +297,7 @@ public class MainConfigScreen extends Screen {
                     // Remove any collapsed parents at or deeper than this level
                     collapsedParentStack.removeIf(path -> {
                         // Find the indent level of this collapsed parent
-                        for (ConfigEntry e : categoryList) {
+                        for (ConfigEntry e : categoryEntries) {
                             if (e.type == ConfigEntryType.SUBCATEGORY_HEADER &&
                                     e.translationPath != null && e.translationPath.equals(path)) {
                                 return e.indentLevel >= entry.indentLevel;
@@ -288,7 +311,7 @@ public class MainConfigScreen extends Screen {
                         displayedConfigEntries.add(entry);
                     }
 
-                    // If this subcategory is collapsed, add it to the stack (null check added)
+                    // If this subcategory is collapsed, add it to the stack
                     if (entry.translationPath != null && collapsedSubcategories.contains(entry.translationPath)) {
                         collapsedParentStack.add(entry.translationPath);
                     }
@@ -360,6 +383,9 @@ public class MainConfigScreen extends Screen {
 
     private void toggleCategoryPanel() {
         categoryPanelCollapsed = !categoryPanelCollapsed;
+        // Save the UI state to config
+        userConfig.mainConfig.categoryPanelCollapsed = categoryPanelCollapsed;
+        userConfig.saveField(SkydopplerClient.CONFIG_PATH, "mainConfig.categoryPanelCollapsed", categoryPanelCollapsed);
         init(); // Reinitialize to adjust layout
     }
 
@@ -388,8 +414,6 @@ public class MainConfigScreen extends Screen {
 
         for (ConfigEntry entry : displayedConfigEntries) {
             if (y > 60 && y < this.height - 50) { // Only create widgets for visible entries
-                int indentOffset = entry.indentLevel * 15;
-
                 if (entry.type != ConfigEntryType.CATEGORY_HEADER && entry.type != ConfigEntryType.SUBCATEGORY_HEADER) {
                     // Position widget on the right side of the content area
                     int widgetX = contentStartX + contentWidth - widgetWidth - resetButtonWidth - spacing;
@@ -399,18 +423,92 @@ public class MainConfigScreen extends Screen {
                         widgets.add(widget);
                         this.addDrawableChild(widget);
 
-                        // Add reset button for configurable entries
-                        ButtonWidget resetButton = ButtonWidget.builder(Text.literal("Reset"),
-                                        button -> resetEntry(entry))
-                                .dimensions(contentStartX + contentWidth - resetButtonWidth, y, resetButtonWidth, 20)
-                                .build();
-                        widgets.add(resetButton);
-                        this.addDrawableChild(resetButton);
+                        // Add reset button for configurable entries (not buttons)
+                        if (entry.type != ConfigEntryType.BUTTON) {
+                            boolean isDefault = isValueDefault(entry);
+                            ButtonWidget resetButton = ButtonWidget.builder(Text.literal("Reset"),
+                                            button -> resetEntry(entry))
+                                    .dimensions(contentStartX + contentWidth - resetButtonWidth, y, resetButtonWidth, 20)
+                                    .build();
+                            resetButton.active = !isDefault; // Disable if already default
+                            widgets.add(resetButton);
+                            this.addDrawableChild(resetButton);
+                        }
                     }
                 }
             }
             y += entryHeight + entrySpacing;
         }
+    }
+
+    private void updateFieldValue(ConfigEntry entry, Object newValue) {
+        try {
+            entry.field.set(entry.instance, newValue);
+            entry.currentValue = newValue;
+
+            // Use optimized field saving
+            String fieldPath = buildFieldPath(entry);
+            userConfig.saveField(SkydopplerClient.CONFIG_PATH, fieldPath, newValue);
+
+            // Update widget states if needed
+            updateWidgetStates();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String buildFieldPath(ConfigEntry entry) {
+        // Build the JSON path for the field by reconstructing the path from the category and field structure
+        StringBuilder path = new StringBuilder("mainConfig");
+
+        // Add the category name
+        path.append(".").append(entry.categoryName);
+
+        // Parse the translation path to get the nested field structure
+        String[] translationParts = entry.translationPath.split("\\.");
+        // Skip the first 5 parts: "config", "ae", "skydoppler", "main_config", "category"
+        // Then skip the category name part (index 5) since we already added it
+        for (int i = 6; i < translationParts.length; i++) {
+            path.append(".").append(translationParts[i]);
+        }
+
+        return path.toString();
+    }
+
+    private void updateWidgetStates() {
+        // Only update widgets if values have changed
+        boolean needsUpdate = false;
+        for (ConfigEntry entry : displayedConfigEntries) {
+            if (entry.field != null) {
+                try {
+                    Object currentValue = entry.field.get(entry.instance);
+                    String key = entry.translationPath;
+                    if (!Objects.equals(previousValues.get(key), currentValue)) {
+                        previousValues.put(key, currentValue);
+                        needsUpdate = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (needsUpdate) {
+            updateWidgets();
+        }
+    }
+
+    private boolean isValueDefault(ConfigEntry entry) {
+        try {
+            Object defaultInstance = getDefaultInstance(entry);
+            if (defaultInstance != null) {
+                Object defaultValue = entry.field.get(defaultInstance);
+                return Objects.equals(entry.currentValue, defaultValue);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private ClickableWidget createWidget(ConfigEntry entry, int x, int y, int width) {
@@ -427,139 +525,54 @@ public class MainConfigScreen extends Screen {
 
             case ENUM -> createEnumWidget(entry, x, y, width);
 
+            case BUTTON -> ButtonWidget.builder(entry.displayName, button -> {
+                if (entry.buttonAction != null) {
+                    entry.buttonAction.run();
+                }
+            }).dimensions(x, y, width, 20).build();
+
             default -> null;
         };
     }
 
-    @SuppressWarnings("unchecked")
-    private ClickableWidget createEnumWidget(ConfigEntry entry, int x, int y, int width) {
-        try {
-            Class<? extends Enum> enumClass = (Class<? extends Enum>) entry.fieldType;
-            Enum[] enumValues = enumClass.getEnumConstants();
-            Enum currentValue = (Enum) entry.currentValue;
+    private void drawScrollingText(DrawContext context, Text text, int x, int y, int maxWidth, int color, long currentTime) {
+        String textString = text.getString();
+        int textWidth = this.textRenderer.getWidth(textString);
 
-            return CyclingButtonWidget.builder(value -> Text.literal(value.toString()))
-                    .values(enumValues)
-                    .initially(currentValue)
-                    .build(x, y, width, 20, entry.displayName, (button, value) -> updateFieldValue(entry, value));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+        if (textWidth <= maxWidth) {
+            // Text fits, draw normally
+            context.drawTextWithShadow(this.textRenderer, text, x, y, color);
+        } else {
+            // Text is too long, implement scrolling with configurable speed
+            int charactersPerSecond = userConfig.mainConfig.accessibility.textScrollingSpeed;
+            int maxScrollDistance = textWidth - maxWidth;
 
-    private void updateFieldValue(ConfigEntry entry, Object newValue) {
-        try {
-            entry.field.set(entry.instance, newValue);
-            entry.currentValue = newValue;
+            // Calculate how long it should take to scroll the full distance
+            long scrollTimeMs = (long) ((textString.length() * 1000.0) / charactersPerSecond);
+            long cycleTime = scrollTimeMs * 2; // Double for round trip
+            long timeInCycle = currentTime % cycleTime;
 
-            // Auto-save the configuration after updating a value
-            userConfig.save(SkydopplerClient.CONFIG_PATH);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void resetEntry(ConfigEntry entry) {
-        try {
-            Object defaultInstance = getDefaultInstance(entry.instance);
-            if (defaultInstance != null) {
-                Object defaultValue = entry.field.get(defaultInstance);
-                entry.field.set(entry.instance, defaultValue);
-                entry.currentValue = defaultValue;
-                updateWidgets();
-
-                // Auto-save the configuration after resetting a value
-                userConfig.save(SkydopplerClient.CONFIG_PATH);
+            // Calculate scroll offset
+            float scrollProgress;
+            if (timeInCycle < cycleTime / 2) {
+                // First half: scroll from left to right
+                scrollProgress = (float) timeInCycle / (cycleTime / 2);
+            } else {
+                // Second half: scroll from right to left
+                scrollProgress = 1.0f - (float) (timeInCycle - cycleTime / 2) / (cycleTime / 2);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            int scrollOffset = (int) (scrollProgress * maxScrollDistance);
+
+            // Enable scissor (clipping) to contain text within bounds
+            context.enableScissor(x, y - 2, x + maxWidth, y + 12);
+
+            // Draw the text with offset
+            context.drawTextWithShadow(this.textRenderer, text, x - scrollOffset, y, color);
+
+            // Disable scissor
+            context.disableScissor();
         }
-    }
-
-    private Object getDefaultInstance(Object instance) {
-        try {
-            Field[] fields = defaultConfig.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object value = field.get(defaultConfig);
-                if (value.getClass().equals(instance.getClass())) {
-                    return value;
-                }
-                Object nestedDefault = findNestedDefault(value, instance.getClass());
-                if (nestedDefault != null) {
-                    return nestedDefault;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private Object findNestedDefault(Object parent, Class<?> targetClass) {
-        try {
-            Field[] fields = parent.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-                    field.setAccessible(true);
-                    Object value = field.get(parent);
-                    if (value.getClass().equals(targetClass)) {
-                        return value;
-                    }
-                    if (isConfigClass(value.getClass())) {
-                        Object nested = findNestedDefault(value, targetClass);
-                        if (nested != null) {
-                            return nested;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (searchField.isFocused() && keyCode == 257) { // Enter key
-            performSearch();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (maxScroll > 0) {
-            scrollOffset -= verticalAmount * 10;
-            scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
-            updateWidgets();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
-
-        // Draw title
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
-
-        // Draw category panel
-        if (!categoryPanelCollapsed) {
-            drawCategoryPanel(context, mouseX, mouseY);
-        }
-
-        // Draw scrollbar
-        drawScrollbar(context);
-
-        super.render(context, mouseX, mouseY, delta);
-
-        // Draw config entries
-        drawConfigEntries(context);
     }
 
     private void drawCategoryPanel(DrawContext context, int mouseX, int mouseY) {
@@ -570,20 +583,13 @@ public class MainConfigScreen extends Screen {
         // Draw panel background
         context.fill(panelX, panelY, panelX + categoryPanelWidth, panelY + panelHeight, 0x80000000);
 
-        // Draw category buttons
-        int buttonY = panelY + 5;
+        // Draw category buttons with more padding
+        int buttonY = panelY + 8; // Increased top padding from 5 to 8
         long currentTime = System.currentTimeMillis();
 
-        // Use the same category order as defined in buildConfigEntries
-        String[] categoryOrder = {"general", "fishing", "dungeons", "inventory", "miscellaneous"};
-
-        for (String category : categoryOrder) {
-            // Only show categories that actually exist in categoryEntries
-            if (!categoryEntries.containsKey(category)) {
-                continue;
-            }
-
-            boolean isSelected = category.equals(selectedCategory);
+        for (MainConfigCategory category : categories) {
+            String categoryName = category.getFieldName();
+            boolean isSelected = categoryName.equals(selectedCategory);
             int buttonColor = isSelected ? 0x80FFFFFF : 0x40FFFFFF;
             int textColor = isSelected ? 0xFFFFFF : 0xCCCCCC;
 
@@ -591,18 +597,18 @@ public class MainConfigScreen extends Screen {
                     mouseY >= buttonY && mouseY < buttonY + 20) {
                 buttonColor = 0x60FFFFFF;
                 if (MinecraftClient.getInstance().mouse.wasLeftButtonClicked()) {
-                    selectCategory(category);
+                    selectCategory(categoryName);
                 }
             }
 
-            context.fill(panelX + 2, buttonY, panelX + categoryPanelWidth - 20, buttonY + 20, buttonColor);
+            // Add more padding around category buttons
+            context.fill(panelX + 4, buttonY, panelX + categoryPanelWidth - 24, buttonY + 20, buttonColor); // Increased size from 10x16 to 14x18
 
-            // Use scrolling text for category names
-            Text categoryText = Text.translatable("config.ae.skydoppler.main_config.category." + category);
-            int availableCategoryWidth = categoryPanelWidth - 30; // Leave some padding
-            drawScrollingText(context, categoryText, panelX + 5, buttonY + 6, availableCategoryWidth, textColor, currentTime);
+            // Use scrolling text for category names with more padding
+            int availableCategoryWidth = categoryPanelWidth - 40; // Increased padding from 30 to 40
+            drawScrollingText(context, category.getLabel(), panelX + 8, buttonY + 6, availableCategoryWidth, textColor, currentTime); // Increased left padding from 5 to 8
 
-            buttonY += 25;
+            buttonY += 28; // Increased spacing between buttons from 25 to 28
         }
     }
 
@@ -646,18 +652,18 @@ public class MainConfigScreen extends Screen {
                 if (entry.type == ConfigEntryType.CATEGORY_HEADER) {
                     drawScrollingText(context, entry.displayName, textX, y + 5, availableTextWidth, 0xFFD700, currentTime);
                 } else if (entry.type == ConfigEntryType.SUBCATEGORY_HEADER) {
-                    // Draw collapse/expand arrow for subcategories
-                    int arrowX = contentStartX + indentOffset - 12;
-                    int arrowY = y + 3;
+                    // Draw collapse/expand arrow for subcategories with more padding
+                    int arrowX = contentStartX + indentOffset - 15; // Increased padding from -12 to -15
+                    int arrowY = y + 2; // Slightly adjusted Y position
                     boolean isCollapsed = collapsedSubcategories.contains(entry.translationPath);
 
-                    // Draw arrow button background
-                    context.fill(arrowX, arrowY, arrowX + 10, arrowY + 16, 0x40FFFFFF);
+                    // Draw larger arrow button background with more padding
+                    context.fill(arrowX, arrowY, arrowX + 14, arrowY + 18, 0x40FFFFFF); // Increased size from 10x16 to 14x18
 
-                    // Draw arrow symbol
+                    // Draw arrow symbol centered in the larger area
                     String arrowSymbol = isCollapsed ? ">" : "v";
                     context.drawTextWithShadow(this.textRenderer, Text.literal(arrowSymbol),
-                            arrowX + 2, arrowY + 4, 0xFFFFFF);
+                            arrowX + 4, arrowY + 5, 0xFFFFFF); // Adjusted positioning for centering
 
                     // Draw subcategory text
                     drawScrollingText(context, entry.displayName, textX, y + 5, availableTextWidth, 0xC0C0C0, currentTime);
@@ -670,45 +676,45 @@ public class MainConfigScreen extends Screen {
         }
     }
 
-    private void drawScrollingText(DrawContext context, Text text, int x, int y, int maxWidth, int color, long currentTime) {
-        String textString = text.getString();
-        int textWidth = this.textRenderer.getWidth(textString);
-
-        if (textWidth <= maxWidth) {
-            // Text fits, draw normally
-            context.drawTextWithShadow(this.textRenderer, text, x, y, color);
-        } else {
-            // Text is too long, implement scrolling at 7 characters per second
-            int charactersPerSecond = 7;
-            int maxScrollDistance = textWidth - maxWidth;
-
-            // Calculate how long it should take to scroll the full distance
-            // Based on character count and speed
-            long scrollTimeMs = (long) ((textString.length() * 1000.0) / charactersPerSecond);
-            long cycleTime = scrollTimeMs * 2; // Double for round trip
-            long timeInCycle = currentTime % cycleTime;
-
-            // Calculate scroll offset
-            float scrollProgress;
-            if (timeInCycle < cycleTime / 2) {
-                // First half: scroll from left to right
-                scrollProgress = (float) timeInCycle / (cycleTime / 2);
-            } else {
-                // Second half: scroll from right to left
-                scrollProgress = 1.0f - (float) (timeInCycle - cycleTime / 2) / (cycleTime / 2);
-            }
-
-            int scrollOffset = (int) (scrollProgress * maxScrollDistance);
-
-            // Enable scissor (clipping) to contain text within bounds
-            context.enableScissor(x, y - 2, x + maxWidth, y + 12);
-
-            // Draw the text with offset
-            context.drawTextWithShadow(this.textRenderer, text, x - scrollOffset, y, color);
-
-            // Disable scissor
-            context.disableScissor();
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (searchField.isFocused() && keyCode == 257) { // Enter key
+            performSearch();
+            return true;
         }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (maxScroll > 0) {
+            scrollOffset -= verticalAmount * 10;
+            scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
+            updateWidgets();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackground(context, mouseX, mouseY, delta);
+
+        // Draw title
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
+
+        // Draw category panel
+        if (!categoryPanelCollapsed) {
+            drawCategoryPanel(context, mouseX, mouseY);
+        }
+
+        // Draw scrollbar
+        drawScrollbar(context);
+
+        super.render(context, mouseX, mouseY, delta);
+
+        // Draw config entries
+        drawConfigEntries(context);
     }
 
     @Override
@@ -749,31 +755,27 @@ public class MainConfigScreen extends Screen {
                 }
             }
 
-            // Check category panel clicks
+            // Check category panel clicks with updated coordinates for new padding
             if (!categoryPanelCollapsed) {
                 int panelX = 5;
                 int panelY = 70;
-                int buttonY = panelY + 5;
+                int buttonY = panelY + 8; // Updated to match new padding
 
-                // Use the same category order as in drawCategoryPanel to ensure clicks match visual order
-                String[] categoryOrder = {"general", "fishing", "dungeons", "inventory", "miscellaneous"};
+                // Use the new category system for clicks
+                for (MainConfigCategory category : categories) {
+                    String categoryName = category.getFieldName();
 
-                for (String category : categoryOrder) {
-                    // Only check categories that actually exist in categoryEntries
-                    if (!categoryEntries.containsKey(category)) {
-                        continue;
-                    }
-
-                    if (mouseX >= panelX && mouseX < panelX + categoryPanelWidth - 20 &&
+                    // Updated click area to match new button positioning and padding
+                    if (mouseX >= panelX + 4 && mouseX < panelX + categoryPanelWidth - 24 &&
                             mouseY >= buttonY && mouseY < buttonY + 20) {
-                        selectCategory(category);
+                        selectCategory(categoryName);
                         return true;
                     }
-                    buttonY += 25;
+                    buttonY += 28; // Updated spacing to match new button spacing
                 }
             }
 
-            // Check subcategory collapse/expand buttons
+            // Check subcategory collapse/expand buttons with updated coordinates for larger buttons
             if (!searchMode && selectedCategory != null) {
                 int contentStartX = categoryPanelCollapsed ? leftMargin : leftMargin + categoryPanelWidth + 10;
                 int y = 70 - (int) scrollOffset;
@@ -782,11 +784,12 @@ public class MainConfigScreen extends Screen {
                     if (y > 60 && y < this.height - 50) {
                         if (entry.type == ConfigEntryType.SUBCATEGORY_HEADER) {
                             int indentOffset = entry.indentLevel * 15;
-                            int arrowX = contentStartX + indentOffset - 12;
-                            int arrowY = y + 3;
+                            int arrowX = contentStartX + indentOffset - 15; // Updated to match new position
+                            int arrowY = y + 2; // Updated to match new position
 
-                            if (mouseX >= arrowX && mouseX < arrowX + 10 &&
-                                    mouseY >= arrowY && mouseY < arrowY + 16) {
+                            // Updated click area to match new larger button size
+                            if (mouseX >= arrowX && mouseX < arrowX + 14 &&
+                                    mouseY >= arrowY && mouseY < arrowY + 18) {
                                 toggleSubcategory(entry.translationPath);
                                 return true;
                             }
@@ -845,29 +848,135 @@ public class MainConfigScreen extends Screen {
         updateWidgets();
     }
 
+    @SuppressWarnings("unchecked")
+    private ClickableWidget createEnumWidget(ConfigEntry entry, int x, int y, int width) {
+        try {
+            Class<? extends Enum> enumClass = (Class<? extends Enum>) entry.fieldType;
+            Enum[] enumValues = enumClass.getEnumConstants();
+            Enum currentValue = (Enum) entry.currentValue;
+
+            return CyclingButtonWidget.builder(value -> Text.literal(value.toString()))
+                    .values(enumValues)
+                    .initially(currentValue)
+                    .build(x, y, width, 20, entry.displayName, (button, value) -> updateFieldValue(entry, value));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void resetEntry(ConfigEntry entry) {
+        try {
+            Object defaultInstance = getDefaultInstance(entry);
+            if (defaultInstance != null) {
+                Object defaultValue = entry.field.get(defaultInstance);
+                entry.field.set(entry.instance, defaultValue);
+                entry.currentValue = defaultValue;
+                updateWidgets();
+
+                // Use optimized field saving
+                String fieldPath = buildFieldPath(entry);
+                userConfig.saveField(SkydopplerClient.CONFIG_PATH, fieldPath, defaultValue);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Object getDefaultInstance(ConfigEntry entry) {
+        try {
+            // Use the field path to navigate to the corresponding instance in the default config
+            String fieldPath = buildFieldPath(entry);
+
+            // Remove "mainConfig." prefix since we start from defaultConfig
+            String relativePath = fieldPath.substring("mainConfig.".length());
+
+            // Split the path and navigate to the parent instance
+            String[] pathParts = relativePath.split("\\.");
+            Object current = defaultConfig;
+
+            // Navigate to the parent of the field (exclude the last part which is the field name)
+            for (int i = 0; i < pathParts.length - 1; i++) {
+                Field field = current.getClass().getDeclaredField(pathParts[i]);
+                field.setAccessible(true);
+                current = field.get(current);
+                if (current == null) {
+                    return null;
+                }
+            }
+
+            return current;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Object getDefaultCategoryInstance(String categoryName) {
+        try {
+            Field categoryField = defaultConfig.getClass().getDeclaredField(categoryName);
+            categoryField.setAccessible(true);
+            return categoryField.get(defaultConfig);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Object findMatchingInstance(Object parent, Class<?> targetClass) {
+        try {
+            if (parent.getClass().equals(targetClass)) {
+                return parent;
+            }
+
+            Field[] fields = parent.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+                    field.setAccessible(true);
+                    Object value = field.get(parent);
+                    if (value != null) {
+                        if (value.getClass().equals(targetClass)) {
+                            return value;
+                        }
+                        if (isConfigClass(value.getClass())) {
+                            Object nested = findMatchingInstance(value, targetClass);
+                            if (nested != null) {
+                                return nested;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private enum ConfigEntryType {
         CATEGORY_HEADER,
         SUBCATEGORY_HEADER,
         BOOLEAN,
         INTEGER,
         FLOAT,
-        ENUM
+        ENUM,
+        BUTTON
     }
 
     private static class ConfigEntry {
-        final ConfigEntryType type;
-        final Text displayName;
-        final Object instance;
-        final Field field;
-        final Class<?> fieldType;
-        final String translationPath;
-        final String categoryName;
-        final int indentLevel;
-        Object currentValue;
+        public final ConfigEntryType type;
+        public final Text displayName;
+        public final Object instance;
+        public final Field field;
+        public final Class<?> fieldType;
+        public final String translationPath;
+        public final String categoryName;
+        public final int indentLevel;
+        public Object currentValue;
+        public Runnable buttonAction; // For button entries
 
-        ConfigEntry(ConfigEntryType type, Text displayName, Object instance, Field field,
-                    Object currentValue, Class<?> fieldType, String translationPath,
-                    String categoryName, int indentLevel) {
+        public ConfigEntry(ConfigEntryType type, Text displayName, Object instance, Field field,
+                           Object currentValue, Class<?> fieldType, String translationPath, String categoryName, int indentLevel) {
             this.type = type;
             this.displayName = displayName;
             this.instance = instance;

@@ -1,17 +1,24 @@
 package ae.skydoppler.config.main_config.categories;
 
+import ae.skydoppler.SkydopplerClient;
+import ae.skydoppler.config.held_item_config.HeldItemConfigScreen;
+import ae.skydoppler.config.main_config.MainConfigCategory;
 import ae.skydoppler.player_hiding.PlayerHidingHelper;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.Text;
 
-public class General {
+public class General extends MainConfigCategory {
 
     public boolean doTransferCooldownFinishedAlert = true;
-
     public HideFarPlayers hideFarPlayers = new HideFarPlayers();
     public HidePlayersNearNpc hidePlayersNearNpc = new HidePlayersNearNpc();
     public AlwaysSprint alwaysSprint = new AlwaysSprint();
     public VisualSettings visualSettings = new VisualSettings();
     public GlowingSettings glowingSettings = new GlowingSettings();
     public OldVersionParityConfig oldVersionParityConfig = new OldVersionParityConfig();
+    public General() {
+        super("general", Text.translatable("config.ae.skydoppler.main_config.category.general"), 0);
+    }
 
     public static class HideFarPlayers {
         public boolean enabled = false;
@@ -30,6 +37,7 @@ public class General {
     }
 
     public static class VisualSettings {
+
         public boolean hideExplosionParticle = true;
         public boolean showFog = true;
         public boolean doFullbright = false;
@@ -37,6 +45,10 @@ public class General {
         public boolean hideNightVisionEffect = false;
         public boolean hideThirdPersonFireOverlay = false;
         public VanillaHud vanillaHudConfig = new VanillaHud();
+
+        public Screen getHeldItemConfigScreen(Screen parent) {
+            return new HeldItemConfigScreen(SkydopplerClient.CONFIG, parent);
+        }
 
         public static class VanillaHud {
             public boolean hideChatIndicators = true;

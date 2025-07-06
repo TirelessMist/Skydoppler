@@ -1,9 +1,12 @@
 package ae.skydoppler.config;
 
 import ae.skydoppler.config.chat_matcher_config.ChatMatchConfigEntryData;
+import ae.skydoppler.config.main_config.MainConfigCategory;
 import ae.skydoppler.config.main_config.categories.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,12 +49,66 @@ public class SkydopplerConfig {
         }
     }
 
+    // Save only a specific field to optimize performance
+    public void saveField(Path path, String fieldPath, Object value) {
+        try {
+            JsonObject configJson;
+            if (Files.exists(path)) {
+                try (BufferedReader reader = Files.newBufferedReader(path)) {
+                    configJson = JsonParser.parseReader(reader).getAsJsonObject();
+                }
+            } else {
+                configJson = new JsonObject();
+            }
+
+            // Navigate to the field and update it
+            String[] pathParts = fieldPath.split("\\.");
+            JsonObject current = configJson;
+
+            for (int i = 0; i < pathParts.length - 1; i++) {
+                if (!current.has(pathParts[i])) {
+                    current.add(pathParts[i], new JsonObject());
+                }
+                current = current.getAsJsonObject(pathParts[i]);
+            }
+
+            // Set the final value
+            current.add(pathParts[pathParts.length - 1], GSON.toJsonTree(value));
+
+            // Save the updated config
+            try (BufferedWriter writer = Files.newBufferedWriter(path,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                GSON.toJson(configJson, writer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Fall back to full save if field save fails
+            save(path);
+        }
+    }
+
     public static class MainConfig {
+        // UI state
+        public boolean categoryPanelCollapsed = false;
+
+        // Categories - now they extend MainConfigCategory and handle their own ordering
         public General general = new General();
+        public Accessibility accessibility = new Accessibility();
         public Fishing fishing = new Fishing();
         public Dungeons dungeons = new Dungeons();
         public Inventory inventory = new Inventory();
         public Miscellaneous miscellaneous = new Miscellaneous();
+
+        // Get all categories in priority order
+        public MainConfigCategory[] getCategories() {
+            MainConfigCategory[] categories = {
+                    general, accessibility, fishing, dungeons, inventory, miscellaneous
+            };
+            // Sort by priority (lower number = higher priority)
+            java.util.Arrays.sort(categories, java.util.Comparator.comparingInt(MainConfigCategory::getPriority));
+            return categories;
+        }
     }
 
     public static class HeldItemRendererConfig {
