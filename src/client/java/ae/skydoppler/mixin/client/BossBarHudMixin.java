@@ -16,13 +16,12 @@ public class BossBarHudMixin {
     @Inject(method = "renderBossBar(Lnet/minecraft/client/gui/DrawContext;IILnet/minecraft/entity/boss/BossBar;)V", at = @At("HEAD"), cancellable = true)
     private void onRenderBossBar(DrawContext context, int x, int y, BossBar bossBar, CallbackInfo ci) {
 
-        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideWitherBossbarsInSkyblock && bossBar.shouldDarkenSky()) {
+        if (SkydopplerClient.CONFIG.mainConfig.general.visualSettings.vanillaHudConfig.shouldHideWitherBossbarsInSkyblock && bossBar.shouldDarkenSky()) {
             bossBar.setName(Text.empty());
             ci.cancel();
         }
 
     }
-
 
 
 }

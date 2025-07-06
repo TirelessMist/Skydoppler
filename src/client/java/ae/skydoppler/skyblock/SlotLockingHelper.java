@@ -7,7 +7,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class SlotLockingHelper {
      * @return true if the screen is a storage UI and doSlotLockingInStorageUi is true
      */
     public static boolean isStorageScreen(Screen screen) {
-        if (!SkydopplerClient.CONFIG.doSlotLockingInStorageUi) {
+        if (!SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.doSlotLockingInStorageUi) {
             return false;
         }
 
@@ -51,7 +50,8 @@ public class SlotLockingHelper {
             lockedSlots = new ArrayList<>();
         }
 
-        if (SkydopplerClient.isPlayingSkyblock && slot == 8) return; // Prevent locking the Skyblock Menu slot in Skyblock
+        if (SkydopplerClient.isPlayingSkyblock && slot == 8)
+            return; // Prevent locking the Skyblock Menu slot in Skyblock
 
         if (lockedSlotsArray[slot]) {
             lockedSlots.remove(Integer.valueOf(slot));
@@ -62,8 +62,8 @@ public class SlotLockingHelper {
         }
 
         // Play sound effect if the config allows it
-        if (SkydopplerClient.CONFIG.doSlotLocking && SkydopplerClient.CONFIG.slotLockingToggleVolume > 0) {
-            MinecraftClient.getInstance().player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, SkydopplerClient.CONFIG.slotLockingToggleVolume, lockedSlotsArray[slot] ? 0.4f : 1.0f);
+        if (SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.enabled && SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.slotLockingToggleVolume > 0) {
+            MinecraftClient.getInstance().player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.slotLockingToggleVolume, lockedSlotsArray[slot] ? 0.4f : 1.0f);
         }
     }
 
@@ -122,11 +122,11 @@ public class SlotLockingHelper {
     public static void playLockedSlotSound(boolean showMessage) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
-        if (SkydopplerClient.CONFIG.slotLockingToggleVolume > 0) {
+        if (SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.slotLockingToggleVolume > 0) {
             client.player.playSoundToPlayer(
                     SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(),
                     SoundCategory.MASTER,
-                    SkydopplerClient.CONFIG.slotLockingToggleVolume,
+                    SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.slotLockingToggleVolume,
                     0.5f
             );
         }

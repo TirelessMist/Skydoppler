@@ -16,7 +16,7 @@ public class InGameOverlayRendererMixin {
 
     @Inject(method = "renderFireOverlay", at = @At("HEAD"), cancellable = true)
     private static void onSetupOverlayColor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
-        if (SkydopplerClient.CONFIG.vanillaHudConfig.shouldHideFireOverlayFirstPerson) {
+        if (SkydopplerClient.CONFIG.mainConfig.general.visualSettings.vanillaHudConfig.shouldHideFireOverlayFirstPerson) {
 
             ci.cancel();
         }

@@ -11,7 +11,7 @@ public class LightmapTextureManagerMixin {
 
     @ModifyExpressionValue(method = "update", at = @At(value = "INVOKE", target = "Ljava/lang/Double;floatValue()F", ordinal = 1))
     private float doFullbright(float original) {
-        if (SkydopplerClient.CONFIG.doFullbright)
+        if (SkydopplerClient.CONFIG.mainConfig.general.visualSettings.doFullbright)
             return 1500;
         return original;
     }

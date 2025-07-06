@@ -3,14 +3,12 @@ package ae.skydoppler.mixin.client;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.api.BlockingAccessor;
 import ae.skydoppler.behavior.AlwaysSprintState;
-import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.config.chat_matcher_config.ChatMatchConfigScreen;
 import ae.skydoppler.skyblock.SlotLockingHelper;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,7 +27,7 @@ public abstract class KeyBindingMixin {
 
         // Handle sword blocking
         if (thisBinding == client.options.useKey &&
-                SkydopplerClient.CONFIG.oldVersionParityConfig.doSwordBlocking &&
+                SkydopplerClient.CONFIG.mainConfig.general.oldVersionParityConfig.doSwordBlocking &&
                 client.player.getMainHandStack().getItem().getTranslationKey().contains("sword")) {
             // If the player is using a sword and the use key is pressed/released, toggle blocking state
             playerAccessor.skydoppler$setBlocking(pressed);
@@ -65,7 +63,7 @@ public abstract class KeyBindingMixin {
 
         // Handle dropping items with locked slots
         if (thisBinding == client.options.dropKey &&
-                SkydopplerClient.CONFIG.doSlotLocking &&
+                SkydopplerClient.CONFIG.mainConfig.inventory.slotLocking.enabled &&
                 SlotLockingHelper.isSlotLocked(client.player.getInventory().getSelectedSlot())) {
             SlotLockingHelper.playLockedSlotSound(true);
             return false;

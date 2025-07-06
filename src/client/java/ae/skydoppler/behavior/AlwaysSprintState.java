@@ -24,8 +24,8 @@ public class AlwaysSprintState {
 
     public static boolean shouldNotDoAlwaysSprint() {
 
-        if (SkydopplerClient.CONFIG.alwaysSprint) {
-            if (SkydopplerClient.CONFIG.alwaysSprintOnlyInSkyblock) {
+        if (SkydopplerClient.CONFIG.mainConfig.general.alwaysSprint.enabled) {
+            if (SkydopplerClient.CONFIG.mainConfig.general.alwaysSprint.alwaysSprintOnlyInSkyblock) {
                 return !SkydopplerClient.isPlayingSkyblock;
             }
             return false;

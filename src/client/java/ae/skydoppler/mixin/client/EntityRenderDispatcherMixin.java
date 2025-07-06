@@ -48,10 +48,10 @@ public abstract class EntityRenderDispatcherMixin {
 
     @Unique
     private <E extends Entity> void applyGlowingEffects(E entity) {
-        if (entity instanceof ItemEntity && SkydopplerClient.CONFIG.glowingDroppedItems) {
+        if (entity instanceof ItemEntity && SkydopplerClient.CONFIG.mainConfig.general.glowingSettings.glowingDroppedItems) {
             entity.setGlowing(true);
         } else if (entity instanceof PlayerEntity player
-                && SkydopplerClient.CONFIG.glowingPlayers
+                && SkydopplerClient.CONFIG.mainConfig.general.glowingSettings.glowingPlayers
                 && !PlayerHidingHelper.isPlayerAnNpc(player)) {
             entity.setGlowing(true);
         }
@@ -68,11 +68,11 @@ public abstract class EntityRenderDispatcherMixin {
         if (isFishing) {
             // Hide other players while fishing
             if (entity instanceof PlayerEntity player
-                    && SkydopplerClient.CONFIG.hidePlayersWhileFishing
+                    && SkydopplerClient.CONFIG.mainConfig.fishing.hidePlayersWhileFishing.enabled
                     && !player.equals(client.player)
                     && !PlayerHidingHelper.isPlayerAnNpc(player)) {
-                float rangeSq = SkydopplerClient.CONFIG.hidePlayersWhileFishingRange *
-                        SkydopplerClient.CONFIG.hidePlayersWhileFishingRange;
+                float rangeSq = SkydopplerClient.CONFIG.mainConfig.fishing.hidePlayersWhileFishing.hidePlayersWhileFishingRange *
+                        SkydopplerClient.CONFIG.mainConfig.fishing.hidePlayersWhileFishing.hidePlayersWhileFishingRange;
                 if (distSq <= rangeSq) {
                     return true;
                 }
@@ -80,7 +80,7 @@ public abstract class EntityRenderDispatcherMixin {
 
             // Hide other fishing rods
             if (entity instanceof FishingBobberEntity bobber
-                    && SkydopplerClient.CONFIG.hideOtherFishingRods
+                    && SkydopplerClient.CONFIG.mainConfig.fishing.hideOthersFishingRods
                     && bobber.getOwner() != null
                     && !bobber.getOwner().equals(client.player)) {
                 return true;
@@ -90,7 +90,7 @@ public abstract class EntityRenderDispatcherMixin {
         // Hub player hiding for distant players
         if (PlayerHidingHelper.shouldDoHubHiding()
                 && !PlayerHidingHelper.isPlayerAnNpc(entity)) {
-            float hideFarRange = SkydopplerClient.CONFIG.hideFarPlayersRange;
+            float hideFarRange = SkydopplerClient.CONFIG.mainConfig.general.hideFarPlayers.hideFarPlayersRange;
             if (distSq >= hideFarRange * hideFarRange) {
                 return true;
             }
@@ -98,11 +98,11 @@ public abstract class EntityRenderDispatcherMixin {
 
         // Hide players near NPCs
         if (entity instanceof PlayerEntity
-                && SkydopplerClient.CONFIG.hidePlayersNearNpc
+                && SkydopplerClient.CONFIG.mainConfig.general.hidePlayersNearNpc.enabled
                 && !entity.equals(client.player)
                 && !PlayerHidingHelper.isPlayerAnNpc(entity)) {
-            float rangeSq = SkydopplerClient.CONFIG.hidePlayersNearNpcRange *
-                    SkydopplerClient.CONFIG.hidePlayersNearNpcRange;
+            float rangeSq = SkydopplerClient.CONFIG.mainConfig.general.hidePlayersNearNpc.hidePlayersNearNpcRange *
+                    SkydopplerClient.CONFIG.mainConfig.general.hidePlayersNearNpc.hidePlayersNearNpcRange;
 
             // Use anyMatch for better performance than stream().anyMatch()
             for (var npcPos : PlayerHidingHelper.npcPositions) {
@@ -118,7 +118,7 @@ public abstract class EntityRenderDispatcherMixin {
     @Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
     private void onRenderFire(MatrixStack matrices, VertexConsumerProvider vertexConsumers,
                               EntityRenderState renderState, Quaternionf rotation, CallbackInfo ci) {
-        if (SkydopplerClient.CONFIG.hideThirdPersonFireOverlay) {
+        if (SkydopplerClient.CONFIG.mainConfig.general.visualSettings.hideThirdPersonFireOverlay) {
             ci.cancel();
         }
     }

@@ -17,7 +17,7 @@ public class OneEightModeHelper {
     public static final float BLOCKING_ROT_Z = 72.17f;
 
     public static float getCrouchHeight() {
-        return SkydopplerClient.CONFIG.oldVersionParityConfig.doOldCrouchHeight ? CROUCH_HEIGHT_1_8 : CROUCH_HEIGHT_MODERN;
+        return SkydopplerClient.CONFIG.mainConfig.general.oldVersionParityConfig.doOldCrouchHeight ? CROUCH_HEIGHT_1_8 : CROUCH_HEIGHT_MODERN;
     }
 }
 

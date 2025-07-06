@@ -32,9 +32,9 @@ public class ParticleManagerMixin {
         ParticleType<?> particleType = parameters.getType();
 
         // Handle far player hiding
-        if (SkydopplerClient.CONFIG.doFarPlayerHiding && PlayerHidingHelper.shouldDoHubHiding()) {
+        if (SkydopplerClient.CONFIG.mainConfig.general.hideFarPlayers.enabled && PlayerHidingHelper.shouldDoHubHiding()) {
             double distanceSq = client.player.squaredDistanceTo(x, y, z);
-            int maxDistance = SkydopplerClient.CONFIG.hideFarPlayersRange;
+            int maxDistance = SkydopplerClient.CONFIG.mainConfig.general.hideFarPlayers.hideFarPlayersRange;
 
             if (distanceSq >= maxDistance * maxDistance) {
                 cir.setReturnValue(null); // Cancel particles outside the distance
@@ -43,13 +43,13 @@ public class ParticleManagerMixin {
         }
 
         // Handle explosion particles
-        if (particleType == ParticleTypes.EXPLOSION && SkydopplerClient.CONFIG.hideExplosionParticle) {
+        if (particleType == ParticleTypes.EXPLOSION && SkydopplerClient.CONFIG.mainConfig.general.visualSettings.hideExplosionParticle) {
             cir.setReturnValue(null); // Cancel explosion particles
             return;
         }
 
         // Handle firework particles
-        if (particleType == ParticleTypes.FIREWORK && SkydopplerClient.CONFIG.hideMageBeams) {
+        if (particleType == ParticleTypes.FIREWORK && SkydopplerClient.CONFIG.mainConfig.dungeons.hideMageBeams) {
             if (isPlayerAimingAtParticle(x, y, z)) {
                 cir.setReturnValue(null); // Cancel firework particles if the player is aiming at them
             }

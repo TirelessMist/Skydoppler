@@ -33,7 +33,7 @@ public class ClientWorldMixin {
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("OOOOOOOOOOOOOOOO====---- [ClientWorldMixin] Initializing world ----OOOOOOOOOOOOOOOO");
 
-        if (SkydopplerClient.isPlayingSkyblock && SkydopplerClient.CONFIG.doTransferCooldownFinishedAlert) {
+        if (SkydopplerClient.isPlayingSkyblock && SkydopplerClient.CONFIG.mainConfig.general.doTransferCooldownFinishedAlert) {
             PlayerTransferCooldown.startCooldown();
 
             SkydopplerClient.currentIsland = SkyblockLocationEnum.NONE;

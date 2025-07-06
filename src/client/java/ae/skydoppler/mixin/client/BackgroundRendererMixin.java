@@ -16,7 +16,7 @@ public class BackgroundRendererMixin {
     @Inject(method = "applyFog", at = @At("HEAD"), cancellable = true)
     private static void onApplyFog(Camera camera, BackgroundRenderer.FogType fogType, Vector4f color, float viewDistance, boolean thickenFog, float tickProgress, CallbackInfoReturnable<Fog> cir) {
 
-        if (fogType != BackgroundRenderer.FogType.FOG_SKY && !SkydopplerClient.CONFIG.showFog)
+        if (fogType != BackgroundRenderer.FogType.FOG_SKY && !SkydopplerClient.CONFIG.mainConfig.general.visualSettings.showFog)
             cir.setReturnValue(Fog.DUMMY);
 
     }

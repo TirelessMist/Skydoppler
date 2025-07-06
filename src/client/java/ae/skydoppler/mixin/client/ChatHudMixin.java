@@ -3,12 +3,10 @@ package ae.skydoppler.mixin.client;
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.chat.StyleConverter;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -38,7 +36,7 @@ public class ChatHudMixin {
             argsOnly = true
     )
     private MessageIndicator forceSinglePlayerIndicator(MessageIndicator original) {
-        if (SkydopplerClient.CONFIG.vanillaHudConfig.hideChatIndicators) {
+        if (SkydopplerClient.CONFIG.mainConfig.general.visualSettings.vanillaHudConfig.hideChatIndicators) {
             return null;
         }
         return original;

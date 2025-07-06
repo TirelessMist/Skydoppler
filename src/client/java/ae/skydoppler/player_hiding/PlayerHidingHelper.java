@@ -23,10 +23,10 @@ public class PlayerHidingHelper {
     public static boolean shouldDoHubHiding() {
 
         // Check if the far player hiding feature is disabled in the configuration.
-        if (!SkydopplerClient.CONFIG.doFarPlayerHiding) return false;
+        if (!SkydopplerClient.CONFIG.mainConfig.general.hideFarPlayers.enabled) return false;
 
         // Evaluate the hiding mode and the player's current location.
-        switch (SkydopplerClient.CONFIG.hideFarPlayersMode) {
+        switch (SkydopplerClient.CONFIG.mainConfig.general.hideFarPlayers.hideFarPlayersMode) {
             case HubHideLocationMode.HUB_ENTIRE -> {
                 // Enable hiding if the player is on the HUB island.
                 return SkydopplerClient.currentIsland == SkyblockLocationEnum.HUB;
@@ -50,7 +50,7 @@ public class PlayerHidingHelper {
 
     public static boolean shouldDoFishingPlayerHiding() {
         // Check if the player is fishing and if the fishing player hiding feature is enabled in the configuration.
-        return SkydopplerClient.CONFIG.hidePlayersWhileFishing && SkydopplerClient.currentIsland.getIslandType() == SkyblockIslandCategoryEnum.FISHING_ISLAND;
+        return SkydopplerClient.CONFIG.mainConfig.fishing.hidePlayersWhileFishing.enabled && SkydopplerClient.currentIsland.getIslandType() == SkyblockIslandCategoryEnum.FISHING_ISLAND;
     }
 
     public static boolean isPlayerAnNpc(Entity player) {

@@ -1,6 +1,5 @@
 package ae.skydoppler;
 
-import ae.skydoppler.chat.ChatMatchHandler;
 import ae.skydoppler.command.SkydopplerCommand;
 import ae.skydoppler.config.SkydopplerConfig;
 import ae.skydoppler.dungeon.DungeonClientHandler;
@@ -53,7 +52,7 @@ public class SkydopplerClient implements ClientModInitializer {
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("Skydoppler (Client) is initializing!");
 
-        CONFIG = SkydopplerConfig.load(CONFIG_PATH);
+        MinecraftClient.getInstance().execute(() -> CONFIG = SkydopplerConfig.load(CONFIG_PATH));
 
         if (SkydopplerClient.debugModeEnabled)
             debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
