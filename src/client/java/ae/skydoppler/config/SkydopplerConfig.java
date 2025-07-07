@@ -38,7 +38,11 @@ public class SkydopplerConfig {
         return new SkydopplerConfig();
     }
 
-    // Save config to file
+    /**
+     * Save the entire configuration to a file. This is costly, so it should be used sparingly.
+     *
+     * @param path The path to save the configuration file to.
+     */
     public void save(Path path) {
         try (BufferedWriter writer = Files.newBufferedWriter(path,
                 StandardOpenOption.CREATE,
@@ -49,7 +53,15 @@ public class SkydopplerConfig {
         }
     }
 
-    // Save only a specific field to optimize performance
+    /**
+     * Save a specific field in the configuration to a file.
+     * This is more efficient than saving the entire config, but it requires the field to be specified by path.
+     * The path should be in dot notation (e.g., "mainConfig.general.someField").
+     *
+     * @param path      The path to save the configuration file to.
+     * @param fieldPath The path to the field to save, in dot notation.
+     * @param value     The value to set for the specified field.
+     */
     public void saveField(Path path, String fieldPath, Object value) {
         try {
             JsonObject configJson;

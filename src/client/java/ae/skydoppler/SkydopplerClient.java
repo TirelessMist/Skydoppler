@@ -52,7 +52,7 @@ public class SkydopplerClient implements ClientModInitializer {
         if (SkydopplerClient.debugModeEnabled)
             System.out.println("Skydoppler (Client) is initializing!");
 
-        MinecraftClient.getInstance().execute(() -> CONFIG = SkydopplerConfig.load(CONFIG_PATH));
+        CONFIG = SkydopplerConfig.load(CONFIG_PATH);
 
         if (SkydopplerClient.debugModeEnabled)
             debugKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Debug Key", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "Skydoppler"));
