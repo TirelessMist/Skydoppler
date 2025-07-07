@@ -524,5 +524,7 @@
   "config.ae.skydoppler.main_config.category.accessibility": "Accessibility",
   "config.ae.skydoppler.main_config.category.accessibility.textScrollingSpeed": "Text Scrolling Speed",
   "config.ae.skydoppler.main_config.category.general.held_item_config": "Open Held Item Config...",
-  "config.ae.skydoppler.main_config.category.general.held_item_config.tooltip": "Opens a separate screen to configure the held item model's appearance and behavior."
+  "config.ae.skydoppler.main_config.category.general.held_item_config.tooltip": "Opens a separate screen to configure the first-person held item model's appearance and behavior.",
+  "modmenu.website.skydoppler": "Modrinth Page",
+  "modmenu.issues.skydoppler": "Report Bugs"
 }

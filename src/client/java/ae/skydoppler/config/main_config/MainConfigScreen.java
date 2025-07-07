@@ -8,7 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
-import net.minecraft.sound.SoundCategory;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -131,7 +131,7 @@ public class MainConfigScreen extends Screen {
         toggleCategoryPanelButton = ButtonWidget.builder(
                         Text.literal(categoryPanelCollapsed ? ">" : "<"),
                         button -> toggleCategoryPanel())
-                .dimensions(categoryPanelCollapsed ? 5 : categoryPanelWidth - 15, topY, 10, 20)
+                .dimensions(categoryPanelCollapsed ? 5 : categoryPanelWidth - 15, topY, 14, 22)
                 .build();
         this.addDrawableChild(toggleCategoryPanelButton);
 
@@ -1002,8 +1002,8 @@ public class MainConfigScreen extends Screen {
     }
 
     private void playClickSound() {
-        if (this.client != null && this.client.player != null) {
-            this.client.player.playSoundToPlayer(SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.MASTER, 1.0f, 1.0f);
+        if (this.client != null) {
+            this.client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f));
         }
     }
 
