@@ -28,7 +28,7 @@ public class HeldItemConfigScreen extends Screen {
     private int panelWidth;
 
     public HeldItemConfigScreen(SkydopplerConfig config, Screen parent) {
-        super(Text.translatable("config.ae.skydoppler.helditem.title"));
+        super(Text.translatable("config.ae.skydoppler.held_item.title"));
         this.config = config;
         this.parent = parent;
         this.isLeftHanded = client.options.getMainArm().getValue() == Arm.LEFT;
@@ -49,37 +49,37 @@ public class HeldItemConfigScreen extends Screen {
 
         // Float sliders
         sliders.clear();
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_x", config.heldItemRendererConfig.posX, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posX = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.pos_x", config.heldItemRendererConfig.posX, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posX = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_y", config.heldItemRendererConfig.posY, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posY = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.pos_y", config.heldItemRendererConfig.posY, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posY = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.pos_z", config.heldItemRendererConfig.posZ, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posZ = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.pos_z", config.heldItemRendererConfig.posZ, -2.0f, 2.0f, 0.0f, v -> config.heldItemRendererConfig.posZ = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_x", config.heldItemRendererConfig.rotX, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotX = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.rot_x", config.heldItemRendererConfig.rotX, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotX = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_y", config.heldItemRendererConfig.rotY, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotY = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.rot_y", config.heldItemRendererConfig.rotY, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotY = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.rot_z", config.heldItemRendererConfig.rotZ, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotZ = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.rot_z", config.heldItemRendererConfig.rotZ, -180.0f, 180.0f, 0.0f, v -> config.heldItemRendererConfig.rotZ = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.scale", config.heldItemRendererConfig.scale, 0.1f, 3.0f, 1.0f, v -> config.heldItemRendererConfig.scale = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.scale", config.heldItemRendererConfig.scale, 0.1f, 3.0f, 1.0f, v -> config.heldItemRendererConfig.scale = v);
         y += spacing;
-        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.swing_speed_multiplier", config.heldItemRendererConfig.swingSpeedMultiplier, 0.1f, 3.0f, 1.0f, v -> config.heldItemRendererConfig.swingSpeedMultiplier = v);
+        addSlider(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.swing_speed_multiplier", config.heldItemRendererConfig.swingSpeedMultiplier, 0.1f, 3.0f, 1.0f, v -> config.heldItemRendererConfig.swingSpeedMultiplier = v);
         y += spacing;
 
         // Boolean toggles
-        addToggle(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.disable_swap_animation", config.heldItemRendererConfig.disableSwapAnimation, v -> config.heldItemRendererConfig.disableSwapAnimation = v);
+        addToggle(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.disable_swap_animation", config.heldItemRendererConfig.disableSwapAnimation, v -> config.heldItemRendererConfig.disableSwapAnimation = v);
         y += spacing;
-        addToggle(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.helditem.disable_modern_swing", config.heldItemRendererConfig.disableModernSwing, v -> config.heldItemRendererConfig.disableModernSwing = v);
+        addToggle(x, y, sliderWidth, sliderHeight, "config.ae.skydoppler.held_item.disable_modern_swing", config.heldItemRendererConfig.disableModernSwing, v -> config.heldItemRendererConfig.disableModernSwing = v);
         y += spacing;
 
         // Main arm toggle
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.translatable("config.ae.skydoppler.helditem.main_arm", client.options.getMainArm().getValue() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()),
+                        Text.translatable("config.ae.skydoppler.held_item.main_arm", client.options.getMainArm().getValue() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()),
                         btn -> {
                             boolean setLeft = client.options.getMainArm().getValue() == Arm.RIGHT;
                             client.player.setMainArm(setLeft ? Arm.LEFT : Arm.RIGHT);
                             client.options.getMainArm().setValue(setLeft ? Arm.LEFT : Arm.RIGHT);
-                            btn.setMessage(Text.translatable("config.ae.skydoppler.helditem.main_arm", client.player.getMainArm() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()));
+                            btn.setMessage(Text.translatable("config.ae.skydoppler.held_item.main_arm", client.player.getMainArm() == Arm.LEFT ? Text.translatable("left").getString() : Text.translatable("right").getString()));
                             client.setScreen(HeldItemConfigScreen.buildConfigScreen(SkydopplerClient.CONFIG, this.parent));
                         })
                 .position(x + 10, y)
@@ -89,7 +89,7 @@ public class HeldItemConfigScreen extends Screen {
 
         // Test punch button
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.translatable("config.ae.skydoppler.helditem.test_punch"),
+                        Text.translatable("config.ae.skydoppler.held_item.test_punch"),
                         btn -> {
                             if (client.player != null) {
                                 client.player.swingHand(Hand.MAIN_HAND);
@@ -102,11 +102,11 @@ public class HeldItemConfigScreen extends Screen {
 
         // Exit button
         this.addDrawableChild(ButtonWidget.builder(
-                        Text.translatable("config.ae.skydoppler.helditem.exit"),
+                        Text.translatable("config.ae.skydoppler.held_item.exit"),
                         btn -> this.close())
                 .position(x + 10, this.height - 30)
                 .size(sliderWidth, 20)
-                .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.helditem.exit.tooltip")))
+                .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.held_item.exit.tooltip")))
                 .build());
 
         // Add sliders
@@ -163,7 +163,7 @@ public class HeldItemConfigScreen extends Screen {
                         Text.translatable(key, initialValue ? Text.translatable("on").getString() : Text.translatable("off").getString()),
                         btn -> {
                             // Dynamically fetch the current value from the config
-                            boolean currentValue = key.equals("config.ae.skydoppler.helditem.disable_swap_animation")
+                            boolean currentValue = key.equals("config.ae.skydoppler.held_item.disable_swap_animation")
                                     ? config.heldItemRendererConfig.disableSwapAnimation
                                     : config.heldItemRendererConfig.disableModernSwing;
 

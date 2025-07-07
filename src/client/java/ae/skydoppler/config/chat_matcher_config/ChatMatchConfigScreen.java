@@ -37,7 +37,7 @@ public class ChatMatchConfigScreen extends Screen {
     private List<ButtonWidget> functionButtons;
 
     public ChatMatchConfigScreen(@NotNull SkydopplerConfig config, Screen parent) {
-        super(Text.translatable("config.ae.skydoppler.chatnotification.title"));
+        super(Text.translatable("config.ae.skydoppler.chat_notification.title"));
         this.config = config;
         this.parent = parent;
     }
@@ -75,7 +75,7 @@ public class ChatMatchConfigScreen extends Screen {
         }
 
         // Add an exit button
-        addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.chatnotification.exit"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.chat_notification.exit"), button -> {
             client.setScreen(parent);
         }).dimensions(width / 2 - 100, height - 30, 200, 20).build());
 
@@ -131,7 +131,7 @@ public class ChatMatchConfigScreen extends Screen {
         private ButtonWidget undoAllButton;
 
         public ChatMatchFunctionConfigScreen(ChatMatchConfigEntryData functionData, Screen parent) {
-            super(Text.translatable("config.ae.skydoppler.chatnotification.function_config.title", functionData.name)); // Settings for Chat Function <function name>
+            super(Text.translatable("config.ae.skydoppler.chat_notification.function_config.title", functionData.name)); // Settings for Chat Function <function name>
             this.functionData = functionData;
             this.parent = parent;
             savedFunctionDataForUndo = functionData;
@@ -163,27 +163,27 @@ public class ChatMatchConfigScreen extends Screen {
             final int buttonWidth = (panelRight - panelX - 29) / 2; // 29 = 12px left margin + 5px between buttons + 12px right margin
 
             // Add Undo All Changes button
-            undoAllButton = addDrawableChild(ButtonWidget.builder(Text.translatable("skydoppler.undo_all_changes"), button -> {
+            undoAllButton = addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.chat_notification.undo_all_changes"), button -> {
                         functionData = savedFunctionDataForUndo;
                         hasMadeAnyChanges = false;
                         client.setScreen(this);
                     }).dimensions(panelX + 12, height - 30, buttonWidth, bottomButtonHeight)
-                    .tooltip(Tooltip.of(Text.translatable("skydoppler.undo_all_changes.tooltip")))
+                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chat_notification.undo_all_changes.tooltip")))
                     .build());
             undoAllButton.active = hasMadeAnyChanges; // Disable if no changes have been made
 
             // Add Save And Exit button
-            addDrawableChild(ButtonWidget.builder(Text.translatable("skydoppler.save_and_exit"), button -> {
+            addDrawableChild(ButtonWidget.builder(Text.translatable("config.ae.skydoppler.chat_notification.save_and_exit"), button -> {
                         client.setScreen(parent);
                     }).dimensions(panelX + 17 + buttonWidth, height - 30, buttonWidth, bottomButtonHeight)
-                    .tooltip(Tooltip.of(Text.translatable("skydoppler.save_and_exit.tooltip")))
+                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chat_notification.save_and_exit.tooltip")))
                     .build());
             //endregion
 
             //region Function Settings
             int buttonHeight = 20;
             int currentY = contentTop + 5; // Start position for the first widget
-            var nameTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.translatable("config.ae.skydoppler.chatnotification.name")));
+            var nameTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.translatable("config.ae.skydoppler.chat_notification.name")));
             nameTextBox.setText(functionData.name);
             nameTextBox.setPosition(panelX + 10, currentY);
             nameTextBox.setChangedListener(text -> {
@@ -194,10 +194,10 @@ public class ChatMatchConfigScreen extends Screen {
             currentY += buttonHeight + 5; // Move down for the next widget
 
             // Add Enabled toggle
-            var enabledCheckbox = addDrawableChild(CheckboxWidget.builder(Text.translatable("config.ae.skydoppler.chatnotification.enabled"), this.textRenderer)
+            var enabledCheckbox = addDrawableChild(CheckboxWidget.builder(Text.translatable("config.ae.skydoppler.chat_notification.enabled"), this.textRenderer)
                     .pos(panelX + 10, currentY)
                     .checked(functionData.enabled)
-                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chatnotification.enabled.tooltip")))
+                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chat_notification.enabled.tooltip")))
                     .callback((checkbox, checked) -> {
                         functionData.enabled = checked;
                         makeChange();
@@ -207,10 +207,10 @@ public class ChatMatchConfigScreen extends Screen {
             currentY += buttonHeight + 5; // Move down for the next widget
 
             // Add Play Sound toggle
-            var playSoundCheckbox = addDrawableChild(CheckboxWidget.builder(Text.translatable("config.ae.skydoppler.chatnotification.play_sound"), this.textRenderer)
+            var playSoundCheckbox = addDrawableChild(CheckboxWidget.builder(Text.translatable("config.ae.skydoppler.chat_notification.play_sound"), this.textRenderer)
                     .pos(panelX + 10, currentY)
                     .checked(functionData.playSound)
-                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chatnotification.play_sound.tooltip")))
+                    .tooltip(Tooltip.of(Text.translatable("config.ae.skydoppler.chat_notification.play_sound.tooltip")))
                     .callback((checkbox, checked) -> {
                         functionData.playSound = checked;
                         makeChange();
@@ -220,7 +220,7 @@ public class ChatMatchConfigScreen extends Screen {
             currentY += buttonHeight + 5; // Move down for the next widget
 
             // Add Display Title text box
-            var displayTitleTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.translatable("config.ae.skydoppler.chatnotification.display_title")));
+            var displayTitleTextBox = addDrawableChild(new TextFieldWidget(this.textRenderer, (int) (this.width * 0.3f), (int) Math.max(getTextRenderer().fontHeight + 8, this.height * 0.1f), Text.translatable("config.ae.skydoppler.chat_notification.display_title")));
             nameTextBox.setText(functionData.displayTitle);
             nameTextBox.setPosition(panelX + 10, currentY);
             nameTextBox.setChangedListener(text -> {

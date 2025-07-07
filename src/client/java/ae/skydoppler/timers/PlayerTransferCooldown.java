@@ -35,7 +35,7 @@ public class PlayerTransferCooldown {
         cooldownTicks = 0;
         if (client.player != null) {
             client.player.playSoundToPlayer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, 0.8f, 0.9f);
-            client.player.sendMessage(Text.literal(Text.translatable("skydoppler.chat.skydoppler_prefix").getString() + Text.translatable("skydoppler.player_transfer_cooldown").getString()), false);
+            client.player.sendMessage(Text.literal(Text.translatable("ae.skydoppler.chat.skydoppler_prefix").getString() + Text.translatable("ae.skydoppler.player_transfer_cooldown").getString()), false);
         }
     }
 }
