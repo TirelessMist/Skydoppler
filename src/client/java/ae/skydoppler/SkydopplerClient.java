@@ -27,7 +27,7 @@ public class SkydopplerClient implements ClientModInitializer {
 
     public static final Path CONFIG_PATH = Paths.get(MinecraftClient.getInstance() // or use a proper run directory reference
             .runDirectory.getAbsolutePath(), "config", "skydoppler.json");
-    public static final Boolean debugModeEnabled = true;
+    public static final Boolean debugModeEnabled = false;
     public static SkydopplerConfig CONFIG;
     public static KeyBinding debugKey;
     public static SkyblockPlayerDataStruct playerDataStruct = new SkyblockPlayerDataStruct();
