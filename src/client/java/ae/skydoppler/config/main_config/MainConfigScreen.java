@@ -744,7 +744,8 @@ public class MainConfigScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta); // this is causing double blur crash
+        //this.renderBackground(context, mouseX, mouseY, delta); // WARNING: THIS FUNCTION CALL IS CAUSING A DOUBLE-BLUR CRASH
+        // TODO: Change custom UI elements to use Minecraft's built-in elements (the custom ones are being rendered by the renderBackground function.
         super.render(context, mouseX, mouseY, delta);
 
         // Draw title
