@@ -63,29 +63,4 @@ public class SkydopplerClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(SkydopplerTimerEventHandler::timerTick);
     }
-
-    private void drawDungeonMap() {
-        MinecraftClient client = MinecraftClient.getInstance();
-
-        ItemStack itemStack = client.player.getInventory().getStack(8); // 9th Hotbar Slot
-
-        if (!(itemStack.getItem() instanceof FilledMapItem)) return; // Ensure the item is a filled map
-
-        //MapParser.saveMapToDesktop(FilledMapItem.getMapState(itemStack, client.world));
-
-        byte[][] mapPixels = MapParser.parseMap(FilledMapItem.getMapState(itemStack, client.world));
-
-        MapTile[][] dungeonMap = DungeonTileMapConstructor.constructMap(mapPixels);
-
-        for (int y = 0; y < dungeonMap.length; y++) {
-            for (int x = 0; x < dungeonMap[0].length; x++) {
-                MapTile tile = dungeonMap[y][x];
-                Random r = new Random();
-                tile.setUuid(r.nextInt());
-            }
-        }
-
-        HudRenderingEntrypoint.dungeonMapTiles = dungeonMap;
-
-    }
 }

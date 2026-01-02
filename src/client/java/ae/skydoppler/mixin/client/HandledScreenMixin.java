@@ -2,7 +2,9 @@ package ae.skydoppler.mixin.client;
 
 import ae.skydoppler.SkydopplerClient;
 import ae.skydoppler.skyblock.SlotLockingHelper;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -57,7 +59,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                 boolean[] lockedSlots = SlotLockingHelper.getLockedSlotsArray();
                 if (lockedSlots[slotIndex]) {
                     // Draw the lock texture over the slot
-                    context.drawTexture(RenderLayer::getGuiTexturedOverlay, LOCK_TEXTURE, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
+                    context.drawTexture(RenderPipelines.GUI, LOCK_TEXTURE, slot.x, slot.y, 0, 0, 16, 16, 16, 16);
                 }
             }
         }

@@ -19,8 +19,7 @@
       "ae.skydoppler.Skydoppler"
     ],
     "client": [
-      "ae.skydoppler.SkydopplerClient",
-      "ae.skydoppler.HudRenderingEntrypoint"
+      "ae.skydoppler.SkydopplerClient"
     ],
     "modmenu": [
       "ae.skydoppler.config.ModMenuIntegration"

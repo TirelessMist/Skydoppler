@@ -744,7 +744,7 @@ public class MainConfigScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
+        this.renderBackground(context, mouseX, mouseY, delta); // this is causing double blur crash
         super.render(context, mouseX, mouseY, delta);
 
         // Draw title

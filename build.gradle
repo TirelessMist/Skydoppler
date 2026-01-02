@@ -40,7 +40,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modApi "com.terraformersmc:modmenu:14.0.0-rc.2"
+    modApi "com.terraformersmc:modmenu:15.0.0"
 }
 
 processResources {

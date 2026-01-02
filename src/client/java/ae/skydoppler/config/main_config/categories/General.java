@@ -39,9 +39,7 @@ public class General extends MainConfigCategory {
     public static class VisualSettings {
 
         public boolean hideExplosionParticle = true;
-        public boolean showFog = true;
         public boolean doFullbright = false;
-        public boolean hideClouds = false;
         public boolean hideNightVisionEffect = false;
         public boolean hideThirdPersonFireOverlay = false;
         public VanillaHud vanillaHudConfig = new VanillaHud();

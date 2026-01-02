@@ -23,7 +23,7 @@ public class GameRendererMixin {
     }
 
     @Inject(method = "renderHand", at = @At("HEAD"))
-    private void onRenderHand(Camera camera, float tickProgress, Matrix4f positionMatrix, CallbackInfo ci) {
+    private void onRenderHand(float tickProgress, boolean sleeping, Matrix4f positionMatrix, CallbackInfo ci) {
 
         // Example transformation values (replace with your own logic or config)
         float handOffsetX = 0.2f;
